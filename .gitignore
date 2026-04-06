@@ -1,0 +1,48 @@
+# 数据集 - 不要提交
+datasets/
+simclr/datasets/
+**/datasets/
+**/*.csv
+**/*.txt
+**/*.dat
+**/*.npy
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+
+# 模型 checkpoints
+*.pth
+*.pt
+*.ckpt
+*.model
+
+# 软标签文件（可以提交但很大）
+*.npy
+
+# 临时文件
+*.tmp
+*.log
+report_temp.html
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Mac
+.DS_Store
+
+# Weights & Biases
+wandb/
+
+# PDF (可选,如果是自动生成的)
+*.pdf
