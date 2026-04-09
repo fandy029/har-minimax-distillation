@@ -5,7 +5,13 @@ simclr/datasets/
 **/*.csv
 **/*.txt
 **/*.dat
-**/*.npy
+# 软标签文件（用于知识蒸馏的可复现性，小文件，允许提交）
+# 注意：datasets下的npy仍需忽略
+!**/soft_labels*.npy
+!new_results/*.npy
+!checkpoints/*.npy
+datasets/**/*.npy
+**/datasets/**/*.npy
 
 # Python
 __pycache__/
@@ -27,8 +33,7 @@ build/
 *.ckpt
 *.model
 
-# 软标签文件（可以提交但很大）
-*.npy
+# 软标签文件（见上方!规则）
 
 # 临时文件
 *.tmp
@@ -46,3 +51,4 @@ wandb/
 
 # PDF (可选,如果是自动生成的)
 *.pdf
+checkpoints/harth_data.npz

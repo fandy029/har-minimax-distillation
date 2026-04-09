@@ -1,0 +1,57 @@
+{
+  "new": [
+    {
+      "dataset": "PAMAP2",
+      "num_classes": 5,
+      "train": 1420,
+      "test": 445,
+      "pure_cnn": 92.36,
+      "cnn_minimax": 92.58,
+      "improvement": 0.22,
+      "pure_class_acc": {
+        "下楼": 0.9538461538461539,
+        "坐着": 0.9357142857142857,
+        "站立": 0.8992805755395683,
+        "走路": 0.9,
+        "慢跑": 0.9512195121951219
+      },
+      "kd_class_acc": {
+        "下楼": 0.9538461538461539,
+        "坐着": 0.9285714285714286,
+        "站立": 0.8992805755395683,
+        "走路": 0.9333333333333333,
+        "慢跑": 0.9512195121951219
+      }
+    }
+  ],
+  "known": {
+    "pamap2": {
+      "pure_cnn": 92.7,
+      "cnn_minimax": 93.1,
+      "num_classes": 5,
+      "train": 2137,
+      "test": 535
+    },
+    "uci_har": {
+      "pure_cnn": 96.2,
+      "cnn_minimax": 96.5,
+      "num_classes": 6,
+      "train": 7352,
+      "test": 2947
+    },
+    "motionsense": {
+      "pure_cnn": 99.2,
+      "cnn_minimax": 99.4,
+      "num_classes": 6,
+      "train": 17492,
+      "test": 4373
+    },
+    "wisdm": {
+      "pure_cnn": 99.6,
+      "cnn_minimax": 99.6,
+      "num_classes": 6,
+      "train": 13365,
+      "test": 3342
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "MotionSense-DM",
+  "num_classes": 6,
+  "train": 13777,
+  "test": 4306,
+  "pure_cnn": 99.58,
+  "pure_class_acc": {
+    "downstairs": 0.9871794871794872,
+    "jogging": 0.9876237623762376,
+    "sitting": 1.0,
+    "standing": 1.0,
+    "upstairs": 0.9872340425531915,
+    "walking": 0.9981042654028436
+  }
+}
