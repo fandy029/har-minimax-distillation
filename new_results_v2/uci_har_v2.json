@@ -1,0 +1,18 @@
+{
+  "dataset": "UCI-HAR",
+  "num_classes": 6,
+  "train": 5881,
+  "test": 2947,
+  "pure_cnn": 95.25,
+  "v1_kd": 96.5,
+  "v2_kd": 95.72,
+  "v2_vs_v1": -0.78,
+  "kd_class_acc": {
+    "WALKING": 0.9959677419354839,
+    "WALKING_UP": 0.9490445859872612,
+    "WALKING_DOWN": 0.95,
+    "SITTING": 0.879837067209776,
+    "STANDING": 0.9624060150375939,
+    "LAYING": 1.0
+  }
+}
