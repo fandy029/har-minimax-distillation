@@ -1,0 +1,18 @@
+{
+  "dataset": "PAMAP2",
+  "num_classes": 5,
+  "train": 2826,
+  "test": 884,
+  "pure_cnn": 94.12,
+  "v1_kd": 93.1,
+  "v2_kd": 95.02,
+  "v3_kd": 95.93,
+  "v3_vs_v2": 0.91,
+  "kd_class_acc": {
+    "downstairs": 0.9615384615384616,
+    "sitting": 0.974910394265233,
+    "standing": 0.9638989169675091,
+    "walking": 0.940677966101695,
+    "jogging": 0.9125
+  }
+}
