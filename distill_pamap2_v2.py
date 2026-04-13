@@ -92,7 +92,7 @@ def main():
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
     # 软标签 - 全部训练样本
-    soft_file = "/home/fandy/workplace/thesis/soft_labels_pamap2.npy"
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/pamap2_soft.npy"
     if os.path.exists(soft_file):
         y_soft = np.load(soft_file)
     else:
@@ -217,7 +217,7 @@ def main():
         "v2_kd": round(ft_acc*100, 2), "v2_vs_v1": round(ft_acc*100-v1_acc, 2),
         "kd_class_acc": ft_ca,
     }
-    with open("/home/fandy/workplace/thesis/new_results_v2/pamap2_v2.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/pamap2_v2.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     
     sys.stdout.write(f"\n  ✅ DONE! Total: {(time.time()-t0)/60:.1f}min\n"); sys.stdout.flush()

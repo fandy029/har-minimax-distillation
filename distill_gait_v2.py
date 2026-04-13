@@ -95,7 +95,7 @@ def main():
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
     # 软标签 - 用v1的或者生成one-hot
-    soft_file = "/home/fandy/workplace/thesis/soft_labels_gait.npy"
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/gait_soft.npy"
     if os.path.exists(soft_file):
         y_soft = np.load(soft_file)
     else:
@@ -195,7 +195,7 @@ def main():
               "pure_cnn": round(pure_acc*100, 2), "v1_kd": v1_acc,
               "v2_kd": round(ft_acc*100, 2), "v2_vs_v1": round(ft_acc*100-v1_acc, 2),
               "kd_class_acc": ft_ca}
-    with open("/home/fandy/workplace/thesis/new_results_v2/gait_v2.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/gait_v2.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     sys.stdout.write(f"\n  ✅ DONE! Total: {(time.time()-t0)/60:.1f}min\n"); sys.stdout.flush()
 

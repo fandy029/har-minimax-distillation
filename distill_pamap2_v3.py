@@ -80,10 +80,19 @@ if __name__ == "__main__":
     mean = X_tr.mean(axis=(0,1), keepdims=True); std = X_tr.std(axis=(0,1), keepdims=True) + 1e-8
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
-    # soft labels: one-hot fallback
+    # soft labels: load from results/soft_labels/ with one-hot fallback
     n_cls = 5
-    y_soft = np.zeros((len(X_tr), n_cls), dtype=np.float32)
-    for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/pamap2_soft.npy"
+    if os.path.exists(soft_file):
+        y_soft = np.load(soft_file)
+        if len(y_soft) > len(X_tr): y_soft = y_soft[:len(X_tr)]
+        elif len(y_soft) < len(X_tr):
+            pad = np.zeros((len(X_tr) - len(y_soft), n_cls), dtype=np.float32)
+            y_soft = np.vstack([y_soft, pad])
+    else:
+        y_soft = np.zeros((len(X_tr), n_cls), dtype=np.float32)
+        for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
+        print(f"  [WARN] Soft labels not found at {soft_file}, using one-hot fallback")
     
     Xt = torch.FloatTensor(X_tr_n); yt = torch.LongTensor(y_tr)
     Xv = torch.FloatTensor(X_vl_n); yv = torch.LongTensor(y_vl)
@@ -171,6 +180,6 @@ if __name__ == "__main__":
               "pure_cnn": round(pure_acc*100, 2), "v1_kd": 93.10, "v2_kd": 95.02,
               "v3_kd": round(ft_acc*100, 2), "v3_vs_v2": round(ft_acc*100-95.02, 2),
               "kd_class_acc": ft_ca}
-    with open("/home/fandy/workplace/thesis/new_results_v2/pamap2_v3.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/pamap2_v3.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     print(f"\n  DONE! {(time.time()-t0)/60:.1f}min")

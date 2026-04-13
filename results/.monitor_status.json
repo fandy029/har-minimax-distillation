@@ -1,0 +1,165 @@
+{
+  "started_at": 1744289000,
+  "completed": [
+    {
+      "dataset": "pamap2",
+      "version": "v3",
+      "desc": "best",
+      "result": {
+        "v3": 95.25,
+        "v2": 95.02,
+        "pure": 94.12
+      },
+      "log": "pamap2_v3_log.txt"
+    },
+    {
+      "dataset": "pamap2",
+      "version": "v2",
+      "desc": "initial",
+      "result": {
+        "v2": 94.91,
+        "v1": 92.58,
+        "pure": 94.46
+      },
+      "log": "pamap2_v2_log.txt"
+    },
+    {
+      "dataset": "kuhar",
+      "version": "v2",
+      "desc": "best",
+      "result": {
+        "v2": 85.02,
+        "v1": 81.01,
+        "pure": 80.05
+      },
+      "log": "kuhar_v2_log.txt"
+    },
+    {
+      "dataset": "kuhar",
+      "version": "v1",
+      "desc": "initial",
+      "result": {
+        "v1": 81.27,
+        "pure": 81.9
+      },
+      "log": "kuhar_v1_log.txt"
+    },
+    {
+      "dataset": "uci_har",
+      "version": "v1",
+      "desc": "initial",
+      "result": {
+        "v1": 95.39,
+        "pure": 96.37
+      },
+      "log": "uci_har_v1_log.txt"
+    },
+    {
+      "dataset": "uci_har",
+      "version": "v2",
+      "desc": "best",
+      "result": null,
+      "log": "uci_har_v2_log.txt",
+      "error": "soft_labels_uci_har.npy missing"
+    },
+    {
+      "dataset": "uci_har_new",
+      "version": "v2",
+      "desc": "best",
+      "result": {
+        "v2": 92.95,
+        "v1": "placeholder",
+        "pure": 92.95
+      },
+      "log": "uci_har_new_v2_log.txt"
+    },
+    {
+      "dataset": "motionsense",
+      "version": "v2",
+      "desc": "best",
+      "result": {
+        "v2": 99.02,
+        "v1": 99.4,
+        "pure": 98.99
+      },
+      "log": "motionsense_v2_log.txt"
+    },
+    {
+      "dataset": "motionsense_dm",
+      "version": "pure_cnn",
+      "desc": "saturated",
+      "result": {
+        "pure": 99.16
+      },
+      "log": "motionsense_dm_pure_cnn_log.txt"
+    },
+    {
+      "dataset": "wisdm",
+      "version": "pure_cnn",
+      "desc": "saturated",
+      "result": {
+        "pure": 99.6
+      },
+      "log": null,
+      "note": "expected result - ARFF format not suitable for CNN"
+    }
+  ],
+  "running": null,
+  "order": [
+    {
+      "dataset": "pamap2",
+      "version": "v3",
+      "desc": "best"
+    },
+    {
+      "dataset": "pamap2",
+      "version": "v2",
+      "desc": "initial"
+    },
+    {
+      "dataset": "kuhar",
+      "version": "v2",
+      "desc": "best"
+    },
+    {
+      "dataset": "kuhar",
+      "version": "v1",
+      "desc": "initial"
+    },
+    {
+      "dataset": "uci_har",
+      "version": "v2",
+      "desc": "best"
+    },
+    {
+      "dataset": "uci_har",
+      "version": "v1",
+      "desc": "initial"
+    },
+    {
+      "dataset": "harth",
+      "version": "v2",
+      "desc": "best"
+    },
+    {
+      "dataset": "uci_har_new",
+      "version": "v2",
+      "desc": "best"
+    },
+    {
+      "dataset": "motionsense",
+      "version": "v2",
+      "desc": "best"
+    },
+    {
+      "dataset": "wisdm",
+      "version": "pure_cnn",
+      "desc": "saturated"
+    },
+    {
+      "dataset": "motionsense_dm",
+      "version": "pure_cnn",
+      "desc": "saturated"
+    }
+  ]
+}

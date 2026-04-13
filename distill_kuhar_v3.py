@@ -76,11 +76,17 @@ def evaluate(model, X, y, cn):
 if __name__ == "__main__":
     t0 = time.time()
     X_tr, y_tr, X_vl, y_vl, X_te, y_te = load()
-    print(f"\nKuHar v3: Train={len(X_tr)} Val={len(X_vl)} Test={len(X_te)}")
+    print(f"\nKuHar v2: Train={len(X_tr)} Val={len(X_vl)} Test={len(X_te)}")
     
     mean = X_tr.mean(axis=(0,1), keepdims=True); std = X_tr.std(axis=(0,1), keepdims=True) + 1e-8
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
-    y_soft = np.load("/home/fandy/workplace/thesis/new_results/kuhar_soft.npy")[:MAX_TRAIN]
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/kuhar_soft.npy"
+    if os.path.exists(soft_file):
+        y_soft = np.load(soft_file)[:MAX_TRAIN]
+    else:
+        print(f"  [WARN] Soft labels not found, using one-hot fallback")
+        y_soft = np.zeros((len(X_tr), 18), dtype=np.float32)
+        for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
     
     Xt = torch.FloatTensor(X_tr_n); yt = torch.LongTensor(y_tr)
     Xv = torch.FloatTensor(X_vl_n); yv = torch.LongTensor(y_vl)
@@ -195,9 +201,9 @@ if __name__ == "__main__":
         print(f"  {m} {c:2d}. {name:<20s}: Pure={p*100:5.1f}% v3={k*100:5.1f}% ({diff:+.1f}%)")
     
     result = {"dataset": "KuHar", "num_classes": 18, "train": len(X_tr), "test": len(X_te),
-              "pure_cnn": round(pure_acc*100, 2), "v1_kd": 81.01, "v2_kd": 85.02,
+              "pure_cnn": round(pure_acc*100, 2), "v1_kd": 81.01, "v3_kd": 85.02,
               "v3_kd": round(ft_acc*100, 2), "v3_vs_v2": round(ft_acc*100-85.02, 2),
               "kd_class_acc": ft_ca}
-    with open("/home/fandy/workplace/thesis/new_results_v2/kuhar_v3.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/kuhar_v3.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     print(f"\n  DONE! {(time.time()-t0)/60:.1f}min")

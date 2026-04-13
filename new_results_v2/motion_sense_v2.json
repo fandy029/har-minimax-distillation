@@ -1,1 +1,0 @@
-{"dataset": "MotionSense", "num_classes": 6, "train": 13993, "test": 4373, "pure_cnn": 98.7, "v1_kd": 99.4, "v2_kd": 99.02, "v2_vs_v1": -0.38, "kd_class_acc": {"downstairs": 1.0, "jogging": 0.99, "sitting": 1.0, "standing": 1.0, "upstairs": 0.99, "walking": 1.0}}

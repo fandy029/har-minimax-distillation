@@ -1,0 +1,13 @@
+{
+  "phase1": [
+    {"dataset": "pamap2", "classes": 5, "train": 2826, "soft_per_class": 141, "total_calls": 705},
+    {"dataset": "gait", "classes": 4, "train": 470, "soft_per_class": 29, "total_calls": 116},
+    {"dataset": "uci_har_new", "classes": 12, "train": 6213, "soft_per_class": 129, "total_calls": 1548},
+    {"dataset": "uci_har", "classes": 6, "train": 5881, "soft_per_class": 147, "total_calls": 882}
+  ],
+  "phase2_after_5h": [
+    {"dataset": "harth", "classes": 6, "train": 20000, "soft_per_class": 150, "total_calls": 900},
+    {"dataset": "motionsense", "classes": 6, "train": 13993, "soft_per_class": 150, "total_calls": 900},
+    {"dataset": "kuhar", "classes": 18, "train": 20000, "soft_per_class": 150, "total_calls": 2700}
+  ]
+}

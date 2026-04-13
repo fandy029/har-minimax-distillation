@@ -1,0 +1,8 @@
+{
+  "start_time": 1745874000,
+  "current_dataset": "uci_har_new",
+  "phase": 1,
+  "completed_datasets": ["pamap2", "gait"],
+  "api_calls_made": 821,
+  "total_api_calls_estimate": 9425
+}

@@ -98,9 +98,14 @@ def main():
     mean = X_tr.mean(axis=(0,1), keepdims=True); std = X_tr.std(axis=(0,1), keepdims=True) + 1e-8
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
-    # 软标签 - 复用之前的
-    soft_file = "/home/fandy/workplace/thesis/checkpoints/harth_soft_labels.npy"
-    y_soft = np.load(soft_file)
+    # 软标签 - fallback to one-hot if file not found
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/harth_soft.npy"
+    if os.path.exists(soft_file):
+        y_soft = np.load(soft_file)
+    else:
+        print("  [WARN] Soft labels not found, using one-hot fallback")
+        y_soft = np.zeros((len(X_tr), n_cls), dtype=np.float32)
+        for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
     if len(y_soft) > len(X_tr):
         y_soft = y_soft[:len(X_tr)]
     elif len(y_soft) < len(X_tr):
@@ -206,7 +211,7 @@ def main():
         "v2_kd": round(ft_acc*100, 2), "v2_vs_v1": round(ft_acc*100-v1_kd, 2),
         "kd_class_acc": ft_ca,
     }
-    with open("/home/fandy/workplace/thesis/new_results_v2/harth_v2.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/harth_v2.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     
     sys.stdout.write(f"\n  ✅ DONE! Total: {(time.time()-t0)/60:.1f}min\n"); sys.stdout.flush()

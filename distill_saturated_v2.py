@@ -114,7 +114,12 @@ def run_dataset(name, loader_fn, soft_file, v1_acc, out_file):
     mean = X_tr.mean(axis=(0,1), keepdims=True); std = X_tr.std(axis=(0,1), keepdims=True) + 1e-8
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
-    y_soft = np.load(soft_file)
+    if os.path.exists(soft_file):
+        y_soft = np.load(soft_file)
+    else:
+        sys.stdout.write(f"  [WARN] Soft labels not found ({soft_file}), using one-hot fallback\n"); sys.stdout.flush()
+        y_soft = np.zeros((len(X_tr), n_cls), dtype=np.float32)
+        for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
     
     Xt = torch.FloatTensor(X_tr_n); yt = torch.LongTensor(y_tr)
     Xv = torch.FloatTensor(X_vl_n); yv = torch.LongTensor(y_vl)
@@ -199,7 +204,7 @@ if __name__ == "__main__":
     # MotionSense
     run_dataset("MotionSense", load_motion_sense,
                 "/home/fandy/workplace/thesis/soft_labels_motionsense.npy",
-                99.40, "/home/fandy/workplace/thesis/new_results_v2/motion_sense_v2.json")
+                99.40, "/home/fandy/workplace/thesis/results/motion_sense_v2.json")
     
     # WISDM - skip as ARFF parsing is complex
     sys.stdout.write("\n  WISDM: skipping (ARFF parsing complex, already saturated at 99.6%)\n"); sys.stdout.flush()

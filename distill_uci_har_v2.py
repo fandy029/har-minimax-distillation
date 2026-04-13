@@ -72,8 +72,13 @@ def main():
     X_tr_n = (X_tr-mean)/std; X_vl_n = (X_vl-mean)/std; X_te_n = (X_te-mean)/std
     
     # 软标签
-    soft_file = "/home/fandy/workplace/thesis/soft_labels_uci_har.npy"
-    y_soft = np.load(soft_file)
+    soft_file = "/home/fandy/workplace/thesis/results/soft_labels/uci_har_soft.npy"
+    if os.path.exists(soft_file):
+        y_soft = np.load(soft_file)
+    else:
+        sys.stdout.write("  [WARN] Soft labels not found, using one-hot fallback\n"); sys.stdout.flush()
+        y_soft = np.zeros((len(X_tr), 6), dtype=np.float32)
+        for i, label in enumerate(y_tr): y_soft[i, label] = 1.0
     
     Xt = torch.FloatTensor(X_tr_n); yt = torch.LongTensor(y_tr)
     Xv = torch.FloatTensor(X_vl_n); yv = torch.LongTensor(y_vl)
@@ -165,7 +170,7 @@ def main():
               "pure_cnn": round(pure_acc*100, 2), "v1_kd": v1_acc,
               "v2_kd": round(ft_acc*100, 2), "v2_vs_v1": round(ft_acc*100-v1_acc, 2),
               "kd_class_acc": ft_ca}
-    with open("/home/fandy/workplace/thesis/new_results_v2/uci_har_v2.json", "w") as f:
+    with open("/home/fandy/workplace/thesis/results/uci_har_v2.json", "w") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     sys.stdout.write(f"\n  ✅ DONE! Total: {(time.time()-t0)/60:.1f}min\n"); sys.stdout.flush()
 
