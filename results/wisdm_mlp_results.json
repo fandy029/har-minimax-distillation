@@ -1,0 +1,12 @@
+{
+  "dataset": "WISDM",
+  "num_classes": 6,
+  "features": 43,
+  "train": 3559,
+  "val": 396,
+  "test": 989,
+  "pure_mlp": 79.47,
+  "v1": 83.32,
+  "v2": 81.7,
+  "v3": 83.72
+}
