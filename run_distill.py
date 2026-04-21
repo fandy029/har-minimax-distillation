@@ -15,8 +15,8 @@ import torch, torch.nn as nn, torch.nn.functional as F
 # ============ 配置 ============
 DEVICE = torch.device("cpu")
 BATCH = 64
-EPOCHS_PURE = 40
-EPOCHS_KD = 80
+EPOCHS_PURE = 300
+EPOCHS_KD = 300
 SOFT_DIR = "/home/fandy/workplace/thesis/results/soft_labels"
 CHECKPOINT_DIR = "/home/fandy/workplace/thesis/results/checkpoints"
 LOG_DIR = "/home/fandy/workplace/thesis/results/logs"
@@ -29,9 +29,9 @@ os.makedirs(HISTORY_DIR, exist_ok=True)
 
 # 蒸馏参数
 VERSION_PARAMS = {
-    'v1': {'T': 3.0, 'ALPHA': 0.6, 'epochs': 80},
-    'v2': {'T': 2.5, 'ALPHA': 0.8, 'epochs': 80},
-    'v3': {'T': 1.5, 'ALPHA': 0.85, 'epochs': 80},
+    'v1': {'T': 3.0, 'ALPHA': 0.6, 'epochs': 300},
+    'v2': {'T': 2.5, 'ALPHA': 0.8, 'epochs': 300},
+    'v3': {'T': 1.5, 'ALPHA': 0.85, 'epochs': 300},
 }
 
 # 数据集配置
@@ -88,7 +88,7 @@ DATASET_CONFIG = {
     },
     'wisdm': {
         'classes': 6,
-        'cn': ['Walking','Jogging','Stairs','Standing','Sitting','Lying'],
+        'cn': ['Walking','Jogging','Upstairs','Downstairs','Sitting','Standing'],
         'loader': 'load_wisdm',
         'channels': 3,
         'max_train': 100000,
@@ -249,35 +249,48 @@ def load_gait():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_wisdm():
-    arff_file = '/home/fandy/workplace/thesis/datasets/WISDM/WISDM_ar_v1.1/WISDM_ar_v1.1_transformed.arff'
+    # Load raw time series data (128 time steps, 3 channels) - CNN format
+    raw_path = '/home/fandy/workplace/thesis/datasets/WISDM/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt'
     d, l = [], []
     label_map = {'Walking':0,'Jogging':1,'Upstairs':2,'Downstairs':3,'Sitting':4,'Standing':5}
-    with open(arff_file, 'r') as f:
-        content = f.read()
-    in_data = False
-    for line in content.split('\n'):
-        line = line.strip()
-        if line.lower().startswith('@data'):
-            in_data = True
-            continue
-        if in_data and line:
+    with open(raw_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            line = line.rstrip(';')
             parts = line.split(',')
-            if len(parts) >= 32:
-                try:
-                    # parts[0]=ID, parts[1]=user, parts[2:32]=X0-X9,Y0-Y9,Z0-Z9 (30 values)
-                    # Take X0-X5, Y0-Y5, Z0-Z5 (18 values) or just first 6 for simplicity
-                    vals = [float(parts[i]) for i in range(2, 32)][:6]  # First 6 of 30 sensor values
-                    label = parts[-1].strip().strip('"')
-                    if label in label_map:
-                        d.append(vals)
-                        l.append(label_map[label])
-                except: pass
-    X = np.array(d, dtype=np.float32) if d else np.zeros((0,6), dtype=np.float32)
-    y = np.array(l, dtype=np.int64)
+            if len(parts) != 6:
+                continue
+            try:
+                activity = parts[1].strip()
+                x = float(parts[3])
+                y = float(parts[4])
+                z = float(parts[5])
+                if activity in label_map:
+                    d.append([x, y, z])
+                    l.append(label_map[activity])
+            except:
+                continue
+    # Sliding window: 128 steps, step 64 (same as gen_soft_labels_unified.py)
+    window_size = 128
+    step = 64
+    X = []
+    y_window = []
+    n_samples = len(d)
+    for start in range(0, n_samples - window_size + 1, step):
+        window = d[start:start+window_size]
+        window_arr = np.array(window, dtype=np.float32)  # (128, 3)
+        X.append(window_arr)
+        y_window.append(l[start + window_size // 2])
+    X = np.array(X, dtype=np.float32)
+    y = np.array(y_window, dtype=np.int64)
     if len(X) > 0:
+        print(f"  [WISDM] Loaded {len(X)} windows, shape {X.shape}")
         X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
         X_tr, X_vl, y_tr, y_vl = train_test_split(X_tr, y_tr, test_size=0.2, random_state=42, stratify=y_tr)
     else:
+        print("WARNING: WISDM loader found 0 samples!")
         X_tr, X_vl, y_tr, y_vl, X_te, y_te = X[:0], X[:0], y[:0], y[:0], X[:0], y[:0]
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
@@ -374,7 +387,7 @@ def evaluate(model, X, y, cn):
     return acc, ca
 
 # ============ 主训练流程 ============
-def train(dataset, version):
+def train(dataset, version, resume=False):
     cfg = DATASET_CONFIG[dataset]
     n_cls = cfg['classes']
     cn = cfg['cn']
@@ -393,10 +406,12 @@ def train(dataset, version):
     print(f"  Log: {log_file}")
     print(f"  History: {history_file}")
     
-    # 打开日志文件
-    log_f = open(log_file, 'w')
-    log_f.write(f"=== {dataset.upper()} - {version.upper()} ===\n")
+    # 打开日志文件（追加模式 if resume）
+    log_f = open(log_file, 'a' if resume else 'w')
+    log_f.write(f"\n=== {dataset.upper()} - {version.upper()} ===\n")
     log_f.write(f"Start time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+    if resume:
+        log_f.write(f"[RESUME MODE]\n")
     log_f.write(f"Dataset config: {cfg}\n\n")
     log_f.flush()
     
@@ -440,7 +455,7 @@ def train(dataset, version):
     else:
         model = MLP(X_tr.shape[1], n_cls).to(DEVICE)
     
-    log_f.write(f"Model: {model.__class__.__name__}, in_ch={in_ch}, n_cls={n_cls}\n")
+    log_f.write(f"Model: {model.__class__.__name__}, in_dim={X_tr.shape[1]}, n_cls={n_cls}\n")
     log_f.flush()
     
     # 软标签
@@ -463,67 +478,138 @@ def train(dataset, version):
     ys = torch.FloatTensor(y_soft)
     log_f.flush()
     
-    # ============ Stage 1: Pure CNN ============
-    print(f"\n[Stage 1] Pure CNN ({EPOCHS_PURE} epochs)...")
-    log_f.write(f"\n=== Stage 1: Pure CNN ({EPOCHS_PURE} epochs) ===\n")
+    # ============ 断点续传恢复 ============
+    resume_state = None
+    resume_stage = None  # 'stage1', 'stage2', or None
+    if resume:
+        ckpt_file = f"{CHECKPOINT_DIR}/{dataset}_{version}_best.pt"
+        pure_ckpt = f"{CHECKPOINT_DIR}/{dataset}_{version}_pure_cnn_best.pt"
+        # 优先加载纯净CNN的断点（包含完整Stage1历史）
+        src = pure_ckpt if os.path.exists(pure_ckpt) else (ckpt_file if os.path.exists(ckpt_file) else None)
+        if src:
+            print(f"  [RESUME] Loading checkpoint: {src}")
+            log_f.write(f"[RESUME] Loading checkpoint: {src}\n")
+            ckpt = torch.load(src, map_location=DEVICE)
+            model.load_state_dict(ckpt['model_state_dict'])
+            best_val = ckpt.get('val_acc', 0)
+            resume_state = ckpt
+            resume_stage = ckpt.get('stage', 'stage1')
+            print(f"  [RESUME] stage={resume_stage}, best_val={best_val*100:.2f}%")
+            log_f.write(f"[RESUME] stage={resume_stage}, best_val={best_val*100:.2f}%\n")
     
-    model.train()
-    opt = torch.optim.AdamW(model.parameters(), lr=5e-4, weight_decay=1e-4)
-    sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=20, T_mult=2)
-    best_state = None; best_val = 0; best_test = 0; t1 = time.time()
+    # ============ Stage 1: 纯CNN训练（无蒸馏）============
+    do_train_stage1 = True
+    if resume_stage == 'stage2':
+        print(f"  [SKIP] Stage 1 (already completed, resuming Stage 2)")
+        log_f.write("[SKIP] Stage 1 (resuming from Stage 2)\n")
+        do_train_stage1 = False
+    elif version != 'pure_cnn':
+        # v1/v2/v3: 检查是否已有 pure_cnn checkpoint，有则跳过 Stage 1
+        candidates = [
+            f"{CHECKPOINT_DIR}/{dataset}_{version}_pure_cnn_best.pt",
+            f"{CHECKPOINT_DIR}/{dataset}_pure_cnn_best.pt",
+        ]
+        pure_ckpt = None
+        for c in candidates:
+            if os.path.exists(c):
+                pure_ckpt = c
+                break
+        if pure_ckpt:
+            ckpt = torch.load(pure_ckpt, map_location=DEVICE)
+            model.load_state_dict(ckpt['model_state_dict'])
+            best_val = ckpt.get('val_acc', 0)
+            print(f"  [SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc={best_val*100:.2f}%)")
+            print(f"  [LOAD] {os.path.basename(pure_ckpt)} → model.load_state_dict()")
+            log_f.write(f"[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc={best_val*100:.2f}%)\n")
+            log_f.write(f"[LOAD] {os.path.basename(pure_ckpt)}\n")
+            do_train_stage1 = False
+        else:
+            print(f"  [WARN] 未找到pure_cnn checkpoint，将从头训练Stage1")
+    else:
+        print(f"\n[Stage 1] 纯CNN训练 ({EPOCHS_PURE} epochs, 无蒸馏)...")
+        print(f"         用focal_loss训练，不使用软标签...")
+        log_f.write(f"\n=== Stage 1: 纯CNN训练 ({EPOCHS_PURE} epochs) ===\n")
     
-    pure_history = []
-    
-    for ep in range(1, EPOCHS_PURE+1):
+    t1 = time.time()  # 总计时开始（无论Stage1是否跳过）
+    if do_train_stage1:
         model.train()
-        perm = torch.randperm(len(Xt))
-        epoch_loss = 0.0; n_batches = 0
-        for i in range(0, len(Xt), BATCH):
-            idx = perm[i:i+BATCH]
-            bx = Xt[idx].to(DEVICE)
-            bh = yt[idx].to(DEVICE)
-            out = model(bx)
-            loss = focal_loss(out, bh)
-            opt.zero_grad(); loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0); opt.step()
-            epoch_loss += loss.item(); n_batches += 1
+        opt = torch.optim.AdamW(model.parameters(), lr=5e-4, weight_decay=1e-4)
+        sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=20, T_mult=2)
+        best_state = None; best_val = 0.0; best_test = 0
         
-        sch.step()
-        model.eval()
-        with torch.no_grad():
-            va = float((model(Xv.to(DEVICE)).argmax(1).cpu().numpy() == yv.numpy()).mean())
-            train_acc = float((model(Xt[:len(Xv)].to(DEVICE)).argmax(1).cpu().numpy() == yt[:len(Xv)].numpy()).mean())
+        pure_history = resume_state.get('stage1_history', []) if resume_state and resume_stage == 'stage1' else []
+        start_ep_pure = resume_state.get('epoch', 0) + 1 if resume_state and resume_stage == 'stage1' else 1
         
-        if va > best_val:
-            best_val = va
-            best_state = {k:v.cpu().clone() for k,v in model.state_dict().items()}
-            best_test, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        if resume_stage != 'stage2':
+            # 恢复optimizer和scheduler状态（如有）
+            if resume_state and resume_stage == 'stage1':
+                opt.load_state_dict(resume_state['optimizer_state_dict'])
+                sch.load_state_dict(resume_state['scheduler_state_dict'])
         
-        pure_history.append({
-            'epoch': ep,
-            'train_loss': epoch_loss / n_batches,
-            'train_acc': train_acc,
-            'val_acc': va,
-        })
+        for ep in range(start_ep_pure, EPOCHS_PURE+1):
+            model.train()
+            perm = torch.randperm(len(Xt))
+            epoch_loss = 0.0; n_batches = 0
+            for i in range(0, len(Xt), BATCH):
+                idx = perm[i:i+BATCH]
+                bx = Xt[idx].to(DEVICE)
+                bh = yt[idx].to(DEVICE)
+                out = model(bx)
+                loss = focal_loss(out, bh)
+                opt.zero_grad(); loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0); opt.step()
+                epoch_loss += loss.item(); n_batches += 1
+            
+            sch.step()
+            model.eval()
+            with torch.no_grad():
+                va = float((model(Xv.to(DEVICE)).argmax(1).cpu().numpy() == yv.numpy()).mean())
+                train_acc = float((model(Xt[:len(Xv)].to(DEVICE)).argmax(1).cpu().numpy() == yt[:len(Xv)].numpy()).mean())
+            
+            if va > best_val:
+                best_val = va
+                best_state = {k:v.cpu().clone() for k,v in model.state_dict().items()}
+                best_test, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
+            
+            pure_history.append({
+                'epoch': ep,
+                'train_loss': epoch_loss / n_batches,
+                'train_acc': train_acc,
+                'val_acc': va,
+            })
+            
+            if ep % 10 == 0:
+                print(f"  [S1] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}%")
+                log_f.write(f"[S1] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best_val={best_val*100:.1f}%\n")
+                log_f.flush()
         
-        if ep % 10 == 0:
-            print(f"  ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}%")
-            log_f.write(f"ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best_val={best_val*100:.1f}%\n")
-            log_f.flush()
-    
-    # 保存 Pure CNN checkpoint
-    model.load_state_dict(best_state)
-    torch.save({
-        'epoch': EPOCHS_PURE,
-        'model_state_dict': best_state,
-        'val_acc': best_val,
-        'test_acc': best_test,
-    }, checkpoint_file.replace(f'_{version}', f'_{version}_pure_cnn'))
-    print(f"  [Save] {checkpoint_file.replace(f'_{version}', f'_{version}_pure_cnn')}")
-    
-    pure_acc, pure_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
-    print(f"  Pure CNN: {pure_acc*100:.2f}%")
-    log_f.write(f"\nPure CNN Final: val={best_val*100:.2f}% test={pure_acc*100:.2f}%\n")
+        # 保存 Pure CNN checkpoint
+        model.load_state_dict(best_state)
+        torch.save({
+            'epoch': EPOCHS_PURE,
+            'model_state_dict': best_state,
+            'optimizer_state_dict': opt.state_dict(),
+            'scheduler_state_dict': sch.state_dict(),
+            'val_acc': best_val,
+            'test_acc': best_test,
+            'stage': 'stage1',
+            'stage1_history': pure_history,
+        }, f"{CHECKPOINT_DIR}/{dataset}_pure_cnn_best.pt")
+        pure_acc, pure_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        print(f"  [S1] Final: val_acc={best_val*100:.2f}% | test_acc={pure_acc*100:.2f}%")
+        log_f.write(f"\n[S1] Final: val={best_val*100:.2f}% test={pure_acc*100:.2f}%\n")
+    else:
+        # Stage 1 已跳过：加载已有checkpoint
+        pure_ckpt_file = f"{CHECKPOINT_DIR}/{dataset}_pure_cnn_best.pt"
+        if os.path.exists(pure_ckpt_file):
+            ckpt = torch.load(pure_ckpt_file, map_location=DEVICE)
+            model.load_state_dict(ckpt['model_state_dict'])
+            best_val = ckpt.get('val_acc', 0)
+            best_state = ckpt['model_state_dict']
+            pure_history = ckpt.get('stage1_history', [])
+        pure_acc, pure_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        print(f"  [S1] Loaded: val_acc={best_val*100:.2f}% | test_acc={pure_acc*100:.2f}%")
+        log_f.write(f"\n[S1] Loaded: val={best_val*100:.2f}% test={pure_acc*100:.2f}%\n")
     log_f.flush()
     
     result = {
@@ -540,18 +626,38 @@ def train(dataset, version):
     if version != 'pure_cnn':
         params = VERSION_PARAMS[version]
         T, ALPHA, EPOCHS_KD = params['T'], params['ALPHA'], params['epochs']
-        print(f"\n[Stage 2] {version.upper()} Distillation ({EPOCHS_KD} epochs, T={T}, alpha={ALPHA})...")
+        print(f"\n[Stage 2] {version.upper()} 蒸馏训练 ({EPOCHS_KD} epochs, T={T}, alpha={ALPHA})")
+        print(f"         用Stage1的权重初始化，用软标签训练...")
         log_f.write(f"\n=== Stage 2: {version.upper()} Distillation (T={T}, alpha={ALPHA}) ===\n")
         
         model.train()
         opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
         sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=30, T_mult=2)
-        best_ft_state = None; best_ft_val = 0; best_ft_test = 0
+        best_ft_state = None; best_ft_val = 0.0; best_ft_test = 0
         t2 = time.time()
         
         kd_history = []
+        start_ep_kd = 1
         
-        for ep in range(1, EPOCHS_KD+1):
+        # 从Stage2断点恢复
+        if resume_stage == 'stage2' and resume_state:
+            model.load_state_dict(resume_state['model_state_dict'])
+            opt.load_state_dict(resume_state['optimizer_state_dict'])
+            sch.load_state_dict(resume_state['scheduler_state_dict'])
+            best_ft_val = resume_state.get('val_acc', 0)
+            best_ft_state = resume_state['model_state_dict']
+            kd_history = resume_state.get('stage2_history', [])
+            start_ep_kd = resume_state.get('epoch', 0) + 1
+            print(f"  [RESUME Stage2] from epoch {start_ep_kd}, best_val={best_ft_val*100:.2f}%")
+            log_f.write(f"[RESUME Stage2] from epoch {start_ep_kd}\n")
+        elif resume_stage == 'stage1':
+            # Stage1刚完成，从Stage2从头开始
+            best_ft_val = 0.0
+        else:
+            # Stage1被跳过（checkpoint存在但resume_stage未设置），从头开始Stage2
+            best_ft_val = 0.0
+        
+        for ep in range(start_ep_kd, EPOCHS_KD+1):
             model.train()
             perm = torch.randperm(len(Xt))
             epoch_loss = 0.0; n_batches = 0
@@ -585,20 +691,24 @@ def train(dataset, version):
             
             if ep % 10 == 0:
                 ft_acc, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
-                print(f"  ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best={best_ft_val*100:.1f}%")
-                log_f.write(f"ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best_val={best_ft_val*100:.1f}%\n")
+                print(f"  [S2] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best={best_ft_val*100:.1f}%")
+                log_f.write(f"[S2] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best_val={best_ft_val*100:.1f}%\n")
                 log_f.flush()
         
-        # 保存蒸馏 checkpoint
+        # 保存蒸馏 checkpoint（含stage标识）
         torch.save({
             'epoch': EPOCHS_KD,
             'model_state_dict': best_ft_state,
+            'optimizer_state_dict': opt.state_dict(),
+            'scheduler_state_dict': sch.state_dict(),
             'val_acc': best_ft_val,
             'test_acc': best_ft_test,
             'T': T,
             'ALPHA': ALPHA,
+            'stage': 'stage2',
+            'stage2_history': kd_history,
         }, checkpoint_file)
-        print(f"  [Save] {checkpoint_file}")
+        print(f"  [S2] {version.upper()} 保存: val_acc={best_ft_val*100:.2f}%")
         
         model.load_state_dict(best_ft_state)
         ft_acc, ft_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
@@ -634,6 +744,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='HAR Distillation Training')
     parser.add_argument('dataset', help='Dataset name: pamap2, kuhar, uci_har, harth, uci_har_new, motionsense, gait, wisdm, motionsense_dm')
     parser.add_argument('version', help='Version: pure_cnn, v1, v2, v3')
+    parser.add_argument('--resume', action='store_true', help='Resume from checkpoint if exists')
     args = parser.parse_args()
     
     if args.dataset not in DATASET_CONFIG:
@@ -645,4 +756,4 @@ if __name__ == "__main__":
         print(f"Available: pure_cnn, v1, v2, v3")
         sys.exit(1)
     
-    train(args.dataset, args.version)
+    train(args.dataset, args.version, resume=args.resume)
