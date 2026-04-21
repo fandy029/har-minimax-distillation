@@ -52,3 +52,7 @@ wandb/
 # PDF (可选,如果是自动生成的)
 *.pdf
 checkpoints/harth_data.npz
+*.npy
+results/soft_labels/kuhar_X_tr.npy
+results/soft_labels/kuhar_y_tr.npy
+results/soft_labels/kuhar_data_cache.npz
