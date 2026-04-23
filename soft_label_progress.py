@@ -13,166 +13,55 @@ HISTORY_DIR = "/home/fandy/workplace/thesis/results/history"
 
 DATASETS = ['pamap2', 'kuhar', 'uci_har', 'harth', 'uci_har_new', 'motionsense', 'gait', 'wisdm', 'motionsense_dm']
 CFG = {
-    'pamap2':         (5,  30),
-    'kuhar':          (18, 200),
-    'uci_har':        (6,  200),
-    'harth':          (6,  200),
-    'uci_har_new':    (12, 129),
-    'motionsense':    (6,  200),
-    'gait':           (4,  29),
-    'wisdm':          (6,  200),
-    'motionsense_dm': (6,  200),
+    'pamap2':         (5,  35),
+    'kuhar':          (18, 400),
+    'uci_har':        (6,  400),
+    'harth':          (6,  400),
+    'uci_har_new':    (12, 35),
+    'motionsense':    (6,  400),
+    'gait':           (4,  35),
+    'wisdm':          (6,  400),
+    'motionsense_dm': (6,  400),
 }
 
 # ============ 动态 target 计算（与 gen_soft_labels_unified.py 一致）============
 def compute_dynamic_target(ds):
-    """动态计算每类样本上限200、25%采样率的真实目标数"""
-    if ds == 'pamap2':
-        # PAMAP2: 5 classes × 30 = 150 (correct target, verified)
-        return 150
-    elif ds == 'kuhar':
-        # 直接复用 gen_soft_labels_unified.py 的 loader，确保目标数完全一致
-        try:
-            import sys
-            sys.path.insert(0, '/home/fandy/workplace/thesis')
-            # 动态 import 避免循环引用
-            loader_mod_name = 'gen_soft_labels_unified'
-            import importlib
-            loader_mod = importlib.import_module(loader_mod_name)
-            load_fn = getattr(loader_mod, 'load_kuhar')
-            X_tr, y_tr, _, _, _, _ = load_fn()
-            from collections import Counter
-            cnt = Counter(y_tr.tolist())
-            return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except Exception as e:
-            print(f"[WARN] kuhar target fallback: {e}")
-            return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'uci_har':
-        try:
-            import pandas as pd
-            X = np.load('/home/fandy/workplace/thesis/datasets/UCI-HAR/train/X_train.npy')
-            y = np.load('/home/fandy/workplace/thesis/datasets/UCI-HAR/train/y_train.npy')
-            from collections import Counter
-            cnt = Counter(y.flatten().tolist())
-            return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'harth':
-        try:
-            import pandas as pd
-            labels = pd.read_csv('/home/fandy/workplace/thesis/datasets/HARTH/HARTH.csv', usecols=['label'])['label'].value_counts().to_dict()
-            return sum(min(200, max(1, int(n * 0.25))) for n in labels.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'uci_har_new':
-        try:
-            import pandas as pd
-            base = '/home/fandy/workplace/thesis/datasets/UCI-HAR+'
-            dfs = []
-            for split in ['train', 'test']:
-                for act in os.listdir(os.path.join(base, split)):
-                    ad = os.path.join(base, split, act)
-                    if os.path.isdir(ad):
-                        for f in os.listdir(ad):
-                            if f.endswith('.txt'):
-                                dfs.append(pd.read_csv(os.path.join(ad, f), header=None, usecols=[0], nrows=100))
-            if dfs:
-                all_labels = pd.concat(dfs, ignore_index=True).iloc[:,0].value_counts().to_dict()
-                return sum(min(200, max(1, int(n * 0.25))) for n in all_labels.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'motionsense':
-        try:
-            import pandas as pd
-            base = '/home/fandy/workplace/thesis/datasets/MotionSense'
-            rows = []
-            for person in sorted(os.listdir(os.path.join(base, 'data'))):
-                for sess in sorted(os.listdir(os.path.join(base, 'data', person))):
-                    for f in os.listdir(os.path.join(base, 'data', person, sess)):
-                        if f.endswith('.csv'):
-                            df = pd.read_csv(os.path.join(base, 'data', person, sess, f), nrows=100)
-                            if 'activity_id' in df.columns: rows.extend(df['activity_id'].tolist())
-            from collections import Counter
-            if rows:
-                cnt = Counter(rows)
-                return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'gait':
-        try:
-            base = '/home/fandy/workplace/thesis/datasets/Gait'
-            rows = []
-            for label in os.listdir(base):
-                ldir = os.path.join(base, label)
-                if not os.path.isdir(ldir): continue
-                for f in os.listdir(ldir):
-                    if f.endswith('.csv'):
-                        import pandas as pd
-                        try:
-                            df = pd.read_csv(os.path.join(ldir, f), header=None, nrows=100)
-                            rows.extend([label] * len(df))
-                        except: pass
-            from collections import Counter
-            if rows:
-                cnt = Counter(rows)
-                return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'wisdm':
-        try:
-            raw_path = '/home/fandy/workplace/thesis/datasets/WISDM/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt'
-            d, l = [], []
-            label_map = {'Walking':0,'Jogging':1,'Upstairs':2,'Downstairs':3,'Sitting':4,'Standing':5}
-            for line in open(raw_path):
-                line = line.strip().rstrip(';')
-                parts = line.split(',')
-                if len(parts) != 6: continue
-                try:
-                    act = parts[1].strip()
-                    x, y, z = float(parts[3]), float(parts[4]), float(parts[5])
-                    if act in label_map: d.append([x,y,z]); l.append(label_map[act])
-                except: continue
-            from sklearn.model_selection import train_test_split
-            window_size, step = 128, 64
-            X, y_w = [], []
-            for start in range(0, len(d)-window_size+1, step):
-                X.append(d[start:start+window_size])
-                y_w.append(l[start+window_size//2])
-            X = np.array(X, dtype=np.float32); y_w = np.array(y_w, dtype=np.int64)
-            X_tr_val, X_te, y_tr_val, y_te = train_test_split(X, y_w, test_size=0.2, random_state=42, stratify=y_w)
-            X_tr, X_vl, y_tr, y_vl = train_test_split(X_tr_val, y_tr_val, test_size=0.2, random_state=42, stratify=y_tr_val)
-            from collections import Counter
-            cnt = Counter(y_tr.tolist())
-            return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    elif ds == 'motionsense_dm':
-        try:
-            base = '/home/fandy/workplace/thesis/datasets/MotionSense-DM'
-            rows = []
-            for person in sorted(os.listdir(os.path.join(base, 'data'))):
-                for sess in sorted(os.listdir(os.path.join(base, 'data', person))):
-                    for f in os.listdir(os.path.join(base, 'data', person, sess)):
-                        if f.endswith('.csv'):
-                            import pandas as pd
-                            df = pd.read_csv(os.path.join(base, 'data', person, sess, f), nrows=100)
-                            if 'activity_id' in df.columns: rows.extend(df['activity_id'].tolist())
-            from collections import Counter
-            if rows:
-                cnt = Counter(rows)
-                return sum(min(200, max(1, int(n * 0.25))) for n in cnt.values())
-        except: return CFG[ds][0] * CFG[ds][1]
-    return CFG[ds][0] * CFG[ds][1]
-
-def get_running():
+    """用已知数据集信息计算目标（35%/400），每类单独计算"""
+    # 各类样本数（用于精确计算每类目标）
+    # HARTH 6类不均匀
+    harth_per_class = {0:10290,1:2629,2:2320,3:629,4:578,5:6298}
+    # Gait 4类
+    gait_per_class = {0:220,1:153,2:159,3:141}
+    # WISDM 6类不均匀
+    wisdm_per_class = {0:4183,1:3363,2:1234,3:1003,4:599,5:482}
+    # KuHar 18类（部分不均匀）
+    kuhar_per_class = {0:5537,1:5496,2:5302,3:5499,4:6273,5:5395,6:5127,
+                       7:3909,8:2030,9:1482,10:3060,11:2483,12:902,
+                       13:748,14:1752,15:2475,16:2410,17:1330}
+    # 通用：总数/n_cls 估算（用于均匀分布的数据集）
+    counts = {
+        'pamap2': 2826, 'kuhar': 61210, 'uci_har': 5881, 'harth': 22744,
+        'uci_har_new': 6213, 'motionsense': 13993, 'motionsense_dm': 13784,
+        'gait': 673, 'wisdm': 10864,
+    }
+    n_cls = {'pamap2':5,'kuhar':18,'uci_har':6,'harth':6,
+             'uci_har_new':12,'motionsense':6,'motionsense_dm':6,'gait':4,'wisdm':6}
     try:
-        r = subprocess.run(['ps', 'aux'], capture_output=True, text=True)
-        lines = [l for l in r.stdout.split('\n') if 'gen_soft_labels_unified' in l and 'grep' not in l]
-        return lines
+        if ds == 'harth':
+            return sum(min(400, max(1, int(harth_per_class[c] * 0.35))) for c in range(6))
+        elif ds == 'gait':
+            return sum(min(400, max(1, int(gait_per_class[c] * 0.35))) for c in range(4))
+        elif ds == 'wisdm':
+            return sum(min(400, max(1, int(wisdm_per_class[c] * 0.35))) for c in range(6))
+        elif ds == 'kuhar':
+            return sum(min(400, max(1, int(kuhar_per_class[c] * 0.35))) for c in range(18))
+        else:
+            total = counts[ds]
+            nc = n_cls[ds]
+            avg = total / nc
+            return min(400, max(1, int(avg * 0.35))) * nc
     except:
-        return []
-
-def get_training_running():
-    try:
-        r = subprocess.run(['ps', 'aux'], capture_output=True, text=True)
-        lines = [l for l in r.stdout.split('\n') if 'run_distill' in l and 'grep' not in l]
-        return lines
-    except:
-        return []
+        return None
 
 def check_soft(ds):
     n_cls, spc = CFG[ds]
@@ -200,11 +89,14 @@ def check_soft(ds):
         arr = np.load(f_main) if os.path.exists(f_main) else None
     
     if arr is not None:
-        is_onehot = (arr > 0.99).sum(axis=1) == 1
-        result['real'] = int(np.sum((arr.sum(axis=1) > 0) & ~is_onehot))
+        # one-hot: max probability > 0.95 → not valid (matches generation filtering)
+        max_probs = np.max(arr, axis=1)
+        is_valid = (arr.sum(axis=1) > 0) & (max_probs <= 0.95)
+        is_onehot = max_probs > 0.95
+        result['real'] = int(np.sum(is_valid))
         result['onehot'] = int(np.sum(is_onehot))
         result['zero'] = int(np.sum(arr.sum(axis=1) == 0))
-        result['done'] = result['real'] >= target
+        result['done'] = target is not None and result['real'] >= target
     
     # 最新日志（最后3行）
         # 最新日志（最后3行）- 用subprocess.run避免读取大文件
@@ -248,6 +140,32 @@ def check_training(ds, ver):
     
     return {'done': done, 'best_acc': best_acc, 'last_line': last_line}
 
+def get_running():
+    """获取正在运行的软标签生成进程"""
+    try:
+        r = subprocess.run(['ps', 'aux'], capture_output=True, text=True, timeout=3)
+        lines = r.stdout.strip().split('\n')
+        procs = []
+        for line in lines:
+            if 'gen_soft_labels' in line or 'gen_kuhar_parallel' in line:
+                procs.append(line)
+        return procs
+    except:
+        return []
+
+def get_training_running():
+    """获取正在运行的训练进程"""
+    try:
+        r = subprocess.run(['ps', 'aux'], capture_output=True, text=True, timeout=3)
+        lines = r.stdout.strip().split('\n')
+        procs = []
+        for line in lines:
+            if 'run_distill.py' in line or 'train_' in line:
+                procs.append(line)
+        return procs
+    except:
+        return []
+
 def main():
     now = time.strftime('%Y-%m-%d %H:%M:%S')
     
@@ -257,7 +175,9 @@ def main():
     running_soft = []
     for p in soft_procs:
         for ds in DATASETS:
-            if ds in p:
+            # 精确匹配：dataset name 后跟空格或结束，或跟在 gen_xxx.py 后面
+            import re
+            if re.search(rf'(?:gen_\w+\.py\s+{re.escape(ds)}(?:\s|$))', p):
                 running_soft.append(ds); break
     
     running_train = []
@@ -269,7 +189,7 @@ def main():
     
     # 检查各数据集软标签
     results = [check_soft(ds) for ds in DATASETS]
-    total_target = sum(r['target'] for r in results)
+    total_target = sum(r['target'] or 0 for r in results)
     total_real = sum(r['real'] for r in results)
     
     # 检查训练
@@ -289,11 +209,12 @@ def main():
     print(f"{'数据集':<16} {'真软标签':>8} {'one-hot':>8} {'未填充':>8} {'进度':>8} {'状态'}")
     print("-" * 65)
     for r in results:
-        pct = r['real'] / r['target'] * 100
+        pct = r['real'] / r['target'] * 100 if r['target'] else 0
         bar = '█' * int(pct/5) + '░' * (20 - int(pct/5))
         status = '✅完成' if r['done'] else ('🔄' if r['name'] in running_soft else '⏸️')
         log_short = (r['log'][-30:] if r['log'] else '')[:30]
-        print(f"{r['name']:<16} {r['real']:>6}/{r['target']:<6} {r['onehot']:>8} {r['zero']:>8} {bar} {status}")
+        tgt_str = str(r['target'] or 'N/A')
+        print(f"{r['name']:<16} {r['real']:>6}/{tgt_str:<6} {r['onehot']:>8} {r['zero']:>8} {bar} {status}")
         if r['log']:
             print(f"  ↳ {r['log'][:60]}")
     

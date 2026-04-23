@@ -3,7 +3,7 @@
 软标签生成参数校验 + 启动脚本
 用法: python run_gen_soft.py <dataset> [samples_per_class]
 
-新逻辑：每类软标签数量 = 该类训练样本数 × 25%，上限200
+新逻辑：每类软标签数量 = 该类训练样本数 × 35%，上限400
 手动指定 samples_per_class 会覆盖动态计算（慎用）。
 """
 import sys
@@ -26,7 +26,7 @@ def main():
     if len(sys.argv) < 2:
         print("用法: python run_gen_soft.py <dataset> [samples_per_class]")
         print(f"可用数据集: {', '.join(DATASETS)}")
-        print("\n说明: 软标签数量 = 每类样本数 × 25%，上限200")
+        print("\n说明: 软标签数量 = 每类样本数 × 35%，上限400")
         print("      手动指定 samples_per_class 会覆盖动态计算（慎用）")
         print("\n示例:")
         print("  python run_gen_soft.py wisdm          # 自动计算每类软标签数")
@@ -53,7 +53,7 @@ def main():
             sys.exit(1)
         mode_desc = f"手动指定每类 {manual_spc}（覆盖动态计算）"
     else:
-        mode_desc = "动态计算: 每类样本数×25%，上限200"
+        mode_desc = "动态计算: 每类样本数×35%，上限400"
 
     # 显示确认信息
     print("=" * 55)
