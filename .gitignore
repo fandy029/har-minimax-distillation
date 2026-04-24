@@ -1,19 +1,43 @@
-# 数据集 - 不要提交
+# ======================
+# 数据集（原始数据，不提交）
+# ======================
 datasets/
-simclr/datasets/
 **/datasets/
-**/*.csv
-**/*.txt
-**/*.dat
-# 软标签文件（用于知识蒸馏的可复现性，小文件，允许提交）
-# 注意：datasets下的npy仍需忽略
-!**/soft_labels*.npy
-!new_results/*.npy
-!checkpoints/*.npy
-datasets/**/*.npy
-**/datasets/**/*.npy
 
+# ======================
+# 实验结果
+# ======================
+
+# 软标签（小文件，提交）
+results/soft_labels/gait_soft.npy
+results/soft_labels/harth_soft.npy
+results/soft_labels/kuhar_soft.npy
+results/soft_labels/motionsense_dm_soft.npy
+results/soft_labels/motionsense_soft.npy
+results/soft_labels/pamap2_soft.npy
+results/soft_labels/uci_har_new_soft.npy
+results/soft_labels/uci_har_soft.npy
+results/soft_labels/wisdm_soft.npy
+
+# KuHar 大缓存文件（不提交）
+results/soft_labels/kuhar_data_cache.npz
+results/soft_labels/kuhar_X_tr.npy
+results/soft_labels/kuhar_y_tr.npy
+results/soft_labels/kuhar_soft_proc*.npy
+results/soft_labels/kuhar_par_checkpoints/
+
+# results/ 下的子目录：靠顶层规则 *.pt 等来忽略具体文件
+# 目录本身不写进 gitignore，让 .gitkeep 可以追踪
+
+# 临时状态文件（不提交）
+results/.monitor_status.json
+results/.progress_track.json
+results/.run_order.json
+results/wisdm_mlp_results.json
+
+# ======================
 # Python
+# ======================
 __pycache__/
 *.pyc
 *.pyo
@@ -27,18 +51,20 @@ build/
 .pytest_cache/
 .mypy_cache/
 
-# 模型 checkpoints
+# ======================
+# 模型文件（全局规则）
+# ======================
 *.pth
 *.pt
 *.ckpt
 *.model
 
-# 软标签文件（见上方!规则）
-
+# ======================
 # 临时文件
+# ======================
 *.tmp
-*.log
 report_temp.html
+*.bak
 
 # Jupyter
 .ipynb_checkpoints/
@@ -49,10 +75,7 @@ report_temp.html
 # Weights & Biases
 wandb/
 
-# PDF (可选,如果是自动生成的)
-*.pdf
-checkpoints/harth_data.npz
-*.npy
-results/soft_labels/kuhar_X_tr.npy
-results/soft_labels/kuhar_y_tr.npy
-results/soft_labels/kuhar_data_cache.npz
+
+
+# 外部依赖数据集（不属于自己的仓库）
+simclr/datasets/

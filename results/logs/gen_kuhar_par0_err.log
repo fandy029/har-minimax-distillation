@@ -1,0 +1,84 @@
+
+=== Proc 0 开始 2026-04-19 16:45:13 ===
+
+=== Proc 0 开始 2026-04-19 16:46:01 ===
+
+=== Proc 0 开始 2026-04-19 16:47:23 ===
+FALLBACK idx=0 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+FALLBACK idx=2 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+FALLBACK idx=6 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== Proc 0 开始 2026-04-19 18:30:45 ===
+FALLBACK idx=0 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+FALLBACK idx=2 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== Proc 0 开始 2026-04-19 18:41:47 ===
+FALLBACK idx=0 class=0 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== Proc 0 开始 2026-04-19 18:51:47 ===
+
+=== Proc 0 开始 2026-04-19 18:57:51 ===
+
+=== Proc 0 开始 2026-04-19 18:58:01 ===
+
+=== Proc 0 开始 2026-04-19 18:58:16 ===
+
+=== Proc 0 开始 2026-04-19 18:58:23 ===
+
+=== Proc 0 开始 2026-04-19 18:58:45 ===
+
+=== Proc 0 开始 2026-04-19 18:59:05 ===
+
+=== Proc 0 开始 2026-04-19 19:03:10 ===
+
+=== Proc 0 开始 2026-04-19 19:04:39 ===
+
+=== Proc 0 开始 2026-04-19 19:08:12 ===
+
+=== Proc 0 开始 2026-04-19 19:10:50 ===
+
+=== Proc 0 开始 2026-04-19 19:15:27 ===
+
+=== Proc 0 开始 2026-04-19 19:18:38 ===
+
+=== Proc 0 开始 2026-04-19 19:32:17 ===
+
+=== Proc 0 开始 2026-04-20 00:11:44 ===
+
+=== Proc 0 开始 2026-04-20 00:25:18 ===
+
+=== Proc 0 开始 2026-04-20 00:39:30 ===
+
+=== Proc 0 开始 2026-04-20 01:52:30 ===
+
+=== Proc 0 开始 2026-04-20 11:33:15 ===
+=== Proc 0 完成 2026-04-20 14:49:37 ===
+
+=== Proc 0 开始 2026-04-22 13:22:34 ===
+FALLBACK idx=3020 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3023 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3028 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3038 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3040 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3047 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3059 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3087 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3093 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3107 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3128 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3131 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3142 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3153 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3155 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3159 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3166 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3189 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3202 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3213 class=0 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+=== Proc 0 完成 2026-04-23 12:50:28 ===
+
+=== Proc 0 开始 2026-04-23 17:36:07 ===
+=== Proc 0 完成 2026-04-23 17:36:07 ===
+
+=== Proc 0 开始 2026-04-23 19:30:13 ===
+=== Proc 0 完成 2026-04-23 19:30:13 ===

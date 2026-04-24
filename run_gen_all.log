@@ -1,0 +1,1449 @@
+============================================================
+ 软标签生成配置
+ 每类采样率: 35%
+ 每类上限: 400
+ 数据集: pamap2, uci_har, harth, uci_har_new, motionsense, motionsense_dm, gait, wisdm, kuhar
+ 模式: 后台
+============================================================
+后台运行中，PID: 566438
+  训练数据: 2826 样本
+  各class样本数: {0: 416, 1: 892, 2: 885, 3: 377, 4: 256}
+  各class软标签(35%上限400): {0: 145, 1: 312, 2: 309, 3: 131, 4: 89}
+  计划总软标签: 986
+  各class详情:
+    Class 0 (downstairs): 416样本 → 145软标签
+    Class 1 (sitting): 892样本 → 312软标签
+    Class 2 (standing): 885样本 → 309软标签
+    Class 3 (walking): 377样本 → 131软标签
+    Class 4 (jogging): 256样本 → 89软标签
+============================================================
+  PAMAP2 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 5, 每类软标签: {0: 145, 1: 312, 2: 309, 3: 131, 4: 89}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/pamap2_soft.npy
+     已填充: 2826/2826
+
+  Class 0 (downstairs): 目标145 (145已有, 0待生成)
+
+
+  Class 1 (sitting): 目标312 (312已有, 0待生成)
+
+
+  Class 2 (standing): 目标309 (309已有, 0待生成)
+
+
+  Class 3 (walking): 目标131 (131已有, 0待生成)
+
+
+  Class 4 (jogging): 目标89 (89已有, 0待生成)
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/pamap2_soft.npy
+   Shape: (2826, 5)
+   mean=0.200, mean_max=0.912, mean_entropy=0.287
+  训练数据: 5881 样本
+  各class样本数: {0: 981, 1: 858, 2: 789, 3: 1029, 4: 1099, 5: 1125}
+  各class软标签(35%上限400): {0: 343, 1: 300, 2: 276, 3: 360, 4: 384, 5: 393}
+  计划总软标签: 2056
+  各class详情:
+    Class 0 (WALKING): 981样本 → 343软标签
+    Class 1 (WALKING_UP): 858样本 → 300软标签
+    Class 2 (WALKING_DOWN): 789样本 → 276软标签
+    Class 3 (SITTING): 1029样本 → 360软标签
+    Class 4 (STANDING): 1099样本 → 384软标签
+    Class 5 (LAYING): 1125样本 → 393软标签
+============================================================
+  UCI_HAR 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 6, 每类软标签: {0: 343, 1: 300, 2: 276, 3: 360, 4: 384, 5: 393}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/uci_har_soft.npy
+     已填充: 5881/5881
+
+  Class 0 (WALKING): 目标343 (343已有, 0待生成)
+
+
+  Class 1 (WALKING_UP): 目标300 (300已有, 0待生成)
+
+
+  Class 2 (WALKING_DOWN): 目标276 (276已有, 0待生成)
+
+
+  Class 3 (SITTING): 目标360 (358已有, 2待生成)
+    [1] idx=125: ✅REAL | sum=1.000 | max=0.800
+  训练数据: 22744 样本
+  各class样本数: {0: 10290, 1: 2629, 2: 2320, 3: 629, 4: 578, 5: 6298}
+  各class软标签(35%上限400): {0: 400, 1: 400, 2: 400, 3: 220, 4: 202, 5: 400}
+  计划总软标签: 2022
+  各class详情:
+    Class 0 (左立): 10290样本 → 400软标签
+    Class 1 (走路): 2629样本 → 400软标签
+    Class 2 (上楼): 2320样本 → 400软标签
+    Class 3 (下楼): 629样本 → 220软标签
+    Class 4 (右立): 578样本 → 202软标签
+    Class 5 (站立): 6298样本 → 400软标签
+============================================================
+  HARTH 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 6, 每类软标签: {0: 400, 1: 400, 2: 400, 3: 220, 4: 202, 5: 400}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/harth_soft.npy
+     已填充: 22744/22744
+
+  Class 0 (左立): 目标400 (400已有, 0待生成)
+
+
+  Class 1 (走路): 目标400 (400已有, 0待生成)
+
+
+  Class 2 (上楼): 目标400 (400已有, 0待生成)
+
+
+  Class 3 (下楼): 目标220 (220已有, 0待生成)
+
+
+  Class 4 (右立): 目标202 (202已有, 0待生成)
+
+
+  Class 5 (站立): 目标400 (360已有, 40待生成)
+  训练数据: 6213 样本
+  各class样本数: {0: 981, 1: 858, 2: 790, 3: 1034, 4: 1138, 5: 1130, 6: 38, 7: 18, 8: 60, 9: 48, 10: 72, 11: 46}
+  各class软标签(35%上限400): {0: 343, 1: 300, 2: 276, 3: 361, 4: 398, 5: 395, 6: 13, 7: 6, 8: 21, 9: 16, 10: 25, 11: 16}
+  计划总软标签: 2170
+  各class详情:
+    Class 0 (WALKING): 981样本 → 343软标签
+    Class 1 (WALKING_UP): 858样本 → 300软标签
+    Class 2 (WALKING_DOWN): 790样本 → 276软标签
+    Class 3 (SITTING): 1034样本 → 361软标签
+    Class 4 (STANDING): 1138样本 → 398软标签
+    Class 5 (LAYING): 1130样本 → 395软标签
+    Class 6 (SIT_TO_STAND): 38样本 → 13软标签
+    Class 7 (STAND_TO_SIT): 18样本 → 6软标签
+    Class 8 (SIT_TO_LIE): 60样本 → 21软标签
+    Class 9 (LIE_TO_SIT): 48样本 → 16软标签
+    Class 10 (STAND_TO_LIE): 72样本 → 25软标签
+    Class 11 (LIE_TO_STAND): 46样本 → 16软标签
+============================================================
+  UCI_HAR_NEW 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 12, 每类软标签: {0: 343, 1: 300, 2: 276, 3: 361, 4: 398, 5: 395, 6: 13, 7: 6, 8: 21, 9: 16, 10: 25, 11: 16}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/uci_har_new_soft.npy
+     已填充: 1980/6213
+
+  Class 0 (WALKING): 目标343 (343已有, 0待生成)
+
+
+  Class 1 (WALKING_UP): 目标300 (300已有, 0待生成)
+
+
+  Class 2 (WALKING_DOWN): 目标276 (276已有, 0待生成)
+
+
+  Class 3 (SITTING): 目标361 (361已有, 0待生成)
+
+
+  Class 4 (STANDING): 目标398 (398已有, 0待生成)
+
+
+  Class 5 (LAYING): 目标395 (267已有, 128待生成)
+    [2] idx=1082: ✅REAL | sum=1.000 | max=0.730
+
+
+  Class 4 (STANDING): 目标384 (384已有, 0待生成)
+
+
+  Class 5 (LAYING): 目标393 (393已有, 0待生成)
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/uci_har_soft.npy
+   Shape: (5881, 6)
+   mean=0.167, mean_max=0.927, mean_entropy=0.272
+    [1] idx=784: ✅REAL | sum=1.000 | max=0.900
+  训练数据: 13993 样本
+  各class样本数: {0: 1275, 1: 1319, 2: 3385, 3: 3060, 4: 1532, 5: 3422}
+  各class软标签(35%上限400): {0: 400, 1: 400, 2: 400, 3: 400, 4: 400, 5: 400}
+  计划总软标签: 2400
+  各class详情:
+    Class 0 (downstairs): 1275样本 → 400软标签
+    Class 1 (jogging): 1319样本 → 400软标签
+    Class 2 (sitting): 3385样本 → 400软标签
+    Class 3 (standing): 3060样本 → 400软标签
+    Class 4 (upstairs): 1532样本 → 400软标签
+    Class 5 (walking): 3422样本 → 400软标签
+============================================================
+  MOTIONSENSE 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 6, 每类软标签: {0: 400, 1: 400, 2: 400, 3: 400, 4: 400, 5: 400}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/motionsense_soft.npy
+     已填充: 13993/13993
+
+  Class 0 (downstairs): 目标400 (399已有, 1待生成)
+    [2] idx=1213: ✅REAL | sum=1.000 | max=0.550
+  训练数据: 13784 样本
+  各class样本数: {0: 1249, 1: 1296, 2: 3341, 3: 3018, 4: 1504, 5: 3376}
+  各class软标签(35%上限400): {0: 400, 1: 400, 2: 400, 3: 400, 4: 400, 5: 400}
+  计划总软标签: 2400
+  各class详情:
+    Class 0 (downstairs): 1249样本 → 400软标签
+    Class 1 (jogging): 1296样本 → 400软标签
+    Class 2 (sitting): 3341样本 → 400软标签
+    Class 3 (standing): 3018样本 → 400软标签
+    Class 4 (upstairs): 1504样本 → 400软标签
+    Class 5 (walking): 3376样本 → 400软标签
+============================================================
+  MOTIONSENSE_DM 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 6, 每类软标签: {0: 400, 1: 400, 2: 400, 3: 400, 4: 400, 5: 400}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/motionsense_dm_soft.npy
+     已填充: 13784/13784
+
+  Class 0 (downstairs): 目标400 (400已有, 0待生成)
+
+
+  Class 1 (jogging): 目标400 (400已有, 0待生成)
+
+
+  Class 2 (sitting): 目标400 (400已有, 0待生成)
+
+
+  Class 3 (standing): 目标400 (400已有, 0待生成)
+
+
+  Class 4 (upstairs): 目标400 (400已有, 0待生成)
+
+
+  Class 5 (walking): 目标400 (244已有, 156待生成)
+    [1] idx=1512: ✅REAL | sum=1.000 | max=0.440
+    [1] idx=2982: ✅REAL | sum=1.000 | max=0.550
+
+
+  Class 1 (jogging): 目标400 (400已有, 0待生成)
+
+
+  Class 2 (sitting): 目标400 (399已有, 1待生成)
+  训练数据: 673 样本
+  各class样本数: {0: 161, 1: 38, 2: 436, 3: 38}
+  各class软标签(35%上限400): {0: 56, 1: 13, 2: 152, 3: 13}
+  计划总软标签: 234
+  各class详情:
+    Class 0 (慢速走): 161样本 → 56软标签
+    Class 1 (正常走): 38样本 → 13软标签
+    Class 2 (站立): 436样本 → 152软标签
+    Class 3 (活动): 38样本 → 13软标签
+============================================================
+  GAIT 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 4, 每类软标签: {0: 56, 1: 13, 2: 152, 3: 13}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/gait_soft.npy
+     已填充: 673/673
+
+  Class 0 (慢速走): 目标56 (55已有, 1待生成)
+    [3] idx=1234: ✅REAL | sum=1.000 | max=0.700
+    [2] idx=1517: ✅REAL | sum=1.000 | max=0.400
+    [1] idx=1011: ✅REAL | sum=1.000 | max=0.350
+    [1] idx=255: ✅REAL | sum=1.000 | max=0.650
+
+
+  Class 1 (正常走): 目标13 (13已有, 0待生成)
+
+
+  Class 2 (站立): 目标152 (151已有, 1待生成)
+    [4] idx=1236: ✅REAL | sum=1.000 | max=0.600
+    [2] idx=916: ✅REAL | sum=1.000 | max=0.550
+
+
+  Class 3 (standing): 目标400 (396已有, 4待生成)
+  WISDM raw: 1086465 time points, 10864 train windows, 2716 val, 3395 test
+  训练数据: 10864 样本
+  各class样本数: {0: 4183, 1: 3363, 2: 1234, 3: 1003, 4: 599, 5: 482}
+  各class软标签(35%上限400): {0: 400, 1: 400, 2: 400, 3: 351, 4: 209, 5: 168}
+  计划总软标签: 1928
+  各class详情:
+    Class 0 (Walking): 4183样本 → 400软标签
+    Class 1 (Jogging): 3363样本 → 400软标签
+    Class 2 (Upstairs): 1234样本 → 400软标签
+    Class 3 (Downstairs): 1003样本 → 351软标签
+    Class 4 (Sitting): 599样本 → 209软标签
+    Class 5 (Standing): 482样本 → 168软标签
+============================================================
+  WISDM 软标签生成 (T=0.7, max_tokens=5000)
+============================================================
+  类别数: 6, 每类软标签: {0: 400, 1: 400, 2: 400, 3: 351, 4: 209, 5: 168}
+  📂 发现已有进度: /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy
+     已填充: 10864/10864
+
+  Class 0 (Walking): 目标400 (400已有, 0待生成)
+
+
+  Class 1 (Jogging): 目标400 (398已有, 2待生成)
+    [2] idx=1012: ✅REAL | sum=1.000 | max=0.550
+    [3] idx=1182: ✅REAL | sum=1.000 | max=0.850
+    [2] idx=195: ✅REAL | sum=1.000 | max=0.800
+
+
+  Class 3 (活动): 目标13 (13已有, 0待生成)
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/gait_soft.npy
+   Shape: (673, 4)
+   mean=0.250, mean_max=0.913, mean_entropy=0.268
+    [5] idx=1240: ✅REAL | sum=1.000 | max=0.600
+    [3] idx=1016: ✅REAL | sum=1.000 | max=0.550
+[启动] Proc 0 PID=567501 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par0.log
+[启动] Proc 1 PID=567513 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par1.log
+[启动] Proc 2 PID=567520 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par2.log
+[启动] Proc 3 PID=567523 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par3.log
+[启动] Proc 4 PID=567539 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par4.log
+[启动] Proc 5 PID=567566 → /home/fandy/workplace/thesis/results/logs/gen_kuhar_par5.log
+
+已启动 6 个进程
+    [4] idx=1370: ✅REAL | sum=1.000 | max=0.950
+    [3] idx=1523: ✅REAL | sum=1.000 | max=0.450
+    [1] idx=1023: ✅REAL | sum=1.000 | max=0.700
+    [4] idx=1022: ✅REAL | sum=1.000 | max=0.400
+    [4] idx=1528: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +5已处理, 累计1987真软标签, one-hot=20757, 已保存
+    [6] idx=1244: ✅REAL | sum=1.000 | max=0.450
+    [5] idx=1024: ✅REAL | sum=1.000 | max=0.400
+    [5] idx=1461: ✅REAL | sum=1.000 | max=0.700
+    [5] idx=1531: ✅REAL | sum=1.000 | max=0.450
+    [2] idx=1330: ✅REAL | sum=1.000 | max=0.750
+
+
+  Class 2 (Upstairs): 目标400 (400已有, 0待生成)
+
+
+  Class 3 (Downstairs): 目标351 (350已有, 1待生成)
+  >>> 进度: +5已处理, 累计2173真软标签, one-hot=11817, 已保存
+    [6] idx=1473: ✅REAL | sum=1.000 | max=0.750
+
+
+  Class 4 (upstairs): 目标400 (375已有, 25待生成)
+    [7] idx=1245: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +5已处理, 累计2249真软标签, one-hot=11535, 已保存
+    [6] idx=1032: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +5已处理, 累计1950真软标签, one-hot=35, 已保存
+    [6] idx=1534: ✅REAL | sum=1.000 | max=0.480
+    [7] idx=3529: ✅REAL | sum=1.000 | max=0.450
+    [3] idx=3119: ✅REAL | sum=1.000 | max=0.800
+
+
+  Class 4 (Sitting): 目标209 (209已有, 0待生成)
+
+
+  Class 5 (Standing): 目标168 (168已有, 0待生成)
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy
+   Shape: (10864, 6)
+   mean=0.167, mean_max=0.958, mean_entropy=0.148
+    [8] idx=1246: ✅REAL | sum=1.000 | max=0.810
+    [8] idx=3532: ✅REAL | sum=1.000 | max=0.750
+    [7] idx=1034: ✅REAL | sum=1.000 | max=0.350
+    [9] idx=1249: ✅REAL | sum=1.000 | max=0.860
+    [7] idx=1539: ✅REAL | sum=1.000 | max=0.551
+    [10] idx=1250: ✅REAL | sum=1.000 | max=0.700
+    [8] idx=1036: ✅REAL | sum=1.000 | max=0.350
+    [9] idx=3534: ✅REAL | sum=1.000 | max=0.450
+    [8] idx=1544: ✅REAL | sum=1.000 | max=0.300
+    [9] idx=1038: ✅REAL | sum=1.000 | max=0.600
+    [10] idx=3536: ✅REAL | sum=1.000 | max=0.650
+  >>> 进度: +10已处理, 累计1992真软标签, one-hot=20752, 已保存
+    [11] idx=1251: ✅REAL | sum=1.000 | max=0.750
+    [9] idx=1553: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +10已处理, 累计2178真软标签, one-hot=11812, 已保存
+    [11] idx=3550: ✅REAL | sum=1.000 | max=0.600
+    [12] idx=1253: ✅REAL | sum=1.000 | max=0.830
+    [10] idx=1042: ✅REAL | sum=1.000 | max=0.450
+    [12] idx=3563: ✅REAL | sum=1.000 | max=0.600
+    [10] idx=1555: ✅REAL | sum=1.000 | max=0.370
+    [13] idx=1254: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +10已处理, 累计2254真软标签, one-hot=11530, 已保存
+    [11] idx=1043: ✅REAL | sum=1.000 | max=0.500
+    [13] idx=3573: ✅REAL | sum=1.000 | max=0.550
+    [14] idx=1255: ✅REAL | sum=1.000 | max=0.750
+  >>> 进度: +10已处理, 累计1955真软标签, one-hot=35, 已保存
+    [11] idx=1564: ✅REAL | sum=1.000 | max=0.480
+    [12] idx=1046: ✅REAL | sum=1.000 | max=0.400
+    [15] idx=1262: ✅REAL | sum=1.000 | max=0.700
+    [14] idx=3588: ✅REAL | sum=1.000 | max=0.600
+    [12] idx=1570: ✅REAL | sum=1.000 | max=0.380
+    [13] idx=1050: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +15已处理, 累计1997真软标签, one-hot=20747, 已保存
+    [16] idx=1269: ✅REAL | sum=1.000 | max=0.780
+    [14] idx=1051: ✅REAL | sum=1.000 | max=0.450
+    [17] idx=1275: ✅REAL | sum=1.000 | max=0.700
+    [15] idx=3597: ✅REAL | sum=1.000 | max=0.500
+    [13] idx=1574: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +15已处理, 累计2183真软标签, one-hot=11807, 已保存
+    [16] idx=3600: ✅REAL | sum=1.000 | max=0.550
+    [18] idx=1280: ✅REAL | sum=1.000 | max=0.800
+    [15] idx=1054: ✅REAL | sum=1.000 | max=0.500
+    [14] idx=1575: ✅REAL | sum=1.000 | max=0.710
+    [17] idx=3606: ✅REAL | sum=1.000 | max=0.380
+  >>> 进度: +15已处理, 累计2259真软标签, one-hot=11525, 已保存
+    [16] idx=1056: ✅REAL | sum=1.000 | max=0.450
+    [19] idx=1282: ✅REAL | sum=1.000 | max=0.450
+    [15] idx=1576: ✅REAL | sum=1.000 | max=0.300
+    [18] idx=3631: ✅REAL | sum=1.000 | max=0.450
+    [20] idx=1283: ✅REAL | sum=1.000 | max=0.730
+    [17] idx=1058: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +20已处理, 累计2002真软标签, one-hot=20742, 已保存
+    [21] idx=1288: ✅REAL | sum=1.000 | max=0.800
+    [19] idx=3636: ✅REAL | sum=1.000 | max=0.550
+    [18] idx=1061: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +15已处理, 累计1960真软标签, one-hot=35, 已保存
+    [16] idx=1584: ✅REAL | sum=1.000 | max=0.200
+    [22] idx=1295: ✅REAL | sum=1.000 | max=0.600
+    [19] idx=1063: ✅REAL | sum=1.000 | max=0.340
+    [20] idx=3644: ✅REAL | sum=1.000 | max=0.700
+    [17] idx=1585: ✅REAL | sum=1.000 | max=0.588
+  >>> 进度: +20已处理, 累计2188真软标签, one-hot=11802, 已保存
+    [21] idx=3648: ✅REAL | sum=1.000 | max=0.700
+    [20] idx=1064: ✅REAL | sum=1.000 | max=0.600
+    [23] idx=1297: ✅REAL | sum=1.000 | max=0.700
+    [22] idx=3655: ✅REAL | sum=1.000 | max=0.450
+    [18] idx=1586: ✅REAL | sum=1.000 | max=0.460
+    [24] idx=1302: ✅REAL | sum=1.000 | max=0.520
+  >>> 进度: +20已处理, 累计2264真软标签, one-hot=11520, 已保存
+    [21] idx=1067: ✅REAL | sum=1.000 | max=0.550
+    [23] idx=3676: ✅REAL | sum=1.000 | max=0.600
+    [19] idx=1587: ✅REAL | sum=1.000 | max=0.408
+    [24] idx=3688: ✅REAL | sum=1.000 | max=0.650
+    [25] idx=3691: ✅REAL | sum=1.000 | max=0.700
+    [20] idx=1588: ✅REAL | sum=1.000 | max=0.286
+    [25] idx=1306: ✅REAL | sum=1.000 | max=0.650
+  >>> 进度: +25已处理, 累计2007真软标签, one-hot=20737, 已保存
+    [26] idx=1310: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +25已处理, 累计2193真软标签, one-hot=11797, 已保存
+    [26] idx=3692: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +20已处理, 累计1965真软标签, one-hot=35, 已保存
+    [21] idx=1594: ✅REAL | sum=1.000 | max=0.200
+    [27] idx=1311: ✅REAL | sum=1.000 | max=0.550
+    [27] idx=3694: ✅REAL | sum=1.000 | max=0.450
+    [22] idx=1599: ✅REAL | sum=1.000 | max=0.650
+    [28] idx=1318: ✅REAL | sum=1.000 | max=0.600
+
+    ⚠️  [1/2] JSON解析失败, content长度=0, 等待10秒后重试...
+    [22] idx=1068: ✅REAL | sum=1.000 | max=0.350
+    [28] idx=3717: ✅REAL | sum=1.000 | max=0.800
+    [29] idx=1320: ✅REAL | sum=1.000 | max=0.800
+    [23] idx=1072: ✅REAL | sum=1.000 | max=0.330
+    [29] idx=3727: ✅REAL | sum=1.000 | max=0.750
+    [30] idx=1321: ✅REAL | sum=1.000 | max=0.650
+    [30] idx=3730: ✅REAL | sum=1.000 | max=0.550
+    [23] idx=1607: ✅REAL | sum=1.000 | max=0.530
+    [24] idx=1073: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +30已处理, 累计2012真软标签, one-hot=20732, 已保存
+    [31] idx=1323: ✅REAL | sum=1.000 | max=0.800
+  >>> 进度: +30已处理, 累计2198真软标签, one-hot=11792, 已保存
+    [31] idx=3731: ✅REAL | sum=1.000 | max=0.550
+
+
+  Class 5 (walking): 目标400 (200已有, 200待生成)
+    [24] idx=1615: ✅REAL | sum=1.000 | max=0.250
+    [25] idx=1076: ✅REAL | sum=1.000 | max=0.550
+    [32] idx=1330: ✅REAL | sum=1.000 | max=0.600
+    [32] idx=853: ✅REAL | sum=1.000 | max=0.550
+    [25] idx=1637: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +25已处理, 累计2269真软标签, one-hot=11515, 已保存
+    [26] idx=1079: ✅REAL | sum=1.000 | max=0.550
+    [33] idx=1332: ✅REAL | sum=1.000 | max=0.600
+    [33] idx=859: ✅REAL | sum=1.000 | max=0.800
+    [27] idx=1082: ✅REAL | sum=1.000 | max=0.400
+    [34] idx=860: ✅REAL | sum=1.000 | max=0.500
+    [34] idx=1337: ✅REAL | sum=1.000 | max=0.350
+    [28] idx=1086: ✅REAL | sum=1.000 | max=0.460
+    [35] idx=873: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +25已处理, 累计1970真软标签, one-hot=35, 已保存
+    [26] idx=1640: ✅REAL | sum=1.000 | max=0.300
+    [29] idx=1090: ✅REAL | sum=1.000 | max=0.250
+    [35] idx=1340: ✅REAL | sum=1.000 | max=0.600
+    [30] idx=1092: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +35已处理, 累计2203真软标签, one-hot=11787, 已保存
+    [36] idx=874: ✅REAL | sum=1.000 | max=0.550
+    [27] idx=1644: ✅REAL | sum=1.000 | max=0.566
+  >>> 进度: +30已处理, 累计2274真软标签, one-hot=11510, 已保存
+    [31] idx=1095: ✅REAL | sum=1.000 | max=0.660
+    [37] idx=878: ✅REAL | sum=1.000 | max=0.300
+    [28] idx=1665: ✅REAL | sum=1.000 | max=0.320
+  >>> 进度: +35已处理, 累计2017真软标签, one-hot=20727, 已保存
+    [36] idx=1341: ✅REAL | sum=1.000 | max=0.300
+    [32] idx=1105: ✅REAL | sum=1.000 | max=0.450
+    [29] idx=1667: ✅REAL | sum=1.000 | max=0.550
+    [38] idx=881: ✅REAL | sum=1.000 | max=0.500
+    [37] idx=1342: ✅REAL | sum=1.000 | max=0.450
+    [33] idx=1109: ✅REAL | sum=1.000 | max=0.400
+    [38] idx=1354: ✅REAL | sum=1.000 | max=0.680
+    [30] idx=1669: ✅REAL | sum=1.000 | max=0.350
+    [39] idx=882: ✅REAL | sum=1.000 | max=0.450
+    [34] idx=1117: ✅REAL | sum=1.000 | max=0.500
+    [40] idx=884: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +40已处理, 累计2208真软标签, one-hot=11782, 已保存
+    [41] idx=887: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +30已处理, 累计1975真软标签, one-hot=35, 已保存
+    [31] idx=1671: ✅REAL | sum=1.000 | max=0.350
+    [35] idx=1119: ✅REAL | sum=1.000 | max=0.350
+    [39] idx=1359: ✅REAL | sum=1.000 | max=0.700
+    [32] idx=1683: ✅REAL | sum=1.000 | max=0.130
+    [42] idx=898: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +35已处理, 累计2279真软标签, one-hot=11505, 已保存
+    [36] idx=1123: ✅REAL | sum=1.000 | max=0.450
+    [40] idx=1360: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +40已处理, 累计2022真软标签, one-hot=20722, 已保存
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/harth_soft.npy
+   Shape: (22744, 6)
+   mean=0.167, mean_max=0.966, mean_entropy=0.101
+    [33] idx=1687: ✅REAL | sum=1.000 | max=0.200
+    [37] idx=1128: ✅REAL | sum=1.000 | max=0.520
+    [43] idx=899: ✅REAL | sum=1.000 | max=0.350
+    [34] idx=1697: ✅REAL | sum=1.000 | max=0.550
+    [38] idx=1130: ✅REAL | sum=1.000 | max=0.550
+    [39] idx=1135: ✅REAL | sum=1.000 | max=0.650
+    [44] idx=903: ✅REAL | sum=1.000 | max=0.500
+    [40] idx=1140: ✅REAL | sum=1.000 | max=0.350
+    [35] idx=1698: ✅REAL | sum=1.000 | max=0.347
+    [45] idx=911: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +40已处理, 累计2284真软标签, one-hot=11500, 已保存
+    [41] idx=1141: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +35已处理, 累计1980真软标签, one-hot=35, 已保存
+    [36] idx=1705: ✅REAL | sum=1.000 | max=0.450
+    [42] idx=1142: ✅REAL | sum=1.000 | max=0.450
+    [37] idx=1707: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +45已处理, 累计2213真软标签, one-hot=11777, 已保存
+    [46] idx=913: ✅REAL | sum=1.000 | max=0.550
+    [43] idx=1144: ✅REAL | sum=1.000 | max=0.500
+    [47] idx=915: ✅REAL | sum=1.000 | max=0.350
+    [44] idx=1150: ✅REAL | sum=1.000 | max=0.350
+    [48] idx=919: ✅REAL | sum=1.000 | max=0.650
+    [49] idx=921: ✅REAL | sum=1.000 | max=0.550
+    [45] idx=1155: ✅REAL | sum=1.000 | max=0.350
+    [38] idx=1728: ✅REAL | sum=1.000 | max=0.420
+  >>> 进度: +45已处理, 累计2289真软标签, one-hot=11495, 已保存
+    [46] idx=1160: ✅REAL | sum=1.000 | max=0.450
+    [50] idx=926: ✅REAL | sum=1.000 | max=0.550
+    [47] idx=1165: ✅REAL | sum=1.000 | max=0.500
+    [39] idx=1729: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +50已处理, 累计2218真软标签, one-hot=11772, 已保存
+    [51] idx=930: ✅REAL | sum=1.000 | max=0.400
+    [48] idx=1177: ✅REAL | sum=1.000 | max=0.450
+    [52] idx=939: ✅REAL | sum=1.000 | max=0.650
+    [40] idx=1733: ✅REAL | sum=1.000 | max=0.645
+    [53] idx=940: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +40已处理, 累计1985真软标签, one-hot=35, 已保存
+    [41] idx=1734: ✅REAL | sum=1.000 | max=0.200
+    [49] idx=1182: ✅REAL | sum=1.000 | max=0.298
+    [54] idx=943: ✅REAL | sum=1.000 | max=0.450
+    [55] idx=946: ✅REAL | sum=1.000 | max=0.680
+    [50] idx=1195: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +55已处理, 累计2223真软标签, one-hot=11767, 已保存
+    [56] idx=947: ✅REAL | sum=1.000 | max=0.700
+    [42] idx=1737: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +50已处理, 累计2294真软标签, one-hot=11490, 已保存
+    [51] idx=1198: ✅REAL | sum=1.000 | max=0.350
+    [43] idx=1740: ✅REAL | sum=1.000 | max=0.450
+    [52] idx=1210: ✅REAL | sum=1.000 | max=0.450
+    [57] idx=952: ✅REAL | sum=1.000 | max=0.450
+    [58] idx=954: ✅REAL | sum=1.000 | max=0.550
+    [53] idx=1212: ✅REAL | sum=1.000 | max=0.400
+    [44] idx=1743: ✅REAL | sum=1.000 | max=0.790
+    [59] idx=955: ✅REAL | sum=1.000 | max=0.550
+    [45] idx=1748: ✅REAL | sum=1.000 | max=0.650
+    [54] idx=1218: ✅REAL | sum=1.000 | max=0.500
+    [60] idx=963: ✅REAL | sum=1.000 | max=0.550
+    [55] idx=1224: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +45已处理, 累计1990真软标签, one-hot=35, 已保存
+    [46] idx=1756: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +55已处理, 累计2299真软标签, one-hot=11485, 已保存
+    [56] idx=1226: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +60已处理, 累计2228真软标签, one-hot=11762, 已保存
+    [61] idx=964: ✅REAL | sum=1.000 | max=0.700
+    [57] idx=1233: ✅REAL | sum=1.000 | max=0.700
+    [47] idx=1762: ✅REAL | sum=1.000 | max=0.450
+    [62] idx=969: ✅REAL | sum=1.000 | max=0.450
+    [48] idx=1769: ✅REAL | sum=1.000 | max=0.360
+    [58] idx=1238: ✅REAL | sum=1.000 | max=0.400
+    [63] idx=970: ✅REAL | sum=1.000 | max=0.550
+    [59] idx=1242: ✅REAL | sum=1.000 | max=0.300
+    [49] idx=1781: ✅REAL | sum=1.000 | max=0.412
+    [64] idx=971: ✅REAL | sum=1.000 | max=0.550
+    [60] idx=1248: ✅REAL | sum=1.000 | max=0.550
+    [65] idx=980: ✅REAL | sum=1.000 | max=0.700
+    [50] idx=1784: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +60已处理, 累计2304真软标签, one-hot=11480, 已保存
+    [61] idx=1249: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +50已处理, 累计1995真软标签, one-hot=35, 已保存
+    [51] idx=1792: ✅REAL | sum=1.000 | max=0.429
+  >>> 进度: +65已处理, 累计2233真软标签, one-hot=11757, 已保存
+    [66] idx=982: ✅REAL | sum=1.000 | max=0.610
+    [62] idx=1253: ✅REAL | sum=1.000 | max=0.400
+    [67] idx=985: ✅REAL | sum=1.000 | max=0.650
+    [52] idx=1795: ✅REAL | sum=1.000 | max=0.350
+    [63] idx=1259: ✅REAL | sum=1.000 | max=0.524
+    [64] idx=1271: ✅REAL | sum=1.000 | max=0.500
+    [68] idx=987: ✅REAL | sum=1.000 | max=0.450
+    [53] idx=1797: ✅REAL | sum=1.000 | max=0.600
+    [65] idx=1274: ✅REAL | sum=1.000 | max=0.350
+    [69] idx=1003: ✅REAL | sum=1.000 | max=0.600
+    [54] idx=1805: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +65已处理, 累计2309真软标签, one-hot=11475, 已保存
+    [66] idx=1278: ✅REAL | sum=1.000 | max=0.400
+    [70] idx=1006: ✅REAL | sum=1.000 | max=0.800
+    [55] idx=1806: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +70已处理, 累计2238真软标签, one-hot=11752, 已保存
+    [71] idx=1007: ✅REAL | sum=1.000 | max=0.450
+    [67] idx=1279: ✅REAL | sum=1.000 | max=0.554
+    [68] idx=1281: ✅REAL | sum=1.000 | max=0.550
+    [72] idx=1009: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +55已处理, 累计2000真软标签, one-hot=35, 已保存
+    [56] idx=1816: ✅REAL | sum=1.000 | max=0.150
+    [69] idx=1289: ✅REAL | sum=1.000 | max=0.350
+    [73] idx=1011: ✅REAL | sum=1.000 | max=0.450
+    [57] idx=1820: ✅REAL | sum=1.000 | max=0.350
+    [74] idx=1017: ✅REAL | sum=1.000 | max=0.450
+    [70] idx=1292: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +70已处理, 累计2314真软标签, one-hot=11470, 已保存
+    [71] idx=1298: ✅REAL | sum=1.000 | max=0.450
+    [58] idx=1823: ✅REAL | sum=1.000 | max=0.350
+    [75] idx=1020: ✅REAL | sum=1.000 | max=0.450
+    [72] idx=1299: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +75已处理, 累计2243真软标签, one-hot=11747, 已保存
+    [76] idx=1028: ✅REAL | sum=1.000 | max=0.750
+    [59] idx=1831: ✅REAL | sum=1.000 | max=0.700
+    [73] idx=1305: ✅REAL | sum=1.000 | max=0.600
+    [74] idx=1310: ✅REAL | sum=1.000 | max=0.600
+    [60] idx=1836: ✅REAL | sum=1.000 | max=0.200
+    [75] idx=1311: ✅REAL | sum=1.000 | max=0.500
+    [77] idx=1029: ✅REAL | sum=1.000 | max=0.750
+  >>> 进度: +60已处理, 累计2005真软标签, one-hot=35, 已保存
+    [61] idx=1853: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +75已处理, 累计2319真软标签, one-hot=11465, 已保存
+    [76] idx=1318: ✅REAL | sum=1.000 | max=0.400
+    [78] idx=1036: ✅REAL | sum=1.000 | max=0.650
+    [77] idx=1324: ✅REAL | sum=1.000 | max=0.350
+    [79] idx=1037: ✅REAL | sum=1.000 | max=0.650
+    [78] idx=1329: ✅REAL | sum=1.000 | max=0.450
+    [62] idx=1858: ✅REAL | sum=1.000 | max=0.450
+    [80] idx=1046: ✅REAL | sum=1.000 | max=0.450
+    [79] idx=1332: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +80已处理, 累计2248真软标签, one-hot=11742, 已保存
+    [81] idx=1054: ✅REAL | sum=1.000 | max=0.400
+    [63] idx=1863: ✅REAL | sum=1.000 | max=0.250
+    [82] idx=1055: ✅REAL | sum=1.000 | max=0.450
+    [80] idx=1337: ✅REAL | sum=1.000 | max=0.550
+    [64] idx=1866: ✅REAL | sum=1.000 | max=0.700
+    [83] idx=1070: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +80已处理, 累计2324真软标签, one-hot=11460, 已保存
+    [81] idx=1339: ✅REAL | sum=1.000 | max=0.500
+    [65] idx=1868: ✅REAL | sum=1.000 | max=0.350
+    [82] idx=1340: ✅REAL | sum=1.000 | max=0.630
+    [84] idx=1072: ✅REAL | sum=1.000 | max=0.450
+    [85] idx=1077: ✅REAL | sum=1.000 | max=0.700
+    [83] idx=1348: ✅REAL | sum=1.000 | max=0.280
+  >>> 进度: +65已处理, 累计2010真软标签, one-hot=35, 已保存
+    [66] idx=1870: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +85已处理, 累计2253真软标签, one-hot=11737, 已保存
+    [86] idx=1079: ✅REAL | sum=1.000 | max=0.550
+    [84] idx=1349: ✅REAL | sum=1.000 | max=0.550
+    [85] idx=1356: ✅REAL | sum=1.000 | max=0.400
+    [67] idx=1873: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +85已处理, 累计2329真软标签, one-hot=11455, 已保存
+    [86] idx=1358: ✅REAL | sum=1.000 | max=0.500
+    [87] idx=1080: ✅REAL | sum=1.000 | max=0.780
+    [88] idx=1083: ✅REAL | sum=1.000 | max=0.714
+    [68] idx=1886: ✅REAL | sum=1.000 | max=0.200
+    [87] idx=1368: ✅REAL | sum=1.000 | max=0.550
+    [89] idx=1089: ✅REAL | sum=1.000 | max=0.600
+    [88] idx=1373: ✅REAL | sum=1.000 | max=0.350
+    [69] idx=1892: ✅REAL | sum=1.000 | max=0.350
+    [90] idx=1093: ✅REAL | sum=1.000 | max=0.700
+    [89] idx=1375: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +90已处理, 累计2258真软标签, one-hot=11732, 已保存
+    [91] idx=1095: ✅REAL | sum=1.000 | max=0.400
+    [90] idx=1376: ✅REAL | sum=1.000 | max=0.450
+    [92] idx=1105: ✅REAL | sum=1.000 | max=0.450
+    [70] idx=1900: ✅REAL | sum=1.000 | max=0.340
+    [93] idx=1106: ✅REAL | sum=1.000 | max=0.800
+  >>> 进度: +90已处理, 累计2334真软标签, one-hot=11450, 已保存
+    [91] idx=1379: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +70已处理, 累计2015真软标签, one-hot=35, 已保存
+    [71] idx=1906: ✅REAL | sum=1.000 | max=0.450
+    [94] idx=1112: ✅REAL | sum=1.000 | max=0.400
+    [92] idx=1385: ✅REAL | sum=1.000 | max=0.500
+    [72] idx=1907: ✅REAL | sum=1.000 | max=0.354
+    [95] idx=1113: ✅REAL | sum=1.000 | max=0.550
+    [93] idx=1389: ✅REAL | sum=1.000 | max=0.500
+    [73] idx=1913: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +95已处理, 累计2263真软标签, one-hot=11727, 已保存
+    [96] idx=1115: ✅REAL | sum=1.000 | max=0.400
+    [94] idx=1394: ✅REAL | sum=1.000 | max=0.600
+    [74] idx=1915: ✅REAL | sum=1.000 | max=0.550
+    [95] idx=1395: ✅REAL | sum=1.000 | max=0.650
+    [97] idx=1119: ✅REAL | sum=1.000 | max=0.800
+  >>> 进度: +95已处理, 累计2339真软标签, one-hot=11445, 已保存
+    [96] idx=1398: ✅REAL | sum=1.000 | max=0.350
+    [98] idx=1121: ✅REAL | sum=1.000 | max=0.450
+    [75] idx=1925: ✅REAL | sum=1.000 | max=0.550
+    [97] idx=1402: ✅REAL | sum=1.000 | max=0.500
+    [99] idx=1122: ✅REAL | sum=1.000 | max=0.400
+    [98] idx=1404: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +75已处理, 累计2020真软标签, one-hot=35, 已保存
+    [76] idx=1926: ✅REAL | sum=1.000 | max=0.450
+    [100] idx=1123: ✅REAL | sum=1.000 | max=0.600
+    [99] idx=1407: ✅REAL | sum=1.000 | max=0.600
+    [77] idx=1928: ✅REAL | sum=1.000 | max=0.470
+    [100] idx=1408: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +100已处理, 累计2268真软标签, one-hot=11722, 已保存
+    [101] idx=1124: ✅REAL | sum=1.000 | max=0.600
+    [78] idx=1935: ✅REAL | sum=1.000 | max=0.408
+    [102] idx=1128: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +100已处理, 累计2344真软标签, one-hot=11440, 已保存
+    [101] idx=1409: ✅REAL | sum=1.000 | max=0.400
+    [79] idx=1937: ✅REAL | sum=1.000 | max=0.450
+    [102] idx=1412: ✅REAL | sum=1.000 | max=0.400
+    [103] idx=1133: ✅REAL | sum=1.000 | max=0.450
+    [103] idx=1417: ✅REAL | sum=1.000 | max=0.450
+    [80] idx=1940: ✅REAL | sum=1.000 | max=0.286
+    [104] idx=1419: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +80已处理, 累计2025真软标签, one-hot=35, 已保存
+    [81] idx=1952: ✅REAL | sum=1.000 | max=0.372
+    [104] idx=1136: ✅REAL | sum=1.000 | max=0.800
+    [105] idx=1421: ✅REAL | sum=1.000 | max=0.450
+    [105] idx=1141: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +105已处理, 累计2349真软标签, one-hot=11435, 已保存
+    [106] idx=1426: ✅REAL | sum=1.000 | max=0.350
+    [82] idx=1958: ✅REAL | sum=1.000 | max=0.350
+    [107] idx=1427: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +105已处理, 累计2273真软标签, one-hot=11717, 已保存
+    [106] idx=1146: ✅REAL | sum=1.000 | max=0.530
+    [83] idx=1961: ✅REAL | sum=1.000 | max=0.500
+    [108] idx=1428: ✅REAL | sum=1.000 | max=0.450
+    [107] idx=1147: ✅REAL | sum=1.000 | max=0.500
+    [84] idx=1962: ✅REAL | sum=1.000 | max=0.400
+    [109] idx=1440: ✅REAL | sum=1.000 | max=0.450
+    [108] idx=1150: ✅REAL | sum=1.000 | max=0.930
+    [109] idx=1152: ✅REAL | sum=1.000 | max=0.600
+    [110] idx=1441: ✅REAL | sum=1.000 | max=0.400
+    [85] idx=1966: ✅REAL | sum=1.000 | max=0.300
+    [110] idx=1158: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +85已处理, 累计2030真软标签, one-hot=35, 已保存
+    [86] idx=1971: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +110已处理, 累计2354真软标签, one-hot=11430, 已保存
+    [111] idx=1450: ✅REAL | sum=1.000 | max=0.261
+  >>> 进度: +110已处理, 累计2277真软标签, one-hot=11712, 已保存
+    [111] idx=1161: ✅REAL | sum=1.000 | max=0.600
+    [112] idx=1166: ✅REAL | sum=1.000 | max=0.350
+    [87] idx=1975: ✅REAL | sum=1.000 | max=0.300
+    [112] idx=1451: ✅REAL | sum=1.000 | max=0.450
+    [113] idx=1167: ✅REAL | sum=1.000 | max=0.550
+    [113] idx=1458: ✅REAL | sum=1.000 | max=0.550
+    [88] idx=1978: ✅REAL | sum=1.000 | max=0.350
+    [114] idx=1170: ✅REAL | sum=1.000 | max=0.550
+    [89] idx=1986: ✅REAL | sum=1.000 | max=0.550
+    [114] idx=1459: ✅REAL | sum=1.000 | max=0.350
+    [115] idx=1174: ✅REAL | sum=1.000 | max=0.550
+    [115] idx=1462: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +115已处理, 累计2282真软标签, one-hot=11707, 已保存
+    [116] idx=1175: ✅REAL | sum=1.000 | max=0.400
+    [90] idx=1991: ✅REAL | sum=1.000 | max=0.380
+  >>> 进度: +115已处理, 累计2359真软标签, one-hot=11425, 已保存
+    [116] idx=1463: ✅REAL | sum=1.000 | max=0.450
+    [117] idx=1178: ✅REAL | sum=1.000 | max=0.400
+    [117] idx=1464: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +90已处理, 累计2035真软标签, one-hot=35, 已保存
+    [91] idx=1994: ✅REAL | sum=1.000 | max=0.350
+    [118] idx=1181: ✅REAL | sum=1.000 | max=0.600
+    [118] idx=1466: ✅REAL | sum=1.000 | max=0.450
+    [119] idx=1183: ✅REAL | sum=1.000 | max=0.550
+    [119] idx=1470: ✅REAL | sum=1.000 | max=0.650
+    [120] idx=1186: ✅REAL | sum=1.000 | max=0.450
+    [120] idx=1471: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +120已处理, 累计2287真软标签, one-hot=11702, 已保存
+    [121] idx=1190: ✅REAL | sum=1.000 | max=0.550
+    [92] idx=1999: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +120已处理, 累计2364真软标签, one-hot=11420, 已保存
+    [121] idx=1472: ✅REAL | sum=1.000 | max=0.350
+    [93] idx=2003: ✅REAL | sum=1.000 | max=0.450
+    [122] idx=1193: ✅REAL | sum=1.000 | max=0.450
+    [122] idx=1484: ✅REAL | sum=1.000 | max=0.500
+    [94] idx=2005: ✅REAL | sum=1.000 | max=0.550
+    [123] idx=1486: ✅REAL | sum=1.000 | max=0.600
+    [123] idx=1202: ✅REAL | sum=1.000 | max=0.450
+    [124] idx=1489: ✅REAL | sum=1.000 | max=0.300
+    [95] idx=2012: ✅REAL | sum=1.000 | max=0.550
+    [124] idx=1212: ✅REAL | sum=1.000 | max=0.580
+============================================================
+ 软标签生成配置
+ 每类采样率: 35%
+ 每类上限: 400
+ 数据集: pamap2, uci_har, harth, uci_har_new, motionsense, motionsense_dm, gait, wisdm, kuhar
+ 模式: 后台
+============================================================
+============================================================
+ 软标签生成配置
+ 每类采样率: 35%
+ 每类上限: 400
+ 数据集: pamap2, uci_har, harth, uci_har_new, motionsense, motionsense_dm, gait, wisdm, kuhar
+ 模式: 后台
+============================================================
+启动: python3 scripts/gen_soft_labels_unified.py pamap2 --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py uci_har --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py harth --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py uci_har_new --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py motionsense --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py motionsense_dm --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py gait --ratio 0.35 --limit 400
+启动: python3 scripts/gen_soft_labels_unified.py wisdm --ratio 0.35 --limit 400
+启动: python3 scripts/gen_kuhar_parallel.py start --ratio 0.35 --limit 400
+
+共启动 9 个进程，监控中（每30秒检查一次）...
+
+[pamap2] 完成 (exit=0)
+[uci_har] 完成 (exit=0)
+[gait] 完成 (exit=0)
+[kuhar] 完成 (exit=0)
+  剩余: harth, uci_har_new, motionsense, motionsense_dm, wisdm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm, wisdm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm, wisdm
+[wisdm] 完成 (exit=0)
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+  剩余: harth, uci_har_new, motionsense, motionsense_dm
+[harth] 完成 (exit=0)
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+    [125] idx=1492: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +95已处理, 累计2040真软标签, one-hot=35, 已保存
+    [96] idx=2018: ✅REAL | sum=1.000 | max=0.680
+    [125] idx=1214: ✅REAL | sum=1.000 | max=0.720
+    [97] idx=2022: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +125已处理, 累计2369真软标签, one-hot=11415, 已保存
+    [126] idx=1495: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +125已处理, 累计2292真软标签, one-hot=11697, 已保存
+    [126] idx=1217: ✅REAL | sum=1.000 | max=0.350
+    [98] idx=2024: ✅REAL | sum=1.000 | max=0.400
+    [127] idx=1496: ✅REAL | sum=1.000 | max=0.350
+    [99] idx=2032: ✅REAL | sum=1.000 | max=0.450
+    [127] idx=1223: ✅REAL | sum=1.000 | max=0.450
+    [128] idx=1503: ✅REAL | sum=1.000 | max=0.450
+    [100] idx=2042: ✅REAL | sum=1.000 | max=0.596
+    [128] idx=1224: ✅REAL | sum=1.000 | max=0.400
+    [129] idx=1505: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +100已处理, 累计2045真软标签, one-hot=35, 已保存
+    [101] idx=2050: ✅REAL | sum=1.000 | max=0.420
+    [130] idx=1508: ✅REAL | sum=1.000 | max=0.350
+    [129] idx=1226: ✅REAL | sum=1.000 | max=0.400
+    [130] idx=1229: ✅REAL | sum=1.000 | max=0.750
+  >>> 进度: +130已处理, 累计2374真软标签, one-hot=11410, 已保存
+    [131] idx=1521: ✅REAL | sum=1.000 | max=0.300
+    [102] idx=2052: ✅REAL | sum=1.000 | max=0.350
+    [132] idx=1524: ✅REAL | sum=1.000 | max=0.300
+  >>> 进度: +130已处理, 累计2297真软标签, one-hot=11692, 已保存
+    [131] idx=1230: ✅REAL | sum=1.000 | max=0.600
+    [103] idx=2053: ✅REAL | sum=1.000 | max=0.350
+    [104] idx=2057: ✅REAL | sum=1.000 | max=0.545
+    [133] idx=1533: ✅REAL | sum=1.000 | max=0.500
+    [132] idx=1231: ✅REAL | sum=1.000 | max=0.450
+    [134] idx=1535: ✅REAL | sum=1.000 | max=0.500
+    [105] idx=2070: ✅REAL | sum=1.000 | max=0.370
+    [133] idx=1233: ✅REAL | sum=1.000 | max=0.450
+    [135] idx=1536: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +105已处理, 累计2050真软标签, one-hot=35, 已保存
+    [106] idx=2072: ✅REAL | sum=1.000 | max=0.700
+    [134] idx=1238: ✅REAL | sum=1.000 | max=0.480
+    [107] idx=2074: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +135已处理, 累计2379真软标签, one-hot=11405, 已保存
+    [136] idx=1539: ✅REAL | sum=1.000 | max=0.450
+    [108] idx=2090: ✅REAL | sum=1.000 | max=0.361
+    [135] idx=1250: ✅REAL | sum=1.000 | max=0.800
+    [137] idx=1540: ✅REAL | sum=1.000 | max=0.409
+  >>> 进度: +135已处理, 累计2302真软标签, one-hot=11687, 已保存
+    [136] idx=1251: ✅REAL | sum=1.000 | max=0.350
+    [138] idx=1543: ✅REAL | sum=1.000 | max=0.450
+    [137] idx=1253: ✅REAL | sum=1.000 | max=0.350
+    [109] idx=2106: ✅REAL | sum=1.000 | max=0.550
+    [138] idx=1254: ✅REAL | sum=1.000 | max=0.550
+    [139] idx=1551: ✅REAL | sum=1.000 | max=0.550
+    [110] idx=2111: ✅REAL | sum=1.000 | max=0.240
+    [139] idx=1267: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +110已处理, 累计2055真软标签, one-hot=35, 已保存
+    [111] idx=2114: ✅REAL | sum=1.000 | max=0.500
+    [140] idx=1552: ✅REAL | sum=1.000 | max=0.450
+    [140] idx=1282: ✅REAL | sum=1.000 | max=0.750
+  >>> 进度: +140已处理, 累计2384真软标签, one-hot=11400, 已保存
+    [141] idx=1553: ✅REAL | sum=1.000 | max=0.350
+    [112] idx=2121: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +140已处理, 累计2307真软标签, one-hot=11682, 已保存
+    [141] idx=1284: ✅REAL | sum=1.000 | max=0.350
+    [142] idx=1562: ✅REAL | sum=1.000 | max=0.300
+    [113] idx=2123: ✅REAL | sum=1.000 | max=0.150
+    [143] idx=1570: ✅REAL | sum=1.000 | max=0.610
+    [142] idx=1288: ✅REAL | sum=1.000 | max=0.480
+    [144] idx=1576: ✅REAL | sum=1.000 | max=0.350
+    [143] idx=1293: ✅REAL | sum=1.000 | max=0.700
+
+    ⚠️  [1/2] JSON解析失败, content长度=981, 等待10秒后重试...
+    [114] idx=2127: ✅REAL | sum=1.000 | max=0.570
+    [145] idx=1580: ✅REAL | sum=1.000 | max=0.400
+    [144] idx=1295: ✅REAL | sum=1.000 | max=0.800
+  >>> 进度: +145已处理, 累计2389真软标签, one-hot=11395, 已保存
+    [146] idx=1584: ✅REAL | sum=1.000 | max=0.300
+    [115] idx=2134: ✅REAL | sum=1.000 | max=0.700
+    [145] idx=1300: ✅REAL | sum=1.000 | max=0.550
+    [147] idx=1585: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +115已处理, 累计2060真软标签, one-hot=35, 已保存
+    [116] idx=2136: ✅REAL | sum=1.000 | max=0.530
+  >>> 进度: +145已处理, 累计2312真软标签, one-hot=11677, 已保存
+    [146] idx=1301: ✅REAL | sum=1.000 | max=0.650
+    [148] idx=1589: ✅REAL | sum=1.000 | max=0.350
+    [147] idx=1305: ✅REAL | sum=1.000 | max=0.600
+    [149] idx=1593: ✅REAL | sum=1.000 | max=0.450
+    [148] idx=1306: ✅REAL | sum=1.000 | max=0.500
+    [117] idx=2137: ✅REAL | sum=1.000 | max=0.350
+    [150] idx=1597: ✅REAL | sum=1.000 | max=0.450
+    [149] idx=1307: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +150已处理, 累计2394真软标签, one-hot=11390, 已保存
+    [151] idx=1605: ✅REAL | sum=1.000 | max=0.350
+    [118] idx=2147: ✅REAL | sum=1.000 | max=0.350
+    [150] idx=1308: ✅REAL | sum=1.000 | max=0.650
+    [152] idx=1606: ✅REAL | sum=1.000 | max=0.500
+    [119] idx=2148: ✅REAL | sum=1.000 | max=0.360
+    [153] idx=1608: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +150已处理, 累计2317真软标签, one-hot=11672, 已保存
+    [151] idx=1309: ✅REAL | sum=1.000 | max=0.450
+    [120] idx=2157: ✅REAL | sum=1.000 | max=0.400
+    [154] idx=1609: ✅REAL | sum=1.000 | max=0.570
+    [152] idx=1314: ✅REAL | sum=1.000 | max=0.350
+    [155] idx=1611: ✅REAL | sum=1.000 | max=0.460
+  >>> 进度: +155已处理, 累计2399真软标签, one-hot=11385, 已保存
+    [156] idx=1613: ✅REAL | sum=1.000 | max=0.450
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/motionsense_dm_soft.npy
+   Shape: (13784, 6)
+   mean=0.167, mean_max=0.907, mean_entropy=0.223
+  >>> 进度: +120已处理, 累计2065真软标签, one-hot=35, 已保存
+
+    ⚠️  [1/2] JSON解析失败, content长度=315, 等待10秒后重试...
+    [121] idx=2159: ✅REAL | sum=1.000 | max=0.198
+    [153] idx=1324: ✅REAL | sum=1.000 | max=0.500
+    [154] idx=1326: ✅REAL | sum=1.000 | max=0.600
+    [122] idx=2166: ✅REAL | sum=1.000 | max=0.100
+    [123] idx=2174: ✅REAL | sum=1.000 | max=0.650
+    [155] idx=1330: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +155已处理, 累计2322真软标签, one-hot=11667, 已保存
+    [156] idx=1332: ✅REAL | sum=1.000 | max=0.450
+    [124] idx=2179: ✅REAL | sum=1.000 | max=0.450
+    [157] idx=1345: ✅REAL | sum=1.000 | max=0.700
+    [125] idx=2180: ✅REAL | sum=1.000 | max=0.750
+    [158] idx=1346: ✅REAL | sum=1.000 | max=0.400
+  >>> 进度: +125已处理, 累计2070真软标签, one-hot=35, 已保存
+    [126] idx=2184: ✅REAL | sum=1.000 | max=0.400
+    [159] idx=1349: ✅REAL | sum=1.000 | max=0.480
+    [127] idx=2191: ✅REAL | sum=1.000 | max=0.250
+    [160] idx=1371: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +160已处理, 累计2327真软标签, one-hot=11662, 已保存
+    [161] idx=1374: ✅REAL | sum=1.000 | max=0.600
+    [128] idx=2209: ✅REAL | sum=1.000 | max=0.650
+
+
+  Class 6 (SIT_TO_STAND): 目标13 (0已有, 13待生成)
+    [162] idx=1377: ✅REAL | sum=1.000 | max=0.750
+    [163] idx=1384: ✅REAL | sum=1.000 | max=0.850
+    [129] idx=385: ✅REAL | sum=1.000 | max=0.637
+    [164] idx=1391: ✅REAL | sum=1.000 | max=0.700
+    [130] idx=581: ✅REAL | sum=1.000 | max=0.389
+    [165] idx=1393: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +165已处理, 累计2332真软标签, one-hot=11657, 已保存
+    [166] idx=1395: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +130已处理, 累计2075真软标签, one-hot=35, 已保存
+    [131] idx=759: ✅REAL | sum=1.000 | max=0.450
+    [167] idx=1399: ✅REAL | sum=1.000 | max=0.450
+    [132] idx=803: ✅REAL | sum=1.000 | max=0.400
+    [133] idx=872: ✅REAL | sum=1.000 | max=0.440
+    [168] idx=1402: ✅REAL | sum=1.000 | max=0.780
+    [169] idx=1404: ✅REAL | sum=1.000 | max=0.550
+    [134] idx=874: ✅REAL | sum=1.000 | max=0.590
+    [170] idx=1410: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +170已处理, 累计2337真软标签, one-hot=11652, 已保存
+    [171] idx=1411: ✅REAL | sum=1.000 | max=0.750
+    [135] idx=1053: ✅REAL | sum=1.000 | max=0.554
+    [172] idx=1413: ✅REAL | sum=1.000 | max=0.650
+    [173] idx=1414: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +135已处理, 累计2080真软标签, one-hot=35, 已保存
+    [136] idx=1285: ✅REAL | sum=1.000 | max=0.380
+    [174] idx=1416: ✅REAL | sum=1.000 | max=0.700
+    [137] idx=1395: ✅REAL | sum=1.000 | max=0.550
+    [138] idx=1459: ✅REAL | sum=1.000 | max=0.350
+    [175] idx=1420: ✅REAL | sum=1.000 | max=0.350
+    [139] idx=1888: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +175已处理, 累计2342真软标签, one-hot=11647, 已保存
+    [176] idx=1424: ✅REAL | sum=1.000 | max=0.680
+    [140] idx=1934: ✅REAL | sum=1.000 | max=0.730
+    [177] idx=1425: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +140已处理, 累计2085真软标签, one-hot=35, 已保存
+    [141] idx=1945: ✅REAL | sum=1.000 | max=0.250
+
+
+  Class 7 (STAND_TO_SIT): 目标6 (0已有, 6待生成)
+    [178] idx=1428: ✅REAL | sum=1.000 | max=0.650
+    [179] idx=1431: ✅REAL | sum=1.000 | max=0.600
+    [180] idx=1432: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +180已处理, 累计2347真软标签, one-hot=11642, 已保存
+    [181] idx=1436: ✅REAL | sum=1.000 | max=0.700
+    [142] idx=524: ✅REAL | sum=1.000 | max=0.300
+    [143] idx=677: ✅REAL | sum=1.000 | max=0.450
+    [182] idx=1440: ✅REAL | sum=1.000 | max=0.400
+    [183] idx=1443: ✅REAL | sum=1.000 | max=0.400
+    [144] idx=1800: ✅REAL | sum=1.000 | max=0.286
+    [184] idx=1445: ✅REAL | sum=1.000 | max=0.300
+    [145] idx=1802: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +145已处理, 累计2090真软标签, one-hot=35, 已保存
+    [146] idx=1832: ✅REAL | sum=1.000 | max=0.550
+    [185] idx=1448: ✅REAL | sum=1.000 | max=0.600
+    [147] idx=2092: ✅REAL | sum=1.000 | max=0.350
+
+
+  Class 8 (SIT_TO_LIE): 目标21 (0已有, 21待生成)
+  >>> 进度: +185已处理, 累计2352真软标签, one-hot=11637, 已保存
+    [186] idx=1449: ✅REAL | sum=1.000 | max=0.580
+    [187] idx=1452: ✅REAL | sum=1.000 | max=0.450
+    [148] idx=357: ✅REAL | sum=1.000 | max=0.400
+    [188] idx=1453: ✅REAL | sum=1.000 | max=0.550
+    [149] idx=599: ✅REAL | sum=1.000 | max=0.550
+    [189] idx=1455: ✅REAL | sum=1.000 | max=0.500
+    [190] idx=1463: ✅REAL | sum=1.000 | max=0.550
+    [150] idx=638: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +190已处理, 累计2357真软标签, one-hot=11632, 已保存
+    [191] idx=1464: ✅REAL | sum=1.000 | max=0.500
+  >>> 进度: +150已处理, 累计2095真软标签, one-hot=35, 已保存
+    [151] idx=668: ✅REAL | sum=1.000 | max=0.600
+    [192] idx=1469: ✅REAL | sum=1.000 | max=0.600
+    [152] idx=778: ✅REAL | sum=1.000 | max=0.300
+    [193] idx=1471: ✅REAL | sum=1.000 | max=0.490
+    [194] idx=1482: ✅REAL | sum=1.000 | max=0.500
+    [195] idx=1483: ✅REAL | sum=1.000 | max=0.450
+    [153] idx=875: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +195已处理, 累计2362真软标签, one-hot=11627, 已保存
+    [196] idx=1485: ✅REAL | sum=1.000 | max=0.550
+    [197] idx=1488: ✅REAL | sum=1.000 | max=0.600
+    [154] idx=1174: ✅REAL | sum=1.000 | max=0.150
+    [198] idx=1500: ✅REAL | sum=1.000 | max=0.400
+    [155] idx=1265: ✅REAL | sum=1.000 | max=0.700
+    [199] idx=1501: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +155已处理, 累计2100真软标签, one-hot=35, 已保存
+    [156] idx=1276: ✅REAL | sum=1.000 | max=0.530
+    [200] idx=1502: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +200已处理, 累计2367真软标签, one-hot=11622, 已保存
+    [201] idx=1504: ✅REAL | sum=1.000 | max=0.550
+    [157] idx=1278: ✅REAL | sum=1.000 | max=0.450
+    [202] idx=1506: ✅REAL | sum=1.000 | max=0.450
+    [158] idx=1341: ✅REAL | sum=1.000 | max=0.400
+    [203] idx=1508: ✅REAL | sum=1.000 | max=0.450
+    [159] idx=1345: ✅REAL | sum=1.000 | max=0.450
+    [160] idx=1367: ✅REAL | sum=1.000 | max=0.280
+    [204] idx=1510: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +160已处理, 累计2105真软标签, one-hot=35, 已保存
+    [161] idx=1451: ✅REAL | sum=1.000 | max=0.600
+    [205] idx=1520: ✅REAL | sum=1.000 | max=0.650
+    [162] idx=1529: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +205已处理, 累计2372真软标签, one-hot=11617, 已保存
+    [206] idx=1521: ✅REAL | sum=1.000 | max=0.550
+    [207] idx=1530: ✅REAL | sum=1.000 | max=0.500
+    [163] idx=1625: ✅REAL | sum=1.000 | max=0.300
+    [208] idx=1539: ✅REAL | sum=1.000 | max=0.720
+    [209] idx=1542: ✅REAL | sum=1.000 | max=0.600
+    [164] idx=1766: ✅REAL | sum=1.000 | max=0.450
+    [210] idx=1545: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +210已处理, 累计2377真软标签, one-hot=11612, 已保存
+    [211] idx=1549: ✅REAL | sum=1.000 | max=0.500
+    [165] idx=1875: ✅REAL | sum=1.000 | max=0.350
+    [212] idx=1555: ✅REAL | sum=1.000 | max=0.700
+    [213] idx=1557: ✅REAL | sum=1.000 | max=0.550
+    [214] idx=1567: ✅REAL | sum=1.000 | max=0.650
+    [215] idx=1571: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +165已处理, 累计2110真软标签, one-hot=35, 已保存
+    [166] idx=1953: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +215已处理, 累计2382真软标签, one-hot=11607, 已保存
+    [216] idx=1573: ✅REAL | sum=1.000 | max=0.550
+    [167] idx=1979: ✅REAL | sum=1.000 | max=0.440
+    [168] idx=2009: ✅REAL | sum=1.000 | max=0.450
+
+
+  Class 9 (LIE_TO_SIT): 目标16 (0已有, 16待生成)
+    [217] idx=1578: ✅REAL | sum=1.000 | max=0.450
+    [218] idx=1579: ✅REAL | sum=1.000 | max=0.450
+    [169] idx=44: ✅REAL | sum=1.000 | max=0.619
+    [219] idx=1585: ✅REAL | sum=1.000 | max=0.650
+    [170] idx=62: ✅REAL | sum=1.000 | max=0.429
+    [220] idx=1599: ✅REAL | sum=1.000 | max=0.720
+  >>> 进度: +220已处理, 累计2387真软标签, one-hot=11602, 已保存
+    [221] idx=1601: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +170已处理, 累计2115真软标签, one-hot=35, 已保存
+    [171] idx=166: ✅REAL | sum=1.000 | max=0.350
+    [172] idx=305: ✅REAL | sum=1.000 | max=0.500
+    [222] idx=1606: ✅REAL | sum=1.000 | max=0.400
+    [223] idx=1607: ✅REAL | sum=1.000 | max=0.800
+    [173] idx=575: ✅REAL | sum=1.000 | max=0.660
+    [224] idx=1611: ✅REAL | sum=1.000 | max=0.700
+    [225] idx=1613: ✅REAL | sum=1.000 | max=0.650
+    [174] idx=900: ✅REAL | sum=1.000 | max=0.660
+  >>> 进度: +225已处理, 累计2392真软标签, one-hot=11597, 已保存
+    [226] idx=1614: ✅REAL | sum=1.000 | max=0.550
+    [175] idx=1004: ✅REAL | sum=1.000 | max=0.560
+    [227] idx=1615: ✅REAL | sum=1.000 | max=0.550
+  >>> 进度: +175已处理, 累计2120真软标签, one-hot=35, 已保存
+    [176] idx=1059: ✅REAL | sum=1.000 | max=0.600
+    [228] idx=1624: ✅REAL | sum=1.000 | max=0.450
+    [177] idx=1126: ✅REAL | sum=1.000 | max=0.450
+    [229] idx=1627: ✅REAL | sum=1.000 | max=0.700
+    [178] idx=1186: ✅REAL | sum=1.000 | max=0.800
+    [230] idx=1629: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +230已处理, 累计2397真软标签, one-hot=11592, 已保存
+    [231] idx=1631: ✅REAL | sum=1.000 | max=0.550
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/motionsense_soft.npy
+   Shape: (13993, 6)
+   mean=0.167, mean_max=0.931, mean_entropy=0.194
+
+    ⚠️  [1/2] JSON解析失败, content长度=738, 等待10秒后重试...
+    🔄 第1次重试成功 idx=1221
+    [179] idx=1221: ✅REAL | sum=1.000 | max=0.550
+    [180] idx=1242: ✅REAL | sum=1.000 | max=0.351
+  >>> 进度: +180已处理, 累计2125真软标签, one-hot=35, 已保存
+    [181] idx=1406: ✅REAL | sum=1.000 | max=0.300
+    [182] idx=1537: ✅REAL | sum=1.000 | max=0.350
+    [183] idx=1580: ✅REAL | sum=1.000 | max=0.350
+    [184] idx=1694: ✅REAL | sum=1.000 | max=0.450
+
+
+  Class 10 (STAND_TO_LIE): 目标25 (0已有, 25待生成)
+    [185] idx=16: ✅REAL | sum=1.000 | max=0.700
+  >>> 进度: +185已处理, 累计2130真软标签, one-hot=35, 已保存
+    [186] idx=173: ✅REAL | sum=1.000 | max=0.220
+    [187] idx=179: ✅REAL | sum=1.000 | max=0.420
+    [188] idx=348: ✅REAL | sum=1.000 | max=0.539
+    [189] idx=481: ✅REAL | sum=1.000 | max=0.400
+    [190] idx=488: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +190已处理, 累计2135真软标签, one-hot=35, 已保存
+    [191] idx=674: ✅REAL | sum=1.000 | max=0.350
+    [192] idx=689: ✅REAL | sum=1.000 | max=0.650
+    [193] idx=713: ✅REAL | sum=1.000 | max=0.300
+    [194] idx=798: ✅REAL | sum=1.000 | max=0.350
+    [195] idx=934: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +195已处理, 累计2140真软标签, one-hot=35, 已保存
+    [196] idx=1048: ✅REAL | sum=1.000 | max=0.560
+    [197] idx=1082: ✅REAL | sum=1.000 | max=0.630
+    [198] idx=1089: ✅REAL | sum=1.000 | max=0.600
+    [199] idx=1152: ✅REAL | sum=1.000 | max=0.580
+    [200] idx=1245: ✅REAL | sum=1.000 | max=0.820
+  >>> 进度: +200已处理, 累计2145真软标签, one-hot=35, 已保存
+    [201] idx=1382: ✅REAL | sum=1.000 | max=0.717
+    [202] idx=1579: ✅REAL | sum=1.000 | max=0.600
+    [203] idx=1656: ✅REAL | sum=1.000 | max=0.450
+    [204] idx=1658: ✅REAL | sum=1.000 | max=0.450
+    [205] idx=1672: ✅REAL | sum=1.000 | max=0.330
+  >>> 进度: +205已处理, 累计2150真软标签, one-hot=35, 已保存
+    [206] idx=1846: ✅REAL | sum=1.000 | max=0.300
+    [207] idx=1877: ✅REAL | sum=1.000 | max=0.450
+    [208] idx=2154: ✅REAL | sum=1.000 | max=0.570
+    [209] idx=2381: ✅REAL | sum=1.000 | max=0.450
+
+
+  Class 11 (LIE_TO_STAND): 目标16 (0已有, 16待生成)
+    [210] idx=90: ✅REAL | sum=1.000 | max=0.600
+  >>> 进度: +210已处理, 累计2155真软标签, one-hot=35, 已保存
+    [211] idx=278: ✅REAL | sum=1.000 | max=0.550
+    [212] idx=451: ✅REAL | sum=1.000 | max=0.550
+    [213] idx=536: ✅REAL | sum=1.000 | max=0.300
+    [214] idx=782: ✅REAL | sum=1.000 | max=0.450
+    [215] idx=932: ✅REAL | sum=1.000 | max=0.440
+  >>> 进度: +215已处理, 累计2160真软标签, one-hot=35, 已保存
+    [216] idx=1081: ✅REAL | sum=1.000 | max=0.770
+    [217] idx=1113: ✅REAL | sum=1.000 | max=0.083
+    [218] idx=1151: ✅REAL | sum=1.000 | max=0.700
+    [219] idx=1225: ✅REAL | sum=1.000 | max=0.450
+    [220] idx=1259: ✅REAL | sum=1.000 | max=0.450
+  >>> 进度: +220已处理, 累计2165真软标签, one-hot=35, 已保存
+    [221] idx=1363: ✅REAL | sum=1.000 | max=0.700
+    [222] idx=1452: ✅REAL | sum=1.000 | max=0.650
+    [223] idx=1541: ✅REAL | sum=1.000 | max=0.400
+    [224] idx=1619: ✅REAL | sum=1.000 | max=0.450
+    [225] idx=1865: ✅REAL | sum=1.000 | max=0.350
+  >>> 进度: +225已处理, 累计2170真软标签, one-hot=35, 已保存
+
+
+✅ 保存到: /home/fandy/workplace/thesis/results/soft_labels/uci_har_new_soft.npy
+   Shape: (6213, 12)
+   mean=0.083, mean_max=0.815, mean_entropy=0.588
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+  剩余: uci_har_new, motionsense, motionsense_dm
+[motionsense_dm] 完成 (exit=0)
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+  剩余: uci_har_new, motionsense
+[motionsense] 完成 (exit=0)
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+  剩余: uci_har_new
+[uci_har_new] 完成 (exit=0)
+
+所有数据集软标签生成完成！

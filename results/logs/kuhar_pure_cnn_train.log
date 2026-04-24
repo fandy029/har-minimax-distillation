@@ -1,0 +1,46 @@
+
+=== KUHAR - PURE_CNN ===
+Start time: 2026-04-20 15:55:50
+Dataset config: {'classes': 18, 'cn': ['Stand', 'Sit', 'Talk-sit', 'Talk-stand', 'Stand-sit', 'Lay', 'Lay-stand', 'Pick', 'Jump', 'Push-up', 'Sit-up', 'Walk', 'Walk-backwards', 'Walk-circle', 'Run', 'Stair-up', 'Stair-down', 'Table-tennis'], 'loader': 'load_kuhar', 'channels': 8, 'max_train': 20000}
+
+Data: Train=61210, Val=15303, Test=19129
+[Limit] Max train: 20000
+Model: CNN1D, in_dim=128, n_cls=18
+Soft labels: one-hot (pure_cnn mode)
+
+=== Stage 1: 纯CNN训练 (300 epochs) ===
+[S1] ep 10: loss=0.3988 val=77.2% best_val=77.2%
+[S1] ep 20: loss=0.2694 val=81.4% best_val=81.4%
+[S1] ep 30: loss=0.3053 val=73.8% best_val=81.4%
+[S1] ep 40: loss=0.2377 val=81.2% best_val=81.8%
+[S1] ep 50: loss=0.1913 val=83.1% best_val=83.1%
+[S1] ep 60: loss=0.1731 val=83.7% best_val=83.7%
+[S1] ep 70: loss=0.2227 val=81.0% best_val=83.7%
+[S1] ep 80: loss=0.1921 val=82.3% best_val=83.7%
+[S1] ep 90: loss=0.1731 val=82.2% best_val=83.7%
+[S1] ep100: loss=0.1582 val=82.7% best_val=83.7%
+[S1] ep110: loss=0.1420 val=85.0% best_val=85.0%
+[S1] ep120: loss=0.1318 val=84.3% best_val=85.7%
+[S1] ep130: loss=0.1214 val=85.6% best_val=86.2%
+[S1] ep140: loss=0.1178 val=84.8% best_val=86.2%
+[S1] ep150: loss=0.1448 val=85.2% best_val=86.2%
+[S1] ep160: loss=0.1354 val=87.4% best_val=87.5%
+[S1] ep170: loss=0.1207 val=87.4% best_val=88.4%
+[S1] ep180: loss=0.0936 val=89.3% best_val=89.8%
+[S1] ep190: loss=0.0799 val=88.8% best_val=91.3%
+[S1] ep200: loss=0.0691 val=91.6% best_val=91.8%
+[S1] ep210: loss=0.0574 val=91.3% best_val=92.2%
+[S1] ep220: loss=0.0455 val=93.1% best_val=93.1%
+[S1] ep230: loss=0.0356 val=93.3% best_val=93.6%
+[S1] ep240: loss=0.0303 val=93.4% best_val=94.0%
+[S1] ep250: loss=0.0252 val=93.9% best_val=94.0%
+[S1] ep260: loss=0.0230 val=93.6% best_val=94.2%
+[S1] ep270: loss=0.0203 val=94.3% best_val=94.4%
+[S1] ep280: loss=0.0173 val=94.1% best_val=94.4%
+[S1] ep290: loss=0.0164 val=94.2% best_val=94.6%
+[S1] ep300: loss=0.0161 val=94.3% best_val=94.6%
+
+[S1] Final: val=94.56% test=94.18%
+
+Total time: 126.5min
+End time: 2026-04-20 18:02:29

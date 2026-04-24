@@ -1,0 +1,50 @@
+
+=== MOTIONSENSE - V2 ===
+Start time: 2026-04-17 19:36:32
+Dataset config: {'classes': 6, 'cn': ['downstairs', 'jogging', 'sitting', 'standing', 'upstairs', 'walking'], 'loader': 'load_motionsense', 'channels': 3, 'max_train': 11000}
+
+Data: Train=13993, Val=3499, Test=4373
+[Limit] Max train: 11000
+Model: CNN1D, in_dim=128, n_cls=6
+Soft labels: /home/fandy/workplace/thesis/results/soft_labels/motionsense_soft.npy, shape=(11000, 6)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=99.17%)
+[LOAD] motionsense_pure_cnn_best.pt
+
+[S1] Loaded: val=99.17% test=98.99%
+
+=== Stage 2: V2 Distillation (T=2.5, alpha=0.8) ===
+[S2] ep 10: loss=0.2063 val=99.1% best_val=99.2%
+[S2] ep 20: loss=0.1914 val=99.2% best_val=99.3%
+[S2] ep 30: loss=0.1876 val=99.3% best_val=99.3%
+[S2] ep 40: loss=0.1781 val=99.1% best_val=99.3%
+[S2] ep 50: loss=0.1724 val=99.2% best_val=99.3%
+[S2] ep 60: loss=0.1688 val=99.1% best_val=99.3%
+[S2] ep 70: loss=0.1663 val=99.1% best_val=99.3%
+[S2] ep 80: loss=0.1649 val=99.2% best_val=99.3%
+[S2] ep 90: loss=0.1652 val=99.2% best_val=99.3%
+[S2] ep100: loss=0.1638 val=99.2% best_val=99.3%
+[S2] ep110: loss=0.1613 val=99.2% best_val=99.3%
+[S2] ep120: loss=0.1590 val=99.3% best_val=99.3%
+[S2] ep130: loss=0.1593 val=99.1% best_val=99.4%
+[S2] ep140: loss=0.1586 val=99.1% best_val=99.4%
+[S2] ep150: loss=0.1582 val=99.0% best_val=99.4%
+[S2] ep160: loss=0.1578 val=99.2% best_val=99.4%
+[S2] ep170: loss=0.1574 val=99.3% best_val=99.4%
+[S2] ep180: loss=0.1570 val=99.2% best_val=99.4%
+[S2] ep190: loss=0.1570 val=99.2% best_val=99.4%
+[S2] ep200: loss=0.1571 val=99.1% best_val=99.4%
+[S2] ep210: loss=0.1576 val=99.2% best_val=99.4%
+[S2] ep220: loss=0.1574 val=99.2% best_val=99.4%
+[S2] ep230: loss=0.1574 val=99.0% best_val=99.4%
+[S2] ep240: loss=0.1570 val=99.0% best_val=99.4%
+[S2] ep250: loss=0.1568 val=99.1% best_val=99.4%
+[S2] ep260: loss=0.1572 val=99.1% best_val=99.4%
+[S2] ep270: loss=0.1567 val=99.1% best_val=99.4%
+[S2] ep280: loss=0.1563 val=99.1% best_val=99.4%
+[S2] ep290: loss=0.1563 val=99.1% best_val=99.4%
+[S2] ep300: loss=0.1561 val=99.1% best_val=99.4%
+
+V2 Final: val=99.43% test=99.25%
+
+Total time: 47.6min
+End time: 2026-04-17 20:24:12

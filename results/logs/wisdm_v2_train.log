@@ -1,0 +1,49 @@
+
+=== WISDM - V2 ===
+Start time: 2026-04-18 12:01:18
+Dataset config: {'classes': 6, 'cn': ['Walking', 'Jogging', 'Upstairs', 'Downstairs', 'Sitting', 'Standing'], 'loader': 'load_wisdm', 'channels': 3, 'max_train': 100000}
+
+Data: Train=10864, Val=2716, Test=3395
+Model: CNN1D, in_dim=128, n_cls=6
+Soft labels: /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy, shape=(10864, 6)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=98.78%)
+[LOAD] wisdm_pure_cnn_best.pt
+
+[S1] Loaded: val=98.78% test=98.44%
+
+=== Stage 2: V2 Distillation (T=2.5, alpha=0.8) ===
+[S2] ep 10: loss=0.1827 val=97.9% best_val=97.9%
+[S2] ep 20: loss=0.1483 val=98.2% best_val=98.2%
+[S2] ep 30: loss=0.1422 val=98.2% best_val=98.3%
+[S2] ep 40: loss=0.1212 val=98.5% best_val=98.5%
+[S2] ep 50: loss=0.1101 val=98.6% best_val=98.6%
+[S2] ep 60: loss=0.1041 val=98.6% best_val=98.7%
+[S2] ep 70: loss=0.1014 val=98.7% best_val=98.7%
+[S2] ep 80: loss=0.1013 val=98.7% best_val=98.7%
+[S2] ep 90: loss=0.1004 val=98.7% best_val=98.7%
+[S2] ep100: loss=0.0975 val=98.6% best_val=98.9%
+[S2] ep110: loss=0.0954 val=98.9% best_val=98.9%
+[S2] ep120: loss=0.0945 val=98.7% best_val=98.9%
+[S2] ep130: loss=0.0936 val=98.6% best_val=98.9%
+[S2] ep140: loss=0.0923 val=98.5% best_val=98.9%
+[S2] ep150: loss=0.0923 val=98.7% best_val=98.9%
+[S2] ep160: loss=0.0924 val=98.6% best_val=98.9%
+[S2] ep170: loss=0.0913 val=98.7% best_val=98.9%
+[S2] ep180: loss=0.0921 val=98.7% best_val=98.9%
+[S2] ep190: loss=0.0922 val=98.6% best_val=98.9%
+[S2] ep200: loss=0.0923 val=98.6% best_val=98.9%
+[S2] ep210: loss=0.0914 val=98.6% best_val=98.9%
+[S2] ep220: loss=0.0917 val=98.5% best_val=98.9%
+[S2] ep230: loss=0.0915 val=98.7% best_val=98.9%
+[S2] ep240: loss=0.0918 val=98.5% best_val=98.9%
+[S2] ep250: loss=0.0920 val=98.6% best_val=98.9%
+[S2] ep260: loss=0.0908 val=98.6% best_val=98.9%
+[S2] ep270: loss=0.0914 val=98.5% best_val=98.9%
+[S2] ep280: loss=0.0908 val=98.7% best_val=98.9%
+[S2] ep290: loss=0.0912 val=98.8% best_val=98.9%
+[S2] ep300: loss=0.0910 val=98.5% best_val=98.9%
+
+V2 Final: val=98.90% test=98.14%
+
+Total time: 48.5min
+End time: 2026-04-18 12:49:50

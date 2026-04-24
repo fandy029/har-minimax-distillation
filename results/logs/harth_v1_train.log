@@ -1,0 +1,50 @@
+
+=== HARTH - V1 ===
+Start time: 2026-04-17 10:54:59
+Dataset config: {'classes': 6, 'cn': ['左立', '走路', '上楼', '下楼', '右立', '站立'], 'loader': 'load_harth', 'channels': 3, 'max_train': 20000}
+
+Data: Train=22744, Val=5686, Test=7108
+[Limit] Max train: 20000
+Model: CNN1D, in_dim=128, n_cls=6
+Soft labels: /home/fandy/workplace/thesis/results/soft_labels/harth_soft.npy, shape=(20000, 6)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=85.54%)
+[LOAD] harth_pure_cnn_best.pt
+
+[S1] Loaded: val=85.54% test=86.48%
+
+=== Stage 2: V1 Distillation (T=3.0, alpha=0.6) ===
+[S2] ep 10: loss=0.2905 val=85.8% best_val=85.9%
+[S2] ep 20: loss=0.2635 val=85.7% best_val=86.2%
+[S2] ep 30: loss=0.2568 val=85.8% best_val=86.2%
+[S2] ep 40: loss=0.2414 val=85.4% best_val=86.2%
+[S2] ep 50: loss=0.2277 val=84.9% best_val=86.2%
+[S2] ep 60: loss=0.2187 val=84.8% best_val=86.2%
+[S2] ep 70: loss=0.2138 val=84.5% best_val=86.2%
+[S2] ep 80: loss=0.2117 val=84.5% best_val=86.2%
+[S2] ep 90: loss=0.2110 val=84.4% best_val=86.2%
+[S2] ep100: loss=0.2145 val=84.4% best_val=86.2%
+[S2] ep110: loss=0.2108 val=84.4% best_val=86.2%
+[S2] ep120: loss=0.2085 val=84.0% best_val=86.2%
+[S2] ep130: loss=0.2069 val=84.2% best_val=86.2%
+[S2] ep140: loss=0.2042 val=84.2% best_val=86.2%
+[S2] ep150: loss=0.2035 val=84.3% best_val=86.2%
+[S2] ep160: loss=0.2031 val=84.1% best_val=86.2%
+[S2] ep170: loss=0.2014 val=83.8% best_val=86.2%
+[S2] ep180: loss=0.2014 val=84.2% best_val=86.2%
+[S2] ep190: loss=0.2005 val=84.3% best_val=86.2%
+[S2] ep200: loss=0.2004 val=84.2% best_val=86.2%
+[S2] ep210: loss=0.2006 val=84.2% best_val=86.2%
+[S2] ep220: loss=0.2042 val=83.9% best_val=86.2%
+[S2] ep230: loss=0.2030 val=83.9% best_val=86.2%
+[S2] ep240: loss=0.2031 val=84.0% best_val=86.2%
+[S2] ep250: loss=0.2023 val=83.8% best_val=86.2%
+[S2] ep260: loss=0.2021 val=84.1% best_val=86.2%
+[S2] ep270: loss=0.2007 val=83.7% best_val=86.2%
+[S2] ep280: loss=0.2002 val=84.5% best_val=86.2%
+[S2] ep290: loss=0.1996 val=83.7% best_val=86.2%
+[S2] ep300: loss=0.1991 val=84.5% best_val=86.2%
+
+V1 Final: val=86.25% test=86.52%
+
+Total time: 86.7min
+End time: 2026-04-17 12:21:56

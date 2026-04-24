@@ -1,0 +1,49 @@
+
+=== UCI_HAR - V2 ===
+Start time: 2026-04-17 02:16:47
+Dataset config: {'classes': 6, 'cn': ['WALKING', 'WALKING_UP', 'WALKING_DOWN', 'SITTING', 'STANDING', 'LAYING'], 'loader': 'load_uci_har', 'channels': 9, 'max_train': 6000}
+
+Data: Train=5881, Val=1471, Test=2947
+Model: MLP, in_dim=561, n_cls=6
+Soft labels: /home/fandy/workplace/thesis/results/soft_labels/uci_har_soft.npy, shape=(5881, 6)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=98.98%)
+[LOAD] uci_har_pure_cnn_best.pt
+
+[S1] Loaded: val=98.98% test=95.86%
+
+=== Stage 2: V2 Distillation (T=2.5, alpha=0.8) ===
+[S2] ep 10: loss=0.4691 val=98.8% best_val=98.8%
+[S2] ep 20: loss=0.3395 val=98.8% best_val=98.8%
+[S2] ep 30: loss=0.3205 val=98.6% best_val=98.8%
+[S2] ep 40: loss=0.2311 val=98.6% best_val=98.8%
+[S2] ep 50: loss=0.1874 val=98.5% best_val=98.8%
+[S2] ep 60: loss=0.1658 val=98.8% best_val=98.9%
+[S2] ep 70: loss=0.1559 val=98.7% best_val=98.9%
+[S2] ep 80: loss=0.1524 val=98.7% best_val=98.9%
+[S2] ep 90: loss=0.1509 val=98.6% best_val=98.9%
+[S2] ep100: loss=0.1379 val=98.9% best_val=98.9%
+[S2] ep110: loss=0.1267 val=98.7% best_val=98.9%
+[S2] ep120: loss=0.1218 val=98.7% best_val=99.0%
+[S2] ep130: loss=0.1187 val=98.6% best_val=99.0%
+[S2] ep140: loss=0.1157 val=98.8% best_val=99.0%
+[S2] ep150: loss=0.1142 val=98.8% best_val=99.0%
+[S2] ep160: loss=0.1133 val=98.8% best_val=99.0%
+[S2] ep170: loss=0.1128 val=98.7% best_val=99.0%
+[S2] ep180: loss=0.1122 val=98.6% best_val=99.0%
+[S2] ep190: loss=0.1119 val=98.6% best_val=99.0%
+[S2] ep200: loss=0.1124 val=98.7% best_val=99.0%
+[S2] ep210: loss=0.1120 val=98.7% best_val=99.0%
+[S2] ep220: loss=0.1109 val=98.7% best_val=99.0%
+[S2] ep230: loss=0.1092 val=98.8% best_val=99.0%
+[S2] ep240: loss=0.1099 val=98.8% best_val=99.0%
+[S2] ep250: loss=0.1090 val=98.9% best_val=99.0%
+[S2] ep260: loss=0.1075 val=98.9% best_val=99.0%
+[S2] ep270: loss=0.1070 val=98.8% best_val=99.0%
+[S2] ep280: loss=0.1069 val=98.9% best_val=99.0%
+[S2] ep290: loss=0.1067 val=98.8% best_val=99.0%
+[S2] ep300: loss=0.1078 val=98.9% best_val=99.0%
+
+V2 Final: val=98.98% test=96.17%
+
+Total time: 3.3min
+End time: 2026-04-17 02:20:04

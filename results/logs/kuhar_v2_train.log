@@ -1,0 +1,52 @@
+
+==================================================
+  KUHAR - V2
+==================================================
+  Checkpoint: /home/fandy/workplace/thesis/results/checkpoints/kuhar_v2_best.pt
+  Log: /home/fandy/workplace/thesis/results/logs/kuhar_v2_train.log
+  History: /home/fandy/workplace/thesis/results/history/kuhar_v2_history.json
+  Train: 61210 Val: 15303 Test: 19129
+  [Limit] Max train: 20000
+  [Soft] Loaded: /home/fandy/workplace/thesis/results/soft_labels/kuhar_soft.npy
+  [SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=94.56%)
+  [LOAD] kuhar_pure_cnn_best.pt → model.load_state_dict()
+  [S1] Loaded: val_acc=94.56% | test_acc=94.00%
+
+[Stage 2] V2 蒸馏训练 (300 epochs, T=2.5, alpha=0.8)
+         用Stage1的权重初始化，用软标签训练...
+  [S2] ep 10: loss=0.5976 val=92.5% best=93.2%
+  [S2] ep 20: loss=0.4876 val=94.1% best=94.3%
+  [S2] ep 30: loss=0.4695 val=94.2% best=94.4%
+  [S2] ep 40: loss=0.3991 val=94.4% best=94.6%
+  [S2] ep 50: loss=0.3635 val=94.7% best=94.9%
+  [S2] ep 60: loss=0.3361 val=95.0% best=95.2%
+  [S2] ep 70: loss=0.3269 val=95.1% best=95.2%
+  [S2] ep 80: loss=0.3171 val=95.4% best=95.4%
+  [S2] ep 90: loss=0.3161 val=95.1% best=95.4%
+  [S2] ep100: loss=0.3038 val=95.1% best=95.4%
+  [S2] ep110: loss=0.2935 val=94.9% best=95.4%
+  [S2] ep120: loss=0.2828 val=95.2% best=95.4%
+  [S2] ep130: loss=0.2727 val=95.2% best=95.4%
+  [S2] ep140: loss=0.2682 val=95.0% best=95.4%
+  [S2] ep150: loss=0.2631 val=95.3% best=95.4%
+  [S2] ep160: loss=0.2618 val=95.3% best=95.4%
+  [S2] ep170: loss=0.2562 val=95.3% best=95.4%
+  [S2] ep180: loss=0.2563 val=95.2% best=95.4%
+  [S2] ep190: loss=0.2543 val=95.2% best=95.5%
+  [S2] ep200: loss=0.2530 val=95.2% best=95.5%
+  [S2] ep210: loss=0.2523 val=95.2% best=95.5%
+  [S2] ep220: loss=0.2561 val=95.2% best=95.5%
+  [S2] ep230: loss=0.2521 val=94.9% best=95.5%
+  [S2] ep240: loss=0.2500 val=95.1% best=95.5%
+  [S2] ep250: loss=0.2465 val=94.8% best=95.5%
+  [S2] ep260: loss=0.2459 val=95.2% best=95.5%
+  [S2] ep270: loss=0.2420 val=95.3% best=95.5%
+  [S2] ep280: loss=0.2415 val=95.1% best=95.5%
+  [S2] ep290: loss=0.2404 val=95.0% best=95.5%
+  [S2] ep300: loss=0.2369 val=95.2% best=95.5%
+  [S2] V2 保存: val_acc=95.55%
+  V2: 95.38%
+
+  ✅ Result saved: /home/fandy/workplace/thesis/results/kuhar_v2.json
+  ✅ History saved: /home/fandy/workplace/thesis/results/history/kuhar_v2_history.json
+  Total time: 115.1min

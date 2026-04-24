@@ -1,0 +1,45 @@
+
+=== UCI_HAR - PURE_CNN ===
+Start time: 2026-04-17 01:40:03
+Dataset config: {'classes': 6, 'cn': ['WALKING', 'WALKING_UP', 'WALKING_DOWN', 'SITTING', 'STANDING', 'LAYING'], 'loader': 'load_uci_har', 'channels': 9, 'max_train': 6000}
+
+Data: Train=5881, Val=1471, Test=2947
+Model: MLP, in_dim=561, n_cls=6
+Soft labels: one-hot (pure_cnn mode)
+
+=== Stage 1: 纯CNN训练 (300 epochs) ===
+[S1] ep 10: loss=0.0346 val=97.6% best_val=97.6%
+[S1] ep 20: loss=0.0191 val=98.1% best_val=98.2%
+[S1] ep 30: loss=0.0181 val=97.8% best_val=98.2%
+[S1] ep 40: loss=0.0135 val=97.9% best_val=98.2%
+[S1] ep 50: loss=0.0062 val=98.2% best_val=98.2%
+[S1] ep 60: loss=0.0043 val=98.4% best_val=98.4%
+[S1] ep 70: loss=0.0137 val=98.0% best_val=98.4%
+[S1] ep 80: loss=0.0146 val=98.2% best_val=98.4%
+[S1] ep 90: loss=0.0083 val=98.6% best_val=98.6%
+[S1] ep100: loss=0.0060 val=98.4% best_val=98.6%
+[S1] ep110: loss=0.0038 val=98.6% best_val=98.6%
+[S1] ep120: loss=0.0021 val=98.6% best_val=98.6%
+[S1] ep130: loss=0.0018 val=98.6% best_val=98.6%
+[S1] ep140: loss=0.0022 val=98.6% best_val=98.7%
+[S1] ep150: loss=0.0081 val=98.6% best_val=98.7%
+[S1] ep160: loss=0.0072 val=98.6% best_val=98.7%
+[S1] ep170: loss=0.0075 val=98.2% best_val=98.7%
+[S1] ep180: loss=0.0055 val=98.6% best_val=98.7%
+[S1] ep190: loss=0.0045 val=98.3% best_val=98.8%
+[S1] ep200: loss=0.0027 val=98.4% best_val=98.8%
+[S1] ep210: loss=0.0032 val=98.6% best_val=98.8%
+[S1] ep220: loss=0.0028 val=98.4% best_val=98.8%
+[S1] ep230: loss=0.0017 val=98.8% best_val=98.8%
+[S1] ep240: loss=0.0013 val=98.6% best_val=98.8%
+[S1] ep250: loss=0.0012 val=98.6% best_val=98.8%
+[S1] ep260: loss=0.0005 val=98.6% best_val=98.8%
+[S1] ep270: loss=0.0009 val=98.6% best_val=98.8%
+[S1] ep280: loss=0.0009 val=98.8% best_val=98.8%
+[S1] ep290: loss=0.0006 val=98.8% best_val=98.9%
+[S1] ep300: loss=0.0006 val=98.9% best_val=99.0%
+
+[S1] Final: val=98.98% test=95.86%
+
+Total time: 2.9min
+End time: 2026-04-17 01:42:56

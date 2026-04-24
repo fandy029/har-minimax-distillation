@@ -1,0 +1,6 @@
+[Proc 3] 启动，90秒后开始（避免并发冲突）
+[数据] 从缓存加载: X_tr=/home/fandy/workplace/thesis/results/soft_labels/kuhar_X_tr.npy
+[Proc 3] 类 9 已完成，跳过
+[Proc 3] 类 10 已完成，跳过
+[Proc 3] 类 11 已完成，跳过
+[Proc 3] 全部完成 → /home/fandy/workplace/thesis/results/soft_labels/kuhar_soft_proc3.npy

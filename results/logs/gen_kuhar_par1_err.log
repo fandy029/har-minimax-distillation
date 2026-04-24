@@ -1,0 +1,64 @@
+
+=== Proc 1 开始 2026-04-19 16:46:00 ===
+
+=== Proc 1 开始 2026-04-19 16:47:23 ===
+FALLBACK idx=33 class=3 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+FALLBACK idx=39 class=3 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== Proc 1 开始 2026-04-19 18:30:52 ===
+FALLBACK idx=33 class=3 err=Request timed out.
+
+=== Proc 1 开始 2026-04-19 18:42:20 ===
+FALLBACK idx=33 class=3 err=JSON解析失败: Expecting value: line 1 column 1 (char 0)
+
+=== Proc 1 开始 2026-04-19 18:52:19 ===
+
+=== Proc 1 开始 2026-04-19 18:58:24 ===
+
+=== Proc 1 开始 2026-04-19 18:58:33 ===
+
+=== Proc 1 开始 2026-04-19 18:58:48 ===
+
+=== Proc 1 开始 2026-04-19 19:19:10 ===
+
+=== Proc 1 开始 2026-04-19 19:32:49 ===
+
+=== Proc 1 开始 2026-04-20 00:12:16 ===
+
+=== Proc 1 开始 2026-04-20 00:25:50 ===
+
+=== Proc 1 开始 2026-04-20 00:40:02 ===
+
+=== Proc 1 开始 2026-04-20 01:52:43 ===
+
+=== Proc 1 开始 2026-04-20 11:33:47 ===
+=== Proc 1 完成 2026-04-20 14:53:08 ===
+
+=== Proc 1 开始 2026-04-22 13:22:46 ===
+FALLBACK idx=2908 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=2923 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=2950 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=2972 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3006 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3024 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3027 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3041 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3042 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3044 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3050 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3060 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3074 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3076 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3099 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3101 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3122 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+FALLBACK idx=3145 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3154 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit ex
+FALLBACK idx=3156 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面
+=== Proc 1 完成 2026-04-23 12:57:04 ===
+
+=== Proc 1 开始 2026-04-23 17:36:38 ===
+=== Proc 1 完成 2026-04-23 17:36:38 ===
+
+=== Proc 1 开始 2026-04-23 19:30:45 ===
+=== Proc 1 完成 2026-04-23 19:30:45 ===

@@ -1,0 +1,46 @@
+
+=== MOTIONSENSE - PURE_CNN ===
+Start time: 2026-04-17 14:34:15
+Dataset config: {'classes': 6, 'cn': ['downstairs', 'jogging', 'sitting', 'standing', 'upstairs', 'walking'], 'loader': 'load_motionsense', 'channels': 3, 'max_train': 11000}
+
+Data: Train=13993, Val=3499, Test=4373
+[Limit] Max train: 11000
+Model: CNN1D, in_dim=128, n_cls=6
+Soft labels: one-hot (pure_cnn mode)
+
+=== Stage 1: 纯CNN训练 (300 epochs) ===
+[S1] ep 10: loss=0.0195 val=98.4% best_val=98.4%
+[S1] ep 20: loss=0.0025 val=99.0% best_val=99.0%
+[S1] ep 30: loss=0.0089 val=98.7% best_val=99.0%
+[S1] ep 40: loss=0.0040 val=98.6% best_val=99.0%
+[S1] ep 50: loss=0.0005 val=99.0% best_val=99.2%
+[S1] ep 60: loss=0.0003 val=99.1% best_val=99.2%
+[S1] ep 70: loss=0.0075 val=98.7% best_val=99.2%
+[S1] ep 80: loss=0.0010 val=98.8% best_val=99.2%
+[S1] ep 90: loss=0.0030 val=97.9% best_val=99.2%
+[S1] ep100: loss=0.0013 val=98.8% best_val=99.2%
+[S1] ep110: loss=0.0004 val=98.7% best_val=99.2%
+[S1] ep120: loss=0.0000 val=98.9% best_val=99.2%
+[S1] ep130: loss=0.0000 val=98.8% best_val=99.2%
+[S1] ep140: loss=0.0001 val=98.8% best_val=99.2%
+[S1] ep150: loss=0.0035 val=98.7% best_val=99.2%
+[S1] ep160: loss=0.0006 val=98.7% best_val=99.2%
+[S1] ep170: loss=0.0007 val=99.0% best_val=99.2%
+[S1] ep180: loss=0.0014 val=98.7% best_val=99.2%
+[S1] ep190: loss=0.0010 val=98.9% best_val=99.2%
+[S1] ep200: loss=0.0007 val=99.0% best_val=99.2%
+[S1] ep210: loss=0.0001 val=99.0% best_val=99.2%
+[S1] ep220: loss=0.0002 val=98.8% best_val=99.2%
+[S1] ep230: loss=0.0000 val=98.9% best_val=99.2%
+[S1] ep240: loss=0.0001 val=98.9% best_val=99.2%
+[S1] ep250: loss=0.0002 val=98.9% best_val=99.2%
+[S1] ep260: loss=0.0001 val=98.9% best_val=99.2%
+[S1] ep270: loss=0.0000 val=98.9% best_val=99.2%
+[S1] ep280: loss=0.0000 val=99.0% best_val=99.2%
+[S1] ep290: loss=0.0000 val=99.1% best_val=99.2%
+[S1] ep300: loss=0.0000 val=99.1% best_val=99.2%
+
+[S1] Final: val=99.17% test=98.99%
+
+Total time: 52.2min
+End time: 2026-04-17 15:26:29
