@@ -6,183 +6,140 @@
 
 ## 📁 数据集
 
-| 数据集 | 路径 | 类别数 | 训练样本 | 形状 |
+| 数据集 | 路径 | 类别数 | 训练样本 | 说明 |
 |--------|------|--------|---------|------|
-| PAMAP2 | `datasets/PAMAP2/` | 5 | ~2137 | (128, 6) |
-| KuHar | `datasets/KuHar/1.Raw_time_domian_data/` | 18 | 20000 | (128, 8) |
-| UCI-HAR | `datasets/UCI_HAR/` | 6 | ~7352 | (561, 1) |
-| HARTH | `datasets/HARTH/harth/` | 6 | 20000 | (128, 3) |
-| UCI-HAR-New | `datasets/UCI_HAR_New/` | 12 | ~6213 | (561, 1) |
-| MotionSense | `datasets/MotionSense/` | 6 | ~17492 | (128, 3) |
-| MotionSense-DM | `datasets/MotionSense_DeviceMotion/` | 6 | ~13777 | (128, 3) |
-| WISDM | `datasets/WISDM/` | 6 | ~13365 | (128, 3) |
-| Gait | `datasets/Gait_Classification/` | 4 | ~588 | (128, 6) |
+| PAMAP2 | `datasets/PAMAP2/` | 5 | 2200 | 6轴IMU，max_train限制 |
+| KuHar | `datasets/KuHar/` | 18 | 20000 | 8轴IMU |
+| UCI-HAR | `datasets/UCI_HAR/` | 6 | ~4700 | 9轴，train_test_split 80/20 |
+| HARTH | `datasets/HARTH/harth/` | 6 | 20000 | 3轴（背部下传感器） |
+| UCI-HAR-New | `datasets/UCI_HAR_New/` | 12 | 5000 | 561维特征（MLP） |
+| MotionSense | `datasets/MotionSense/` | 6 | 11000 | 3轴，max_train限制 |
+| MotionSense-DM | `datasets/MotionSense_DeviceMotion/` | 6 | 10000 | DeviceMotion多轴 |
+| WISDM | `datasets/WISDM/` | 6 | ~8700 | 3轴滑动窗口128步 |
+| Gait | `datasets/Gait_Classification/` | 4 | 400 | 6轴（加速度+陀螺仪） |
+
+> 所有数据集划分：训练 80% / 验证 16% / 测试 20%（嵌套划分）。验证集用于 Early Stopping，测试集用于最终评估。
 
 ---
 
 ## 🔧 脚本说明
 
-本项目脚本分为两级：**根目录启动器**（交互式参数校验 + 调用） + **`scripts/` 核心脚本**（实际执行）。
+所有核心脚本位于 `scripts/` 目录。根目录的 `.sh` 脚本是后台运行包装器。
 
 ---
 
-### run_train.py —— 训练启动器（交互式）
+### scripts/run_distill.py —— 单数据集训练（核心脚本）
 
-**作用**：训练参数校验 + 交互确认，然后调用 `scripts/run_distill.py` 执行实际训练。
+**作用**：单个数据集的 Stage1（纯CNN）+ Stage2（蒸馏）训练，保存 Checkpoint 和结果。
 
 **用法**：
 ```bash
-python run_train.py <dataset> <version> [--resume]
+python3 scripts/run_distill.py <dataset> <version> [--resume]
 ```
 
 **参数说明**：
-- `<dataset>`：数据集名称
-  - `pamap2`, `kuhar`, `uci_har`, `harth`, `uci_har_new`, `motionsense`, `motionsense_dm`, `gait`, `wisdm`
-- `<version>`：训练版本
-  - `pure_cnn` — 纯 CNN 基线（不使用软标签）
-  - `v1` — 蒸馏 v1（T=3.0, alpha=0.6）
-  - `v2` — 蒸馏 v2（T=2.5, alpha=0.8）
-  - `v3` — 蒸馏 v3（T=1.5, alpha=0.85）
-- `--resume`：从断点继续训练
+- `<dataset>`：`pamap2`, `kuhar`, `uci_har`, `harth`, `uci_har_new`, `motionsense`, `motionsense_dm`, `gait`, `wisdm`
+- `<version>`：`pure_cnn`（纯CNN基线）/ `v1` / `v2` / `v3`（蒸馏版本）
+- `--resume`：从 Checkpoint 断点续传
 
 **示例**：
 ```bash
-python run_train.py pamap2 v2              # 训练 PAMAP2 蒸馏 v2
-python run_train.py wisdm pure_cnn          # 训练 WISDM 纯CNN基线
-python run_train.py kuhar v3 --resume      # 断点续传
-```
-
-**工作流程**：
-1. 校验数据集和版本参数
-2. 检查软标签文件是否存在
-3. 显示完整配置信息（交互确认）
-4. 调用 `scripts/run_distill.py` 执行训练
-5. 日志输出到 `/tmp/train_{dataset}_{version}.log`
-
----
-
-### run_train_all.py —— 批量训练脚本
-
-**作用**：批量训练所有数据集的所有版本，支持断点续传和状态检查。
-
-**用法**：
-```bash
-python3 run_train_all.py                          # 训练所有数据集所有版本
-python3 run_train_all.py --datasets pamap2 uci_har  # 只训练指定数据集
-python3 run_train_all.py --version v2             # 只训练 v2 版本（调试用）
-python3 run_train_all.py --resume                  # 断点续传（跳过已完成）
-python3 run_train_all.py --force                    # 强制重新训练（忽略已有结果）
-python3 run_train_all.py --check-only               # 仅查看当前训练状态，不实际训练
-```
-
-**输出内容**：
-- 表格展示各数据集 `pure_cnn / v1 / v2 / v3` 的完成状态和准确率
-- 标注正在生成软标签的数据集（跳过）
-- 每轮训练后显示测试准确率
-
----
-
-### run_gen_soft.py —— 软标签生成启动器（交互式）
-
-**作用**：生成指定数据集的软标签，参数校验后调用 `scripts/gen_soft_labels_unified.py`。
-
-**用法**：
-```bash
-python run_gen_soft.py <dataset> [samples_per_class] [--force]
-```
-
-**参数说明**：
-- `<dataset>`：同 run_train.py
-- `[samples_per_class]`：手动指定每类生成数量（覆盖默认逻辑，慎用）
-- `--force`：强制从头开始（忽略已有进度）
-
-**默认逻辑**：每类软标签数量 = 该类训练样本数 × 35%，上限 400。
-
-**示例**：
-```bash
-python run_gen_soft.py wisdm              # 自动计算每类软标签数
-python run_gen_soft.py pamap2 200         # 强制每类200个
-python run_gen_soft.py kuhar --force       # 强制从头开始
-```
-
----
-
-### run_gen_all.py —— 批量软标签生成脚本
-
-**作用**：并行启动所有 9 个数据集的软标签生成（后台守护进程模式）。
-
-**用法**：
-```bash
-python3 run_gen_all.py                            # 后台运行（默认），每30秒启动一个
-python3 run_gen_all.py --sequential              # 前台运行，顺序执行（调试用）
-python3 run_gen_all.py --ratio 0.40              # 调整采样率为 40%
-python3 run_gen_all.py --limit 500                # 调整每类上限为 500
-python3 run_gen_all.py --datasets pamap2 uci_har  # 只生成指定数据集
-```
-
-**注意事项**：
-- 默认每 30 秒启动一个新数据集，避免 API 限流
-- KuHar 使用专门的并行脚本 `scripts/gen_kuhar_parallel.py`
-- 后台运行时日志写入 `run_gen_all.log`
-
----
-
-### soft_label_progress.py —— 进度汇报脚本
-
-**作用**：检查所有数据集软标签生成 + 训练的详细进度。
-
-**用法**：
-```bash
-python soft_label_progress.py
-```
-
-**输出内容**：
-- 各数据集软标签：真软标签数 / one-hot 数 / 未填充数 / 进度条 / 最新日志
-- 各数据集训练进度：pure_cnn / v1 / v2 / v3 完成状态 + 准确率
-- 正在运行的软标签生成进程
-- 正在运行的训练进程
-
----
-
-### api_test.py —— MiniMax API 测试
-
-**作用**：测试 MiniMax API 连通性和响应速度。
-
-**用法**：
-```bash
-python api_test.py
-```
-
-**输出**：连续 5 次请求的成功率、平均响应时间、最快/最慢响应。
-
----
-
-### scripts/run_distill.py —— 核心蒸馏训练脚本
-
-**作用**：实际执行模型训练（被 `run_train.py` 和 `run_train_all.py` 调用）。
-
-**用法**（通常不直接调用）：
-```bash
-python scripts/run_distill.py <dataset> <version> [--resume]
+python3 scripts/run_distill.py pamap2 v2              # 训练 PAMAP2 蒸馏 v2
+python3 scripts/run_distill.py wisdm pure_cnn         # 训练 WISDM 纯CNN基线
+python3 scripts/run_distill.py kuhar v3 --resume       # 断点续传
 ```
 
 **训练流程**：
-1. **Stage 1（纯CNN）**：所有版本共用 focal loss 训练 300 epochs，保存 `*_pure_cnn_best.pt`
-2. **Stage 2（蒸馏）**：v1/v2/v3 在 Stage 1 权重基础上用软标签继续训练
-   - 损失函数：`ALPHA × Focal + (1-ALPHA) × KL_div`
-   - `pure_cnn` 模式跳过 Stage 2
+1. **Stage 1（纯CNN）**：focal loss 训练 300 epochs，保存最佳 Val 模型
+2. **Stage 2（蒸馏）**：v1/v2/v3 在 Stage1 权重基础上用软标签微调 300 epochs
+   - 损失：`α × Focal + (1-α) × KL_div × T²`
 
 **输出文件**：
-- Checkpoint: `results/checkpoints/{dataset}_{version}_best.pt`
-- 训练日志: `results/logs/{dataset}_{version}_train.log`
-- 历史记录: `results/history/{dataset}_{version}_history.json`
-- 结果 JSON: `results/{dataset}_{version}.json`
+| 文件 | 路径 |
+|------|------|
+| Checkpoint | `results/checkpoints/{dataset}_{version}_best.pt` |
+| 训练日志 | `results/logs/{dataset}_{version}_train.log` |
+| 历史记录 | `results/history/{dataset}_{version}_history.json` |
+| 实验结果 | `results/{dataset}_{version}.json` |
+| 混淆矩阵 | `results/history/{dataset}_{version}_cm.npy` |
+| 每类准确率 | `results/history/{dataset}_{version}_class_acc.json` |
 
 ---
 
-### scripts/gen_soft_labels_unified.py —— 核心软标签生成脚本
+### scripts/run_train_all.py —— 批量训练
 
-**作用**：调用 MiniMax API 为数据集生成软标签（被 `run_gen_soft.py` 和 `run_gen_all.py` 调用）。
+**作用**：批量训练所有（或指定）数据集的所有版本，支持断点续传。
+
+**用法**：
+```bash
+python3 scripts/run_train_all.py                          # 训练所有数据集所有版本
+python3 scripts/run_train_all.py --datasets pamap2 uci_har  # 只训练指定数据集
+python3 scripts/run_train_all.py --version v2             # 只训练 v2 版本（调试用）
+python3 scripts/run_train_all.py --resume                  # 断点续传（跳过已完成）
+python3 scripts/run_train_all.py --force                   # 强制重新训练（忽略已有结果）
+python3 scripts/run_train_all.py --check-only              # 仅查看当前训练状态
+```
+
+**输出**：表格展示各数据集 `pure_cnn / v1 / v2 / v3` 完成状态和准确率。
+
+---
+
+### scripts/run_train.py —— 单数据集训练（封装）
+
+**作用**：调用 `run_distill.py` 执行单数据集训练（与直接调用 `run_distill.py` 等效）。
+
+**用法**：
+```bash
+python3 scripts/run_train.py <dataset> <version> [--resume]
+```
+
+---
+
+### scripts/run_gen_soft.py —— 软标签生成（单数据集）
+
+**作用**：调用 MiniMax API 为单个数据集生成软标签。
+
+**用法**：
+```bash
+python3 scripts/run_gen_soft.py <dataset> [samples_per_class] [--force]
+```
+
+**参数说明**：
+- `<dataset>`：同 run_distill.py
+- `[samples_per_class]`：手动指定每类生成数量（覆盖默认逻辑）
+- `--force`：强制从头开始（忽略已有进度）
+
+**默认逻辑**：每类软标签数 = 该类训练样本数 × 35%，上限 400。
+
+**示例**：
+```bash
+python3 scripts/run_gen_soft.py wisdm              # 自动计算每类软标签数
+python3 scripts/run_gen_soft.py pamap2 200         # 强制每类200个
+python3 scripts/run_gen_soft.py kuhar --force      # 强制从头开始
+```
+
+---
+
+### scripts/run_gen_all.py —— 批量软标签生成
+
+**作用**：并行启动所有数据集的软标签生成。
+
+**用法**：
+```bash
+python3 scripts/run_gen_all.py                            # 后台运行，每30秒启动一个
+python3 scripts/run_gen_all.py --sequential             # 前台顺序执行（调试用）
+python3 scripts/run_gen_all.py --ratio 0.40             # 调整采样率为 40%
+python3 scripts/run_gen_all.py --limit 500               # 调整每类上限为 500
+python3 scripts/run_gen_all.py --datasets pamap2 uci_har  # 只生成指定数据集
+```
+
+**注意**：KuHar 使用专门的并行脚本 `gen_kuhar_parallel.py`（18类，样本量大）。
+
+---
+
+### scripts/gen_soft_labels_unified.py —— 核心软标签生成
+
+**作用**：调用 MiniMax-M2.7 API 生成软标签（被 `run_gen_soft.py` 和 `run_gen_all.py` 调用）。
 
 **用法**（通常不直接调用）：
 ```bash
@@ -190,28 +147,47 @@ python scripts/gen_soft_labels_unified.py <dataset> [--ratio 0.35] [--limit 400]
 ```
 
 **软标签生成逻辑**：
-- 对每个样本窗口提取物理特征（均值、标准差、峰值、FFT 能量等）
-- 组装 prompt 发送给 MiniMax-M2.7 API
-- 解析返回的类别概率向量，保存为 `.npy`
+1. 对每个样本窗口提取物理特征（均值、标准差、峰值、FFT能量、协方差等）
+2. 组装 prompt 发送给 MiniMax-M2.7 API
+3. 解析返回的类别概率向量，保存为 `.npy`
+4. 过滤 one-hot（max > 0.95）和全零的样本
 
-**输出文件**：`results/soft_labels/{dataset}_soft.npy`
-
-**过滤规则**：one-hot（max > 0.95）或全零的样本被过滤，只保留真实软标签。
+**输出**：`results/soft_labels/{dataset}_soft.npy`
 
 ---
 
 ### scripts/gen_kuhar_parallel.py —— KuHar 并行软标签生成
 
-**作用**：KuHar 数据集专用并行生成脚本（18 类，样本量大）。
+**作用**：KuHar 数据集专用并行生成（18 类，样本量大）。
 
 **用法**：
 ```bash
-python scripts/gen_kuhar_parallel.py start --ratio 0.35 --limit 400
-python scripts/gen_kuhar_parallel.py status     # 查看生成状态
-python scripts/gen_kuhar_parallel.py merge      # 合并所有 proc 的 npy
+python3 scripts/gen_kuhar_parallel.py start --ratio 0.35 --limit 400
+python3 scripts/gen_kuhar_parallel.py status     # 查看生成状态
+python3 scripts/gen_kuhar_parallel.py merge      # 合并所有进程 npy
 ```
 
-**特点**：多进程并行生成，最终合并为 `kuhar_soft.npy`。
+---
+
+### scripts/soft_label_progress.py —— 进度汇报
+
+**作用**：检查所有数据集软标签生成和训练的详细进度。
+
+```bash
+python3 scripts/soft_label_progress.py
+```
+
+**输出**：各数据集软标签进度条、训练完成状态和准确率、正在运行的进程。
+
+---
+
+### scripts/api_test.py —— MiniMax API 测试
+
+```bash
+python3 scripts/api_test.py
+```
+
+**输出**：连续5次请求成功率、平均响应时间、最快/最慢响应。
 
 ---
 
@@ -219,43 +195,55 @@ python scripts/gen_kuhar_parallel.py merge      # 合并所有 proc 的 npy
 
 | 版本 | Temperature T | Alpha α | 说明 |
 |------|-------------|--------|------|
-| `pure_cnn` | — | — | 纯 CNN 基线，不使用软标签 |
+| `pure_cnn` | — | — | 纯 CNN 基线，focal loss，不使用软标签 |
 | `v1` | 3.0 | 0.6 | 高温度 + 低 alpha，信任软标签更多 |
-| `v2` | 2.5 | 0.8 | 中等温度 |
+| `v2` | 2.5 | 0.8 | 中等温度，平衡蒸馏与硬标签 |
 | `v3` | 1.5 | 0.85 | 低温度 + 高 alpha，更信任硬标签 |
 
-蒸馏损失函数：
+**蒸馏损失函数**：
 ```
 Loss = α × Focal + (1-α) × KL_div(softmax(logits/T), softmax(soft_labels/T)) × T²
 ```
+
+**Early Stopping**：基于验证集准确率保存最优模型，最终报告测试集准确率。
 
 ---
 
 ## 🔑 典型工作流
 
-**1. 生成软标签（单数据集）**：
+**1. 生成单数据集软标签**：
 ```bash
-python run_gen_soft.py pamap2
+python3 scripts/run_gen_soft.py pamap2
 ```
 
 **2. 训练单数据集**：
 ```bash
-python run_train.py pamap2 v2
+python3 scripts/run_distill.py pamap2 v2
 ```
 
-**3. 批量生成所有软标签**：
+**3. 批量生成所有软标签（后台）**：
 ```bash
-python3 run_gen_all.py --ratio 0.35 --limit 400
+nohup python3 scripts/run_gen_all.py --ratio 0.35 --limit 400 > run_gen_all.log 2>&1 &
 ```
 
 **4. 批量训练所有数据集所有版本**：
 ```bash
-python3 run_train_all.py --resume
+nohup python3 scripts/run_train_all.py --resume > train_all.log 2>&1 &
 ```
 
-**5. 查看当前进度**：
+**5. 查看进度**：
 ```bash
-python soft_label_progress.py
+python3 scripts/soft_label_progress.py
+```
+
+**6. 查看训练日志**：
+```bash
+tail -f results/logs/<dataset>_<version>_train.log
+```
+
+**7. 终止所有训练进程**：
+```bash
+./kill_all.sh
 ```
 
 ---
@@ -264,24 +252,32 @@ python soft_label_progress.py
 
 ```
 thesis/
-├── run_train.py              # 训练启动器（交互式）
-├── run_train_all.py          # 批量训练
-├── run_gen_soft.py           # 软标签生成启动器（交互式）
-├── run_gen_all.py            # 批量软标签生成
-├── soft_label_progress.py    # 进度汇报
-├── api_test.py               # API 测试
 │
-├── scripts/
-│   ├── run_distill.py        # 核心训练脚本
-│   ├── gen_soft_labels_unified.py  # 核心软标签生成脚本
-│   └── gen_kuhar_parallel.py      # KuHar 并行生成
+├── 根目录启动脚本（后台运行包装）
+│   ├── train.sh              # 批量训练（后台 nohup）
+│   ├── train_single.sh       # 单数据集训练（后台）
+│   ├── gen_soft.sh           # 批量软标签生成（后台）
+│   └── kill_all.sh           # 终止所有训练/生成进程
 │
-├── datasets/                 # 9 个数据集
+├── scripts/                   # 核心脚本（所有Python脚本在此）
+│   ├── run_distill.py         # 单数据集训练（核心）
+│   ├── run_train_all.py       # 批量训练
+│   ├── run_train.py           # 单数据集训练（封装）
+│   ├── run_gen_soft.py        # 单数据集软标签生成
+│   ├── run_gen_all.py         # 批量软标签生成
+│   ├── gen_soft_labels_unified.py  # 核心软标签API调用
+│   ├── gen_kuhar_parallel.py  # KuHar并行生成
+│   ├── soft_label_progress.py # 进度汇报
+│   └── api_test.py            # API测试
+│
+├── datasets/                  # 9个数据集原始数据
+│
 ├── results/
-│   ├── checkpoints/           # 模型检查点
-│   ├── history/              # 训练历史 JSON
+│   ├── checkpoints/           # 模型检查点 .pt
+│   ├── history/               # 训练历史、混淆矩阵、每类准确率
 │   ├── logs/                 # 训练/生成日志
-│   ├── soft_labels/          # 软标签 .npy 文件
+│   ├── soft_labels/           # 软标签 .npy 文件
 │   └── *.json                # 各版本实验结果
-└── docs/                     # 论文文档
+│
+└── docs/                     # 论文相关文档
 ```
