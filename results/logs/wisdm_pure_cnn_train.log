@@ -1,6 +1,6 @@
 
 === WISDM - PURE_CNN ===
-Start time: 2026-04-18 07:42:59
+Start time: 2026-04-28 06:15:12
 Dataset config: {'classes': 6, 'cn': ['Walking', 'Jogging', 'Upstairs', 'Downstairs', 'Sitting', 'Standing'], 'loader': 'load_wisdm', 'channels': 3, 'max_train': 100000}
 
 Data: Train=10864, Val=2716, Test=3395
@@ -8,38 +8,39 @@ Model: CNN1D, in_dim=128, n_cls=6
 Soft labels: one-hot (pure_cnn mode)
 
 === Stage 1: 纯CNN训练 (300 epochs) ===
-[S1] ep 10: loss=0.0161 val=97.7% best_val=97.7%
-[S1] ep 20: loss=0.0030 val=98.5% best_val=98.5%
-[S1] ep 30: loss=0.0073 val=97.6% best_val=98.5%
-[S1] ep 40: loss=0.0030 val=98.2% best_val=98.5%
-[S1] ep 50: loss=0.0011 val=98.6% best_val=98.7%
-[S1] ep 60: loss=0.0009 val=98.6% best_val=98.7%
-[S1] ep 70: loss=0.0081 val=98.2% best_val=98.7%
-[S1] ep 80: loss=0.0078 val=98.1% best_val=98.7%
-[S1] ep 90: loss=0.0044 val=98.2% best_val=98.7%
-[S1] ep100: loss=0.0011 val=98.4% best_val=98.7%
-[S1] ep110: loss=0.0014 val=98.1% best_val=98.7%
-[S1] ep120: loss=0.0006 val=98.5% best_val=98.7%
-[S1] ep130: loss=0.0006 val=98.7% best_val=98.7%
-[S1] ep140: loss=0.0002 val=98.7% best_val=98.7%
-[S1] ep150: loss=0.0028 val=97.9% best_val=98.7%
-[S1] ep160: loss=0.0009 val=98.0% best_val=98.7%
-[S1] ep170: loss=0.0025 val=98.2% best_val=98.7%
-[S1] ep180: loss=0.0011 val=98.4% best_val=98.7%
-[S1] ep190: loss=0.0011 val=98.2% best_val=98.7%
-[S1] ep200: loss=0.0014 val=98.3% best_val=98.7%
-[S1] ep210: loss=0.0030 val=98.3% best_val=98.7%
-[S1] ep220: loss=0.0002 val=98.1% best_val=98.7%
-[S1] ep230: loss=0.0002 val=98.3% best_val=98.7%
+[S1] ep 10: loss=0.0154 val=97.8% best_val=97.8%
+[S1] ep 20: loss=0.0027 val=98.5% best_val=98.5%
+[S1] ep 30: loss=0.0063 val=97.8% best_val=98.5%
+[S1] ep 40: loss=0.0032 val=98.1% best_val=98.5%
+[S1] ep 50: loss=0.0019 val=98.2% best_val=98.6%
+[S1] ep 60: loss=0.0010 val=98.5% best_val=98.6%
+[S1] ep 70: loss=0.0021 val=98.3% best_val=98.6%
+[S1] ep 80: loss=0.0068 val=98.2% best_val=98.7%
+[S1] ep 90: loss=0.0048 val=97.7% best_val=98.7%
+[S1] ep100: loss=0.0020 val=98.1% best_val=98.8%
+[S1] ep110: loss=0.0028 val=98.6% best_val=98.8%
+[S1] ep120: loss=0.0006 val=98.4% best_val=98.8%
+[S1] ep130: loss=0.0004 val=98.5% best_val=98.8%
+[S1] ep140: loss=0.0002 val=98.5% best_val=98.8%
+[S1] ep150: loss=0.0044 val=98.0% best_val=98.8%
+[S1] ep160: loss=0.0013 val=98.4% best_val=98.8%
+[S1] ep170: loss=0.0029 val=98.2% best_val=98.8%
+[S1] ep180: loss=0.0007 val=98.4% best_val=98.8%
+[S1] ep190: loss=0.0013 val=97.8% best_val=98.8%
+[S1] ep200: loss=0.0007 val=98.3% best_val=98.8%
+[S1] ep210: loss=0.0006 val=98.4% best_val=98.8%
+[S1] ep220: loss=0.0017 val=98.1% best_val=98.8%
+[S1] ep230: loss=0.0003 val=98.4% best_val=98.8%
 [S1] ep240: loss=0.0001 val=98.5% best_val=98.8%
-[S1] ep250: loss=0.0001 val=98.6% best_val=98.8%
-[S1] ep260: loss=0.0011 val=98.3% best_val=98.8%
-[S1] ep270: loss=0.0000 val=98.6% best_val=98.8%
-[S1] ep280: loss=0.0000 val=98.5% best_val=98.8%
-[S1] ep290: loss=0.0000 val=98.7% best_val=98.8%
-[S1] ep300: loss=0.0002 val=98.6% best_val=98.8%
+[S1] ep250: loss=0.0002 val=98.4% best_val=98.8%
+[S1] ep260: loss=0.0001 val=98.1% best_val=98.8%
+[S1] ep270: loss=0.0000 val=98.3% best_val=98.8%
+[S1] ep280: loss=0.0000 val=98.4% best_val=98.8%
+[S1] ep290: loss=0.0000 val=98.4% best_val=98.8%
+[S1] ep300: loss=0.0002 val=98.4% best_val=98.8%
 
-[S1] Final: val=98.78% test=98.44%
+[S1] Final: val=98.78% test=98.00%
+[S1] Per-class acc: {'Walking': 0.990053557765876, 'Jogging': 0.994291151284491, 'Upstairs': 0.9402597402597402, 'Downstairs': 0.9363057324840764, 'Sitting': 0.983957219251337, 'Standing': 0.9801324503311258}
 
-Total time: 52.8min
-End time: 2026-04-18 08:35:51
+Total time: 37.3min
+End time: 2026-04-28 06:52:33

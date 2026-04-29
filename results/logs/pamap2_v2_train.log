@@ -1,47 +1,53 @@
 
 === PAMAP2 - V2 ===
-Start time: 2026-04-17 01:16:54
+Start time: 2026-04-28 11:44:49
 Dataset config: {'classes': 5, 'cn': ['downstairs', 'sitting', 'standing', 'walking', 'jogging'], 'loader': 'load_pamap2', 'channels': 6, 'max_train': 2200}
 
 Data: Train=2826, Val=707, Test=884
 [Limit] Max train: 2200
 Model: CNN1D, in_dim=128, n_cls=5
+Soft labels truncated: 2826 -> 2200
 Soft labels: /home/fandy/workplace/thesis/results/soft_labels/pamap2_soft.npy, shape=(2200, 5)
-[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=94.63%)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=94.34%)
 [LOAD] pamap2_pure_cnn_best.pt
 
-[S1] Loaded: val=94.63% test=94.57%
+[S1] Loaded: val=94.34% test=94.68%
+[S1] Per-class acc: {'downstairs': 0.9615384615384616, 'sitting': 0.956989247311828, 'standing': 0.9675090252707581, 'walking': 0.9067796610169492, 'jogging': 0.875}
 
 === Stage 2: V2 Distillation (T=2.5, alpha=0.8) ===
-[S2] ep 10: loss=0.2325 val=92.9% best_val=93.5%
-[S2] ep 20: loss=0.2131 val=93.5% best_val=93.9%
-[S2] ep 30: loss=0.2128 val=93.5% best_val=93.9%
-[S2] ep 40: loss=0.2008 val=93.5% best_val=93.9%
-[S2] ep 50: loss=0.1930 val=93.6% best_val=94.5%
-[S2] ep 60: loss=0.1865 val=93.8% best_val=94.5%
-[S2] ep 70: loss=0.1829 val=94.5% best_val=94.5%
-[S2] ep 80: loss=0.1837 val=94.5% best_val=94.5%
-[S2] ep 90: loss=0.1813 val=94.3% best_val=94.6%
-[S2] ep100: loss=0.1838 val=94.5% best_val=94.8%
-[S2] ep110: loss=0.1831 val=93.8% best_val=94.8%
-[S2] ep120: loss=0.1789 val=93.5% best_val=94.8%
-[S2] ep130: loss=0.1768 val=93.9% best_val=94.8%
-[S2] ep140: loss=0.1704 val=93.9% best_val=94.8%
-[S2] ep150: loss=0.1696 val=93.6% best_val=94.8%
-[S2] ep160: loss=0.1694 val=93.9% best_val=94.8%
-[S2] ep170: loss=0.1657 val=93.8% best_val=94.8%
-[S2] ep180: loss=0.1642 val=93.8% best_val=94.8%
-[S2] ep190: loss=0.1638 val=94.1% best_val=94.8%
-[S2] ep200: loss=0.1629 val=93.9% best_val=94.8%
-[S2] ep210: loss=0.1644 val=94.1% best_val=94.8%
-[S2] ep220: loss=0.1677 val=93.9% best_val=94.8%
-[S2] ep230: loss=0.1678 val=93.8% best_val=94.8%
-[S2] ep240: loss=0.1635 val=93.5% best_val=94.8%
-[S2] ep250: loss=0.1642 val=93.1% best_val=94.8%
-[S2] ep260: loss=0.1653 val=93.8% best_val=94.8%
-[S2] ep270: loss=0.1600 val=93.4% best_val=94.8%
-[S2] ep280: loss=0.1651 val=93.5% best_val=94.8%
-[S2] ep290: loss=0.1618 val=93.9% best_val=94.8%
-[S2] ep300: loss=0.1578 val=93.9% best_val=94.8%
+[S2] ep 10: loss=0.2275 val=93.5% best_val=94.2%
+[S2] ep 20: loss=0.2115 val=93.8% best_val=94.2%
+[S2] ep 30: loss=0.2080 val=93.9% best_val=94.2%
+[S2] ep 40: loss=0.2059 val=93.8% best_val=94.3%
+[S2] ep 50: loss=0.1931 val=93.9% best_val=94.8%
+[S2] ep 60: loss=0.1875 val=94.2% best_val=94.8%
+[S2] ep 70: loss=0.1823 val=93.9% best_val=94.8%
+[S2] ep 80: loss=0.1801 val=94.3% best_val=94.8%
+[S2] ep 90: loss=0.1795 val=94.9% best_val=94.9%
+[S2] ep100: loss=0.1826 val=94.3% best_val=94.9%
+[S2] ep110: loss=0.1828 val=94.3% best_val=94.9%
+[S2] ep120: loss=0.1767 val=93.8% best_val=94.9%
+[S2] ep130: loss=0.1798 val=93.6% best_val=94.9%
+[S2] ep140: loss=0.1775 val=94.5% best_val=94.9%
+[S2] ep150: loss=0.1727 val=93.9% best_val=94.9%
+[S2] ep160: loss=0.1698 val=94.2% best_val=94.9%
+[S2] ep170: loss=0.1670 val=94.2% best_val=94.9%
+[S2] ep180: loss=0.1654 val=94.1% best_val=94.9%
+[S2] ep190: loss=0.1647 val=94.3% best_val=95.0%
+[S2] ep200: loss=0.1665 val=94.8% best_val=95.0%
+[S2] ep210: loss=0.1631 val=94.6% best_val=95.0%
+[S2] ep220: loss=0.1692 val=92.9% best_val=95.0%
+[S2] ep230: loss=0.1662 val=93.2% best_val=95.0%
+[S2] ep240: loss=0.1688 val=93.2% best_val=95.0%
+[S2] ep250: loss=0.1637 val=93.2% best_val=95.0%
+[S2] ep260: loss=0.1631 val=93.2% best_val=95.0%
+[S2] ep270: loss=0.1629 val=93.6% best_val=95.0%
+[S2] ep280: loss=0.1609 val=93.5% best_val=95.0%
+[S2] ep290: loss=0.1607 val=93.5% best_val=95.0%
+[S2] ep300: loss=0.1583 val=93.8% best_val=95.0%
 
-V2 Final: val=94.77% test=95.48%
+V2 Final: val=95.05% test=95.14%
+[V2] Per-class acc: {'downstairs': 0.9538461538461539, 'sitting': 0.96415770609319, 'standing': 0.9494584837545126, 'walking': 0.9491525423728814, 'jogging': 0.9125}
+
+Total time: 7.0min
+End time: 2026-04-28 11:52:14

@@ -3,18 +3,17 @@
 kuhar 软标签并行生成脚本（完全独立，不依赖 gen_soft_labels_unified.py）
 
 数据只加载一次保存为 mmap，并行进程只读自己需要的类索引，不重复加载全量数据。
-  Proc 0: 类 0,1,2
-  Proc 1: 类 3,4,5
-  Proc 2: 类 6,7,8
-  Proc 3: 类 9,10,11
-  Proc 4: 类 12,13,14
-  Proc 5: 类 15,16,17
+  Proc 0:  类 0        Proc 9:  类 9
+  Proc 1:  类 1        Proc 10: 类 10
+  ...                     ...
+  Proc 8:  类 8        Proc 17: 类 17
+  共18个进程，每进程处理1个类。
 
 用法：
-  python3 gen_kuhar_parallel.py start      # 启动全部6个进程
+  python3 gen_kuhar_parallel.py start      # 启动全部18个进程
   python3 gen_kuhar_parallel.py start 0   # 只启动进程0
   python3 gen_kuhar_parallel.py merge     # 合并结果
-  python3 gen_kuhar_parallel.py status     # 查看进度
+  python3 gen_kuhar_parallel.py status    # 查看进度
 """
 
 import os, sys, time, json, subprocess, glob, random
@@ -23,15 +22,15 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # ============ 配置 ============
-BASE_DIR  = "/home/fandy/workplace/thesis"
+BASE_DIR  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR  = f"{BASE_DIR}/datasets/KuHar"
 OUT_DIR  = f"{BASE_DIR}/results/soft_labels"
 CKPT_DIR = f"{OUT_DIR}/kuhar_par_checkpoints"
 LOG_DIR  = f"{BASE_DIR}/results/logs"
 X_CACHE = f"{OUT_DIR}/kuhar_X_tr.npy"
 y_CACHE = f"{OUT_DIR}/kuhar_y_tr.npy"
-CPP     = 3
-RATIO   = 0.35
+CPP     = 1   # 每进程处理类数，18进程×1类=18类全覆盖
+RATIO   = 0.40
 LIMIT   = 400
 
 # API 配置（与原脚本一致）
@@ -86,7 +85,8 @@ def is_valid_soft_label(row):
     s = row.sum()
     if s < 0.99: return False
     second = np.sort(row)[-2]
-    if row.max() > 0.90 and second < 0.20: return False
+    # one-hot: 最大值 > 0.97，且第二大值 < 0.20 → 舍弃，重新生成
+    if row.max() > 0.97 and second < 0.20: return False
     return True
 
 # ============ API 调用（与原脚本一致）============
@@ -143,18 +143,73 @@ Output JSON with probability distribution: {{"0":0.8,"1":0.1,"2":0.05,...}}}}"""
 
 # ============ 单进程生成 =====================
 
-def run_process(proc_id, verbose=True):
+class TimestampedLogger:
+    """同时写文件（带时间戳）和 stdout"""
+    def __init__(self, path):
+        self.file = open(path, 'a', buffering=1)  # 'a' 模式追加写入，保留旧日志
+        self.buf = ''
+    def write(self, msg):
+        self.buf += msg
+        while '\n' in self.buf:
+            line, self.buf = self.buf.split('\n', 1)
+            self.file.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {line}\n")
+            self.file.flush()
+            sys.__stdout__.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {line}\n")
+            sys.__stdout__.flush()
+    def flush(self):
+        if self.buf:
+            self.file.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {self.buf}\n")
+            self.file.flush()
+            sys.__stdout__.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {self.buf}\n")
+            sys.__stdout__.flush()
+            self.buf = ''
+        self.file.flush()
+    def close(self):
+        self.flush()
+        self.file.close()
+
+def _write_ckpt(ckpt_file, ckpt):
+    """原子写入 checkpoint：先写临时文件再 rename，避免损坏"""
+    tmp = ckpt_file + ".tmp"
+    with open(tmp, "w") as f:
+        # numpy int64 → Python int，避免 JSON 序列化失败
+        raw = {
+            "done_classes": [int(x) for x in ckpt["done_classes"]],
+            "current_class": int(ckpt["current_class"]),
+            "current_idx": int(ckpt["current_idx"]),
+            "exhausted_idxs": [int(x) for x in ckpt.get("exhausted_idxs", [])],
+        }
+        json.dump(raw, f)
+    os.replace(tmp, ckpt_file)  # 原子替换，旧文件自动消失
+
+def _load_ckpt(ckpt_file):
+    """加载 checkpoint，文件损坏时返回 None"""
+    if not os.path.exists(ckpt_file):
+        return None
+    try:
+        with open(ckpt_file) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return None
+
+def run_process(proc_id, log_path=None, verbose=True):
     os.makedirs(CKPT_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
     my_cls = list(range(proc_id * CPP, (proc_id + 1) * CPP))
     ckpt_file = f"{CKPT_DIR}/proc{proc_id}_state.json"
     out_file   = f"{OUT_DIR}/kuhar_soft_proc{proc_id}.npy"
-    err_file   = f"{LOG_DIR}/gen_kuhar_par{proc_id}_err.log"
+    err_file   = f"{LOG_DIR}/gen_kuhar_{proc_id}_err.log"
+    
+    # 重定向 stdout 到带时间戳的日志文件
+    if log_path is not None:
+        logger = TimestampedLogger(log_path)
+        sys.stdout = logger
+        sys.stderr = logger
 
-    # 错开启动时间，避免 6 路同时打 API 被限流
-    # proc_id=0 立即开始，proc_id=1 等 30s，proc_id=2 等 60s...
-    # 这样每批 6 个请求错开 30s，API 能承受
-    stagger = proc_id * 30
+    # 错开启动时间，避免 18 路同时打 API 被限流
+    # proc_id=0 立即开始，proc_id=1 等 5s，proc_id=2 等 10s...
+    # 这样 18 个请求每5秒错开一批，API 能承受
+    stagger = proc_id * 5
     if verbose:
         print(f"[Proc {proc_id}] 启动，{stagger}秒后开始（避免并发冲突）")
     time.sleep(stagger)
@@ -169,12 +224,16 @@ def run_process(proc_id, verbose=True):
     for c in my_cls:
         my_cidx[c] = np.where(y_tr == c)[0]
 
-    # 初始化或恢复
-    if os.path.exists(ckpt_file):
-        with open(ckpt_file) as f: ckpt = json.load(f)
-        y_soft = np.load(out_file) if os.path.exists(out_file) else np.zeros((n_samples, n_cls), dtype=np.float32)
+    # 初始化或恢复（损坏的 checkpoint 自动跳过，从头开始）
+    ckpt = _load_ckpt(ckpt_file)
+    if ckpt is not None and os.path.exists(out_file):
+        try:
+            y_soft = np.load(out_file)
+        except Exception as e:
+            print(f'[Proc {proc_id}] 警告: 软标签文件损坏，从头开始 ({e})')
+            y_soft = np.zeros((n_samples, n_cls), dtype=np.float32)
     else:
-        ckpt = {"done_classes": [], "current_class": my_cls[0], "current_idx": 0}
+        ckpt = {"done_classes": [], "current_class": my_cls[0], "current_idx": 0, "exhausted_idxs": []}
         y_soft = np.zeros((n_samples, n_cls), dtype=np.float32)
 
     with open(err_file, "a") as ef:
@@ -196,53 +255,94 @@ def run_process(proc_id, verbose=True):
             if ckpt["current_class"] == c and c in ckpt["done_classes"]:
                 print(f"[Proc {proc_id}] 类 {c} 已完成但 checkpoint 未更新，跳过")
                 continue
+            # 追踪已耗尽的样本（API彻底失败后设置one-hot，跳过不再重试）
+            exhausted = set(ckpt.get("exhausted_idxs", []))
             done = 0
             start_i = ckpt["current_idx"] if ckpt["current_class"] == c else 0
             t_class_start = time.time()
             for i, global_idx in enumerate(cidx):
                 if i < start_i: continue
                 if done >= need: break
+                if global_idx in exhausted: continue  # 已耗尽，跳过
                 if is_valid_soft_label(y_soft[global_idx]): continue
+                
                 t_req = time.time()
                 prompt = build_prompt(X_tr[global_idx], CLASS_NAMES)
                 res, err = call_api(prompt, n_cls)
                 latency_ms = (time.time() - t_req) * 1000
+                
                 if res is None:
-                    wait = 30  # API 失败后等 30 秒再重试，避免被连续拦截
-                    print(f"  [{done+1}/{need}] ⚠️ API失败 ({err[:40]}), 等{wait}s后重试...")
-                    time.sleep(wait)
+                    # API 调用失败，最多重试 3 次，每次等 30 秒
                     for retry in range(2):
+                        time.sleep(30)
                         res, err = call_api(prompt, n_cls)
                         if res is not None: break
-                        print(f"  [{done+1}/{need}] ⚠️ 重试失败 ({err[:40]}), 等{wait}s...")
-                        time.sleep(wait)
                     if res is None:
+                        # 3次全失败 → 标记为耗尽，保存one-hot，跳过不再重试
+                        exhausted.add(global_idx)
                         y_soft[global_idx, y_tr[global_idx]] = 1.0
+                        ckpt["exhausted_idxs"] = list(exhausted)
+                        ckpt["current_class"] = c; ckpt["current_idx"] = i + 1
+                        np.save(out_file, y_soft)
+                        _write_ckpt(ckpt_file, ckpt)
                         ef.write(f"FALLBACK idx={global_idx} class={y_tr[global_idx]} err={err}\n"); ef.flush()
-                        done += 1
-                        print(f"  [{done}/{need}] ❌FALLBACK idx={global_idx}")
-                        continue
-                y_soft[global_idx] = res
-                is_oh = (res > 0.99).sum() == 1 and res.sum() > 0.99
-                if is_oh:
-                    ef.write(f"ONEHOT  idx={global_idx} class={y_tr[global_idx]}\n"); ef.flush()
-                else:
+                        print(f"  ⚠️ idx={global_idx} API彻底失败，标记为耗尽，设置one-hot")
+                        continue  # 不增加 done，该样本已耗尽，跳过
+                
+                # one-hot → 舍弃，重新生成（最多重试 MAX_ONEHOT_RETRY 次）
+                MAX_ONEHOT_RETRY = 10
+                reject_count = 0
+                while not is_valid_soft_label(res):
+                    reject_count += 1
+                    if reject_count >= MAX_ONEHOT_RETRY:
+                        # 重试次数用尽 → 强制接受该 one-hot，不再重试
+                        y_soft[global_idx, y_tr[global_idx]] = 1.0
+                        ef.write(f"ONEHOT_FORCE idx={global_idx} class={y_tr[global_idx]} reject={reject_count}\n"); ef.flush()
+                        print(f"  ⚠️ idx={global_idx} 重试{MAX_ONEHOT_RETRY}次仍为one-hot，强制接受")
+                        break
+                    if reject_count > 1:
+                        print(f"  ⚠️ idx={global_idx} one-hot被舍弃，重新生成 (第{reject_count}次)")
+                        ef.write(f"ONEHOT_REJECT idx={global_idx} class={y_tr[global_idx]} reject={reject_count}\n"); ef.flush()
+                    t_req = time.time()
+                    res, err = call_api(prompt, n_cls)
+                    latency_ms = (time.time() - t_req) * 1000
+                    if res is None:
+                        for retry in range(2):
+                            time.sleep(30)
+                            res, err = call_api(prompt, n_cls)
+                            if res is not None: break
+                        if res is None:
+                            # API 彻底失败 → 标记为耗尽，设置 one-hot，跳过不再重试
+                            exhausted.add(global_idx)
+                            y_soft[global_idx, y_tr[global_idx]] = 1.0
+                            ckpt["exhausted_idxs"] = list(exhausted)
+                            ckpt["current_class"] = c; ckpt["current_idx"] = i + 1
+                            np.save(out_file, y_soft)
+                            _write_ckpt(ckpt_file, ckpt)
+                            ef.write(f"FALLBACK idx={global_idx} class={y_tr[global_idx]} err={err}\n"); ef.flush()
+                            print(f"  ⚠️ idx={global_idx} 重试耗尽，标记为耗尽，设置one-hot")
+                            break
+                    # API 成功但仍是 one-hot → 继续重试
+                
+                if is_valid_soft_label(res):
+                    y_soft[global_idx] = res
                     done += 1
-                pct = done / need * 100
-                elapsed_class = time.time() - t_class_start
-                eta = (elapsed_class / done * (need - done)) if done > 0 else 0
-                print(f"  [{done}/{need} · {pct:.0f}%] idx={global_idx}: {'🔄ONEHOT' if is_oh else '✅REAL'} max={res.max():.3f} ({latency_ms:.0f}ms) ETA={eta:.0f}s")
-                # 每生成1个有效软标签后立即保存checkpoint，避免重启丢失进度
-                ckpt["current_class"] = c; ckpt["current_idx"] = i + 1
-                np.save(out_file, y_soft)
-                with open(ckpt_file, "w") as f: json.dump(ckpt, f)
-                if done % 20 == 0:
-                    print(f"  💾 [{done}/{need}] 进度已保存")
-                time.sleep(SLEEP_SEC)
+                    pct = done / need * 100
+                    elapsed_class = time.time() - t_class_start
+                    eta = (elapsed_class / done * (need - done)) if done > 0 else 0
+                    extra = f" ({reject_count}次重试后)" if reject_count > 0 else ""
+                    print(f"  [{done}/{need} · {pct:.0f}%] idx={global_idx}: ✅REAL max={res.max():.3f} ({latency_ms:.0f}ms){extra} ETA={eta:.0f}s")
+                    
+                    ckpt["current_class"] = c; ckpt["current_idx"] = i + 1
+                    np.save(out_file, y_soft)
+                    _write_ckpt(ckpt_file, ckpt)
+                    if done % 20 == 0:
+                        print(f"  💾 [{done}/{need}] 进度已保存")
+                    time.sleep(SLEEP_SEC)
             ckpt["done_classes"].append(c)
             ckpt["current_class"] = c; ckpt["current_idx"] = 0
             np.save(out_file, y_soft)
-            with open(ckpt_file, "w") as f: json.dump(ckpt, f)
+            _write_ckpt(ckpt_file, ckpt)
             real_c = sum(1 for j in cidx if is_valid_soft_label(y_soft[j]))
             elapsed = time.time() - t_class_start
             print(f"[Proc {proc_id}] ✅ 类 {c} ({CLASS_NAMES[c]}) 完成: {real_c}/{tgt} 耗时{elapsed:.0f}s")
@@ -251,6 +351,8 @@ def run_process(proc_id, verbose=True):
 
     np.save(out_file, y_soft)
     if verbose: print(f"[Proc {proc_id}] 全部完成 → {out_file}")
+    if log_path is not None:
+        logger.close()
     return True
 
 # ============ 合并 =====================
@@ -259,7 +361,7 @@ def merge_results():
     _, y_tr = load_or_create_data()
     n = len(y_tr)
     merged = np.zeros((n, N_CLS), dtype=np.float32)
-    for pid in range(6):
+    for pid in range(18):
         part = f"{OUT_DIR}/kuhar_soft_proc{pid}.npy"
         if not os.path.exists(part):
             print(f"[Merge] 警告: {part} 不存在"); continue
@@ -267,7 +369,8 @@ def merge_results():
         merged += y
         cids = list(range(pid*CPP, (pid+1)*CPP))
         real = sum(1 for i in range(n) if is_valid_soft_label(merged[i]))
-        print(f"[Merge] Proc {pid} (类{cids}): {real} 有效软标签")
+        cls_name = CLASS_NAMES[cids[0]] if cids else '?'
+        print(f"[Merge] Proc {pid} (类{cids[0] if cids else '?'}={cls_name}): {real} 有效软标签")
     out = f"{OUT_DIR}/kuhar_soft.npy"
     np.save(out, merged)
     total = sum(1 for i in range(n) if is_valid_soft_label(merged[i]))
@@ -288,7 +391,7 @@ def show_status():
     print(f"{'='*60}")
     done_total = 0
     all_done = True
-    for pid in range(6):
+    for pid in range(18):
         my_c = list(range(pid*CPP, (pid+1)*CPP))
         part  = f"{OUT_DIR}/kuhar_soft_proc{pid}.npy"
         ckpt  = f"{CKPT_DIR}/proc{pid}_state.json"
@@ -313,8 +416,8 @@ def show_status():
         print(f"\n  无运行中进程")
 
     # 打印各进程最近日志
-    for pid in range(6):
-        log_file = f"{LOG_DIR}/gen_kuhar_par{pid}.log"
+    for pid in range(18):
+        log_file = f"{LOG_DIR}/gen_kuhar_{pid}.log"
         if os.path.exists(log_file):
             with open(log_file) as f:
                 lines = f.readlines()
@@ -328,17 +431,17 @@ def show_status():
     print(f"{'='*60}\n")
 
 # ============ 启动 =====================
-
 def start_workers(only=None, wait=True):
-    ids = [only] if only is not None else list(range(6))
+    ids = [only] if only is not None else list(range(18))
     workers = []
     for pid in ids:
-        log = f"{LOG_DIR}/gen_kuhar_par{pid}.log"
-        cmd = [sys.executable, "-u", sys.argv[0], "worker", str(pid), "--ratio", str(RATIO), "--limit", str(LIMIT)]
-        with open(log, "w", buffering=1) as f:
-            p = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT)
+        log = f"{LOG_DIR}/gen_kuhar_{pid}.log"
+        cmd = [sys.executable, sys.argv[0], "worker", str(pid), "--ratio", str(RATIO), "--limit", str(LIMIT)]
+        # stdout 定向到 /dev/null（子进程自己写日志文件）
+        with open(os.devnull, 'w') as devnull:
+            p = subprocess.Popen(cmd, stdout=devnull, stderr=devnull)
         workers.append((pid, p))
-        time.sleep(2)  # 错开启动时刻，确保各进程真正错开
+        time.sleep(2)  # 错开启动时刻
         print(f"[启动] Proc {pid} PID={p.pid} → {log}")
     print(f"\n已启动 {len(ids)} 个进程，正在等待完成...")
     if wait:
@@ -378,7 +481,7 @@ if __name__ == "__main__":
             # No pid given, argv2 is actually --ratio
             RATIO = float(sys.argv[3]) if len(sys.argv) > 3 else RATIO
             LIMIT = int(sys.argv[5]) if len(sys.argv) > 5 else LIMIT
-            run_process(None)
+            run_process(None, log_path=None)  # 无 pid 则不写日志文件
         else:
             pid = int(argv2)
             i = 3
@@ -389,7 +492,8 @@ if __name__ == "__main__":
                     LIMIT = int(sys.argv[i+1]); i += 2
                 else:
                     i += 1
-            run_process(pid)
+            log_path = f"{LOG_DIR}/gen_kuhar_{pid}.log"
+            run_process(pid, log_path=log_path)
     elif cmd == "merge":
         merge_results()
     elif cmd == "status":

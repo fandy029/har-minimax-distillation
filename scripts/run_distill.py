@@ -11,16 +11,18 @@ import numpy as np, pandas as pd
 from glob import glob
 from sklearn.model_selection import train_test_split
 import torch, torch.nn as nn, torch.nn.functional as F
+from sklearn.metrics import confusion_matrix
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ============ 配置 ============
-DEVICE = torch.device("cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 BATCH = 64
 EPOCHS_PURE = 300
 EPOCHS_KD = 300
-SOFT_DIR = "/home/fandy/workplace/thesis/results/soft_labels"
-CHECKPOINT_DIR = "/home/fandy/workplace/thesis/results/checkpoints"
-LOG_DIR = "/home/fandy/workplace/thesis/results/logs"
-HISTORY_DIR = "/home/fandy/workplace/thesis/results/history"
+SOFT_DIR = BASE_DIR + "/results/soft_labels"
+CHECKPOINT_DIR = BASE_DIR + "/results/checkpoints"
+LOG_DIR = BASE_DIR + "/results/logs"
+HISTORY_DIR = BASE_DIR + "/results/history"
 
 # 创建目录
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
@@ -104,7 +106,7 @@ DATASET_CONFIG = {
 
 # ============ 数据加载 ============
 def load_pamap2():
-    base = '/home/fandy/workplace/thesis/datasets/PAMAP2/PAMAP2_Dataset'
+    base = BASE_DIR + '/datasets/PAMAP2/PAMAP2_Dataset'
     d, l = [], []
     PAMAP_MAP = {9:0, 2:1, 3:2, 4:3, 5:4}
     for folder in ['Protocol', 'Optional']:
@@ -127,7 +129,7 @@ def load_pamap2():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_kuhar():
-    base = '/home/fandy/workplace/thesis/datasets/KuHar/1.Raw_time_domian_data'
+    base = BASE_DIR + '/datasets/KuHar/1.Raw_time_domian_data'
     d, l = [], []
     for folder in sorted(glob(f"{base}/*/")):
         label = int(os.path.basename(folder.rstrip("/")).split(".")[0])
@@ -146,7 +148,7 @@ def load_kuhar():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_uci_har():
-    base = '/home/fandy/workplace/thesis/datasets/UCI_HAR/UCI HAR Dataset'
+    base = BASE_DIR + '/datasets/UCI_HAR/UCI HAR Dataset'
     X_tr = np.loadtxt(f"{base}/train/X_train.txt").astype(np.float32)
     y_tr = (np.loadtxt(f"{base}/train/y_train.txt")-1).astype(np.int64)
     X_te = np.loadtxt(f"{base}/test/X_test.txt").astype(np.float32)
@@ -155,7 +157,7 @@ def load_uci_har():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_harth():
-    base = '/home/fandy/workplace/thesis/datasets/HARTH/harth'
+    base = BASE_DIR + '/datasets/HARTH/harth'
     files = sorted(glob(f"{base}/*.csv"))
     d, l = [], []
     label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5}
@@ -184,7 +186,7 @@ def load_harth():
 def load_uci_har_new():
     # UCI_HAR_New has pre-extracted features (561 dims), not time series
     # Use 2D features for MLP
-    base = '/home/fandy/workplace/thesis/datasets/UCI_HAR_New'
+    base = BASE_DIR + '/datasets/UCI_HAR_New'
     X_tr = np.loadtxt(f"{base}/Train/X_train.txt").astype(np.float32)
     y_tr = (np.loadtxt(f"{base}/Train/y_train.txt")-1).astype(np.int64)
     X_te = np.loadtxt(f"{base}/Test/X_test.txt").astype(np.float32)
@@ -194,7 +196,7 @@ def load_uci_har_new():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_motionsense():
-    base = '/home/fandy/workplace/thesis/datasets/MotionSense'
+    base = BASE_DIR + '/datasets/MotionSense'
     d, l = [], []
     label_map = {'dws':0,'jog':1,'sit':2,'std':3,'ups':4,'wlk':5}
     for folder in sorted(glob(f"{base}/*/")):
@@ -220,7 +222,7 @@ def load_motionsense():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_gait():
-    base = '/home/fandy/workplace/thesis/datasets/Gait_Classification'
+    base = BASE_DIR + '/datasets/Gait_Classification'
     d, l = [], []
     # label_map: activity label in last column -> class index
     label_map = {1:0, 2:1, 3:2, 4:3}  # Activities 1-4
@@ -250,7 +252,7 @@ def load_gait():
 
 def load_wisdm():
     # Load raw time series data (128 time steps, 3 channels) - CNN format
-    raw_path = '/home/fandy/workplace/thesis/datasets/WISDM/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt'
+    raw_path = BASE_DIR + '/datasets/WISDM/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt'
     d, l = [], []
     label_map = {'Walking':0,'Jogging':1,'Upstairs':2,'Downstairs':3,'Sitting':4,'Standing':5}
     with open(raw_path, 'r') as f:
@@ -295,7 +297,7 @@ def load_wisdm():
     return X_tr, y_tr, X_vl, y_vl, X_te, y_te
 
 def load_motionsense_dm():
-    base = '/home/fandy/workplace/thesis/datasets/MotionSense_DeviceMotion/A_DeviceMotion_data'
+    base = BASE_DIR + '/datasets/MotionSense_DeviceMotion/A_DeviceMotion_data'
     d, l = [], []
     label_map = {'dws':0,'jog':1,'sit':2,'std':3,'ups':4,'wlk':5}
     for folder in sorted(glob(f"{base}/*/")):
@@ -384,7 +386,8 @@ def evaluate(model, X, y, cn):
     for c in range(len(cn)):
         m = yn == c
         if m.sum() > 0: ca[cn[c]] = float((preds[m] == yn[m]).mean())
-    return acc, ca
+    cm = confusion_matrix(yn, preds, labels=range(len(cn)))
+    return acc, ca, cm
 
 # ============ 主训练流程 ============
 def train(dataset, version, resume=False):
@@ -468,7 +471,13 @@ def train(dataset, version, resume=False):
         y_soft = np.load(soft_file)
         if len(y_soft) > len(X_tr):
             y_soft = y_soft[:len(X_tr)]
-        print(f"  [Soft] Loaded: {soft_file}")
+            print(f"  [Soft] WARNING: 软标签样本数({np.load(soft_file).shape[0]}) > 训练样本数({len(X_tr)}), 已截断")
+            log_f.write(f"Soft labels truncated: {np.load(soft_file).shape[0]} -> {len(X_tr)}\n")
+        elif len(y_soft) < len(X_tr):
+            print(f"  [Soft] WARNING: 软标签样本数({len(y_soft)}) < 训练样本数({len(X_tr)}), 训练将使用部分软标签")
+            log_f.write(f"Soft labels shortage: {len(y_soft)} < {len(X_tr)}\n")
+        else:
+            print(f"  [Soft] Loaded: {soft_file}")
         log_f.write(f"Soft labels: {soft_file}, shape={y_soft.shape}\n")
     else:
         print(f"  [WARN] Soft labels not found, using one-hot fallback")
@@ -569,7 +578,7 @@ def train(dataset, version, resume=False):
             if va > best_val:
                 best_val = va
                 best_state = {k:v.cpu().clone() for k,v in model.state_dict().items()}
-                best_test, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
+                best_test, _, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
             
             pure_history.append({
                 'epoch': ep,
@@ -595,9 +604,20 @@ def train(dataset, version, resume=False):
             'stage': 'stage1',
             'stage1_history': pure_history,
         }, f"{CHECKPOINT_DIR}/{dataset}_pure_cnn_best.pt")
-        pure_acc, pure_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        pure_acc, pure_ca, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
         print(f"  [S1] Final: val_acc={best_val*100:.2f}% | test_acc={pure_acc*100:.2f}%")
         log_f.write(f"\n[S1] Final: val={best_val*100:.2f}% test={pure_acc*100:.2f}%\n")
+        
+        # Stage 1: 保存每类准确率和混淆矩阵
+        _, pure_ca, pure_cm = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        np.save(f"{HISTORY_DIR}/{dataset}_pure_cnn_cm.npy", pure_cm)
+        with open(f"{HISTORY_DIR}/{dataset}_pure_cnn_class_acc.json", 'w') as fjson:
+            json.dump(pure_ca, fjson, indent=2, ensure_ascii=False)
+        print(f"  [S1] Confusion matrix saved ({pure_cm.shape})")
+        print(f"  [S1] Per-class accuracy saved:")
+        for cls_name, cls_acc in pure_ca.items():
+            print(f"    {cls_name}: {cls_acc*100:.1f}%")
+        log_f.write(f"[S1] Per-class acc: {pure_ca}\n")
     else:
         # Stage 1 已跳过：加载已有checkpoint
         pure_ckpt_file = f"{CHECKPOINT_DIR}/{dataset}_pure_cnn_best.pt"
@@ -607,9 +627,20 @@ def train(dataset, version, resume=False):
             best_val = ckpt.get('val_acc', 0)
             best_state = ckpt['model_state_dict']
             pure_history = ckpt.get('stage1_history', [])
-        pure_acc, pure_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        pure_acc, pure_ca, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
         print(f"  [S1] Loaded: val_acc={best_val*100:.2f}% | test_acc={pure_acc*100:.2f}%")
         log_f.write(f"\n[S1] Loaded: val={best_val*100:.2f}% test={pure_acc*100:.2f}%\n")
+        
+        # Stage 1 (loaded): 保存每类准确率和混淆矩阵
+        _, pure_ca, pure_cm = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        np.save(f"{HISTORY_DIR}/{dataset}_pure_cnn_cm.npy", pure_cm)
+        with open(f"{HISTORY_DIR}/{dataset}_pure_cnn_class_acc.json", 'w') as fjson:
+            json.dump(pure_ca, fjson, indent=2, ensure_ascii=False)
+        print(f"  [S1] Confusion matrix saved ({pure_cm.shape})")
+        print(f"  [S1] Per-class accuracy saved:")
+        for cls_name, cls_acc in pure_ca.items():
+            print(f"    {cls_name}: {cls_acc*100:.1f}%")
+        log_f.write(f"[S1] Per-class acc: {pure_ca}\n")
     log_f.flush()
     
     result = {
@@ -681,7 +712,7 @@ def train(dataset, version, resume=False):
             if va > best_ft_val:
                 best_ft_val = va
                 best_ft_state = {k:v.cpu().clone() for k,v in model.state_dict().items()}
-                best_ft_test, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
+                best_ft_test, _, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
             
             kd_history.append({
                 'epoch': ep,
@@ -690,7 +721,7 @@ def train(dataset, version, resume=False):
             })
             
             if ep % 10 == 0:
-                ft_acc, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
+                ft_acc, _, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
                 print(f"  [S2] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best={best_ft_val*100:.1f}%")
                 log_f.write(f"[S2] ep{ep:>3}: loss={epoch_loss/n_batches:.4f} val={va*100:.1f}% best_val={best_ft_val*100:.1f}%\n")
                 log_f.flush()
@@ -711,17 +742,28 @@ def train(dataset, version, resume=False):
         print(f"  [S2] {version.upper()} 保存: val_acc={best_ft_val*100:.2f}%")
         
         model.load_state_dict(best_ft_state)
-        ft_acc, ft_ca = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        ft_acc, ft_ca, _ = evaluate(model, Xte.to(DEVICE), y_te, cn)
         print(f"  {version.upper()}: {ft_acc*100:.2f}%")
         log_f.write(f"\n{version.upper()} Final: val={best_ft_val*100:.2f}% test={ft_acc*100:.2f}%\n")
         log_f.flush()
+        
+        # Stage 2: 保存每类准确率和混淆矩阵
+        _, ft_ca, ft_cm = evaluate(model, Xte.to(DEVICE), y_te, cn)
+        np.save(f"{HISTORY_DIR}/{dataset}_{version}_cm.npy", ft_cm)
+        with open(f"{HISTORY_DIR}/{dataset}_{version}_class_acc.json", 'w') as f:
+            json.dump(ft_ca, f, indent=2, ensure_ascii=False)
+        print(f"  [{version.upper()}] Confusion matrix saved ({ft_cm.shape})")
+        print(f"  [{version.upper()}] Per-class accuracy saved:")
+        for cls_name, cls_acc in ft_ca.items():
+            print(f"    {cls_name}: {cls_acc*100:.1f}%")
+        log_f.write(f"[{version.upper()}] Per-class acc: {ft_ca}\n")
         
         result[f'{version}_kd'] = round(ft_acc*100, 2)
         result['kd_class_acc'] = ft_ca
         result['stage2_history'] = kd_history
     
     # 保存最终结果JSON
-    result_file = f"/home/fandy/workplace/thesis/results/{dataset}_{version}.json"
+    result_file = BASE_DIR + "/results/" + dataset + "_" + version + ".json"
     with open(result_file, 'w') as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     print(f"\n  ✅ Result saved: {result_file}")

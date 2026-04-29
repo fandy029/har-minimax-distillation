@@ -1,6 +1,6 @@
 
 === WISDM - V1 ===
-Start time: 2026-04-18 09:02:05
+Start time: 2026-04-28 06:52:36
 Dataset config: {'classes': 6, 'cn': ['Walking', 'Jogging', 'Upstairs', 'Downstairs', 'Sitting', 'Standing'], 'loader': 'load_wisdm', 'channels': 3, 'max_train': 100000}
 
 Data: Train=10864, Val=2716, Test=3395
@@ -9,41 +9,43 @@ Soft labels: /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy, sh
 [SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=98.78%)
 [LOAD] wisdm_pure_cnn_best.pt
 
-[S1] Loaded: val=98.78% test=98.44%
+[S1] Loaded: val=98.78% test=98.00%
+[S1] Per-class acc: {'Walking': 0.990053557765876, 'Jogging': 0.994291151284491, 'Upstairs': 0.9402597402597402, 'Downstairs': 0.9363057324840764, 'Sitting': 0.983957219251337, 'Standing': 0.9801324503311258}
 
 === Stage 2: V1 Distillation (T=3.0, alpha=0.6) ===
-[S2] ep 10: loss=0.2061 val=97.4% best_val=97.5%
-[S2] ep 20: loss=0.1735 val=97.8% best_val=97.9%
-[S2] ep 30: loss=0.1694 val=97.9% best_val=98.0%
-[S2] ep 40: loss=0.1434 val=98.2% best_val=98.4%
-[S2] ep 50: loss=0.1344 val=98.5% best_val=98.5%
-[S2] ep 60: loss=0.1283 val=98.6% best_val=98.6%
-[S2] ep 70: loss=0.1257 val=98.5% best_val=98.6%
-[S2] ep 80: loss=0.1253 val=98.6% best_val=98.7%
-[S2] ep 90: loss=0.1250 val=98.6% best_val=98.7%
-[S2] ep100: loss=0.1222 val=98.7% best_val=98.7%
-[S2] ep110: loss=0.1200 val=98.6% best_val=98.8%
-[S2] ep120: loss=0.1183 val=98.6% best_val=98.8%
-[S2] ep130: loss=0.1169 val=98.7% best_val=98.8%
-[S2] ep140: loss=0.1169 val=98.6% best_val=98.8%
-[S2] ep150: loss=0.1159 val=98.4% best_val=98.8%
-[S2] ep160: loss=0.1159 val=98.5% best_val=98.8%
-[S2] ep170: loss=0.1162 val=98.6% best_val=98.8%
-[S2] ep180: loss=0.1158 val=98.7% best_val=98.8%
-[S2] ep190: loss=0.1156 val=98.6% best_val=98.8%
-[S2] ep200: loss=0.1153 val=98.7% best_val=98.8%
-[S2] ep210: loss=0.1151 val=98.6% best_val=98.8%
-[S2] ep220: loss=0.1150 val=98.6% best_val=98.8%
-[S2] ep230: loss=0.1156 val=98.7% best_val=98.8%
-[S2] ep240: loss=0.1149 val=98.6% best_val=98.8%
-[S2] ep250: loss=0.1151 val=98.3% best_val=98.8%
-[S2] ep260: loss=0.1147 val=98.5% best_val=98.8%
-[S2] ep270: loss=0.1142 val=98.5% best_val=98.8%
-[S2] ep280: loss=0.1141 val=98.4% best_val=98.8%
-[S2] ep290: loss=0.1139 val=98.4% best_val=98.8%
-[S2] ep300: loss=0.1144 val=98.6% best_val=98.8%
+[S2] ep 10: loss=0.2015 val=98.4% best_val=98.4%
+[S2] ep 20: loss=0.1739 val=98.4% best_val=98.6%
+[S2] ep 30: loss=0.1684 val=98.4% best_val=98.6%
+[S2] ep 40: loss=0.1497 val=98.3% best_val=98.6%
+[S2] ep 50: loss=0.1403 val=98.4% best_val=98.7%
+[S2] ep 60: loss=0.1357 val=98.5% best_val=98.7%
+[S2] ep 70: loss=0.1331 val=98.5% best_val=98.7%
+[S2] ep 80: loss=0.1318 val=98.5% best_val=98.7%
+[S2] ep 90: loss=0.1316 val=98.5% best_val=98.7%
+[S2] ep100: loss=0.1295 val=98.5% best_val=98.7%
+[S2] ep110: loss=0.1279 val=98.5% best_val=98.7%
+[S2] ep120: loss=0.1266 val=98.5% best_val=98.7%
+[S2] ep130: loss=0.1261 val=98.2% best_val=98.7%
+[S2] ep140: loss=0.1261 val=98.4% best_val=98.7%
+[S2] ep150: loss=0.1257 val=98.4% best_val=98.7%
+[S2] ep160: loss=0.1251 val=98.5% best_val=98.7%
+[S2] ep170: loss=0.1249 val=98.3% best_val=98.7%
+[S2] ep180: loss=0.1248 val=98.3% best_val=98.7%
+[S2] ep190: loss=0.1251 val=98.3% best_val=98.7%
+[S2] ep200: loss=0.1240 val=98.3% best_val=98.7%
+[S2] ep210: loss=0.1246 val=98.3% best_val=98.7%
+[S2] ep220: loss=0.1249 val=98.3% best_val=98.7%
+[S2] ep230: loss=0.1241 val=98.5% best_val=98.7%
+[S2] ep240: loss=0.1245 val=98.3% best_val=98.7%
+[S2] ep250: loss=0.1237 val=98.2% best_val=98.7%
+[S2] ep260: loss=0.1245 val=98.3% best_val=98.7%
+[S2] ep270: loss=0.1233 val=98.3% best_val=98.7%
+[S2] ep280: loss=0.1234 val=98.3% best_val=98.7%
+[S2] ep290: loss=0.1230 val=98.5% best_val=98.7%
+[S2] ep300: loss=0.1234 val=98.4% best_val=98.7%
 
-V1 Final: val=98.82% test=98.32%
+V1 Final: val=98.75% test=98.26%
+[V1] Per-class acc: {'Walking': 0.9923488905891354, 'Jogging': 0.9933396764985728, 'Upstairs': 0.9506493506493506, 'Downstairs': 0.9490445859872612, 'Sitting': 0.9786096256684492, 'Standing': 0.9801324503311258}
 
-Total time: 50.2min
-End time: 2026-04-18 09:52:26
+Total time: 34.5min
+End time: 2026-04-28 07:27:08

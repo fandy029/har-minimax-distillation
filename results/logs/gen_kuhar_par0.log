@@ -1,6 +1,0 @@
-[Proc 0] 启动，0秒后开始（避免并发冲突）
-[数据] 从缓存加载: X_tr=/home/fandy/workplace/thesis/results/soft_labels/kuhar_X_tr.npy
-[Proc 0] 类 0 已完成，跳过
-[Proc 0] 类 1 已完成，跳过
-[Proc 0] 类 2 已完成，跳过
-[Proc 0] 全部完成 → /home/fandy/workplace/thesis/results/soft_labels/kuhar_soft_proc0.npy

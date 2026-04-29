@@ -1,50 +1,53 @@
 
 === HARTH - V2 ===
-Start time: 2026-04-17 12:56:08
+Start time: 2026-04-28 22:39:03
 Dataset config: {'classes': 6, 'cn': ['左立', '走路', '上楼', '下楼', '右立', '站立'], 'loader': 'load_harth', 'channels': 3, 'max_train': 20000}
 
 Data: Train=22744, Val=5686, Test=7108
 [Limit] Max train: 20000
 Model: CNN1D, in_dim=128, n_cls=6
+Soft labels truncated: 22744 -> 20000
 Soft labels: /home/fandy/workplace/thesis/results/soft_labels/harth_soft.npy, shape=(20000, 6)
-[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=85.54%)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=85.58%)
 [LOAD] harth_pure_cnn_best.pt
 
-[S1] Loaded: val=85.54% test=86.47%
+[S1] Loaded: val=85.58% test=85.86%
+[S1] Per-class acc: {'左立': 0.9107587064676617, '走路': 0.9732360097323601, '上楼': 0.43310344827586206, '下楼': 0.7295918367346939, '右立': 0.6888888888888889, '站立': 0.9106145251396648}
 
 === Stage 2: V2 Distillation (T=2.5, alpha=0.8) ===
-[S2] ep 10: loss=0.2504 val=85.8% best_val=85.8%
-[S2] ep 20: loss=0.2208 val=85.5% best_val=85.9%
-[S2] ep 30: loss=0.2113 val=85.6% best_val=85.9%
-[S2] ep 40: loss=0.1972 val=84.8% best_val=85.9%
-[S2] ep 50: loss=0.1770 val=84.6% best_val=85.9%
-[S2] ep 60: loss=0.1655 val=84.4% best_val=85.9%
-[S2] ep 70: loss=0.1596 val=84.7% best_val=85.9%
-[S2] ep 80: loss=0.1564 val=84.4% best_val=85.9%
-[S2] ep 90: loss=0.1554 val=84.3% best_val=85.9%
-[S2] ep100: loss=0.1613 val=84.3% best_val=85.9%
-[S2] ep110: loss=0.1559 val=84.0% best_val=85.9%
-[S2] ep120: loss=0.1532 val=84.2% best_val=85.9%
-[S2] ep130: loss=0.1522 val=83.9% best_val=85.9%
-[S2] ep140: loss=0.1491 val=84.3% best_val=85.9%
-[S2] ep150: loss=0.1469 val=83.9% best_val=85.9%
-[S2] ep160: loss=0.1460 val=84.0% best_val=85.9%
-[S2] ep170: loss=0.1450 val=84.0% best_val=85.9%
-[S2] ep180: loss=0.1444 val=84.1% best_val=85.9%
-[S2] ep190: loss=0.1440 val=84.1% best_val=85.9%
-[S2] ep200: loss=0.1443 val=84.1% best_val=85.9%
-[S2] ep210: loss=0.1440 val=84.1% best_val=85.9%
-[S2] ep220: loss=0.1484 val=84.0% best_val=85.9%
-[S2] ep230: loss=0.1464 val=83.8% best_val=85.9%
-[S2] ep240: loss=0.1467 val=83.6% best_val=85.9%
-[S2] ep250: loss=0.1452 val=83.6% best_val=85.9%
-[S2] ep260: loss=0.1451 val=84.1% best_val=85.9%
-[S2] ep270: loss=0.1451 val=84.0% best_val=85.9%
-[S2] ep280: loss=0.1444 val=83.7% best_val=85.9%
-[S2] ep290: loss=0.1432 val=84.0% best_val=85.9%
-[S2] ep300: loss=0.1433 val=84.0% best_val=85.9%
+[S2] ep 10: loss=0.2461 val=85.9% best_val=85.9%
+[S2] ep 20: loss=0.2151 val=85.8% best_val=85.9%
+[S2] ep 30: loss=0.2068 val=85.4% best_val=85.9%
+[S2] ep 40: loss=0.1914 val=85.6% best_val=86.0%
+[S2] ep 50: loss=0.1751 val=85.1% best_val=86.0%
+[S2] ep 60: loss=0.1649 val=85.1% best_val=86.0%
+[S2] ep 70: loss=0.1588 val=84.7% best_val=86.0%
+[S2] ep 80: loss=0.1562 val=84.7% best_val=86.0%
+[S2] ep 90: loss=0.1547 val=84.9% best_val=86.0%
+[S2] ep100: loss=0.1598 val=84.2% best_val=86.0%
+[S2] ep110: loss=0.1561 val=84.6% best_val=86.0%
+[S2] ep120: loss=0.1534 val=84.4% best_val=86.0%
+[S2] ep130: loss=0.1511 val=84.3% best_val=86.0%
+[S2] ep140: loss=0.1482 val=84.8% best_val=86.0%
+[S2] ep150: loss=0.1469 val=84.8% best_val=86.0%
+[S2] ep160: loss=0.1457 val=85.0% best_val=86.0%
+[S2] ep170: loss=0.1449 val=84.6% best_val=86.0%
+[S2] ep180: loss=0.1447 val=85.1% best_val=86.0%
+[S2] ep190: loss=0.1445 val=85.1% best_val=86.0%
+[S2] ep200: loss=0.1441 val=84.9% best_val=86.0%
+[S2] ep210: loss=0.1440 val=84.7% best_val=86.0%
+[S2] ep220: loss=0.1479 val=84.1% best_val=86.0%
+[S2] ep230: loss=0.1471 val=84.4% best_val=86.0%
+[S2] ep240: loss=0.1466 val=84.0% best_val=86.0%
+[S2] ep250: loss=0.1452 val=84.3% best_val=86.0%
+[S2] ep260: loss=0.1471 val=83.9% best_val=86.0%
+[S2] ep270: loss=0.1454 val=84.5% best_val=86.0%
+[S2] ep280: loss=0.1442 val=84.7% best_val=86.0%
+[S2] ep290: loss=0.1440 val=84.7% best_val=86.0%
+[S2] ep300: loss=0.1448 val=84.5% best_val=86.0%
 
-V2 Final: val=85.91% test=86.58%
+V2 Final: val=85.97% test=86.24%
+[V2] Per-class acc: {'左立': 0.9281716417910447, '走路': 0.975669099756691, '上楼': 0.5048275862068966, '下楼': 0.6632653061224489, '右立': 0.7333333333333333, '站立': 0.8710005078720162}
 
-Total time: 84.8min
-End time: 2026-04-17 14:21:10
+Total time: 64.0min
+End time: 2026-04-28 23:43:14

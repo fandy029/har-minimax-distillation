@@ -1,6 +1,6 @@
 
 === UCI_HAR_NEW - PURE_CNN ===
-Start time: 2026-04-18 02:08:01
+Start time: 2026-04-28 12:10:07
 Dataset config: {'classes': 12, 'cn': ['WALKING', 'WALKING_UP', 'WALKING_DOWN', 'SITTING', 'STANDING', 'LAYING', 'SIT_TO_STAND', 'STAND_TO_SIT', 'SIT_TO_LIE', 'LIE_TO_SIT', 'STAND_TO_LIE', 'LIE_TO_STAND'], 'loader': 'load_uci_har_new', 'channels': 9, 'max_train': 5000}
 
 Data: Train=6213, Val=1554, Test=3162
@@ -9,38 +9,39 @@ Model: MLP, in_dim=561, n_cls=12
 Soft labels: one-hot (pure_cnn mode)
 
 === Stage 1: 纯CNN训练 (300 epochs) ===
-[S1] ep 10: loss=0.0934 val=95.5% best_val=95.5%
-[S1] ep 20: loss=0.0724 val=95.9% best_val=96.0%
-[S1] ep 30: loss=0.0464 val=96.0% best_val=96.5%
-[S1] ep 40: loss=0.0364 val=96.7% best_val=97.0%
-[S1] ep 50: loss=0.0213 val=97.2% best_val=97.2%
-[S1] ep 60: loss=0.0213 val=97.0% best_val=97.2%
-[S1] ep 70: loss=0.0293 val=96.7% best_val=97.2%
-[S1] ep 80: loss=0.0274 val=96.6% best_val=97.2%
-[S1] ep 90: loss=0.0169 val=96.8% best_val=97.2%
-[S1] ep100: loss=0.0146 val=96.8% best_val=97.2%
-[S1] ep110: loss=0.0128 val=97.2% best_val=97.4%
-[S1] ep120: loss=0.0149 val=97.3% best_val=97.4%
-[S1] ep130: loss=0.0097 val=97.4% best_val=97.4%
-[S1] ep140: loss=0.0085 val=97.4% best_val=97.5%
-[S1] ep150: loss=0.0203 val=97.1% best_val=97.5%
-[S1] ep160: loss=0.0221 val=97.2% best_val=97.5%
-[S1] ep170: loss=0.0182 val=97.2% best_val=97.5%
-[S1] ep180: loss=0.0121 val=97.0% best_val=97.5%
-[S1] ep190: loss=0.0122 val=97.6% best_val=97.6%
-[S1] ep200: loss=0.0130 val=97.0% best_val=97.6%
-[S1] ep210: loss=0.0118 val=97.4% best_val=97.6%
-[S1] ep220: loss=0.0133 val=97.4% best_val=97.6%
-[S1] ep230: loss=0.0071 val=96.8% best_val=97.6%
-[S1] ep240: loss=0.0076 val=97.2% best_val=97.6%
-[S1] ep250: loss=0.0057 val=97.4% best_val=97.6%
-[S1] ep260: loss=0.0053 val=97.7% best_val=97.7%
-[S1] ep270: loss=0.0060 val=97.7% best_val=97.7%
-[S1] ep280: loss=0.0044 val=97.6% best_val=97.7%
-[S1] ep290: loss=0.0060 val=97.4% best_val=97.7%
-[S1] ep300: loss=0.0098 val=97.4% best_val=97.7%
+[S1] ep 10: loss=0.1011 val=95.9% best_val=95.9%
+[S1] ep 20: loss=0.0690 val=96.4% best_val=96.5%
+[S1] ep 30: loss=0.0457 val=96.8% best_val=96.8%
+[S1] ep 40: loss=0.0413 val=97.2% best_val=97.2%
+[S1] ep 50: loss=0.0331 val=97.4% best_val=97.4%
+[S1] ep 60: loss=0.0190 val=97.2% best_val=97.4%
+[S1] ep 70: loss=0.0350 val=96.6% best_val=97.4%
+[S1] ep 80: loss=0.0274 val=96.7% best_val=97.4%
+[S1] ep 90: loss=0.0233 val=96.8% best_val=97.4%
+[S1] ep100: loss=0.0134 val=97.4% best_val=97.4%
+[S1] ep110: loss=0.0117 val=97.0% best_val=97.6%
+[S1] ep120: loss=0.0117 val=97.4% best_val=97.6%
+[S1] ep130: loss=0.0188 val=97.4% best_val=97.6%
+[S1] ep140: loss=0.0093 val=97.3% best_val=97.6%
+[S1] ep150: loss=0.0246 val=97.2% best_val=97.6%
+[S1] ep160: loss=0.0173 val=96.1% best_val=97.6%
+[S1] ep170: loss=0.0237 val=97.1% best_val=97.6%
+[S1] ep180: loss=0.0213 val=97.3% best_val=97.6%
+[S1] ep190: loss=0.0148 val=97.4% best_val=97.7%
+[S1] ep200: loss=0.0121 val=97.6% best_val=97.7%
+[S1] ep210: loss=0.0114 val=97.2% best_val=97.7%
+[S1] ep220: loss=0.0101 val=97.5% best_val=97.7%
+[S1] ep230: loss=0.0057 val=97.2% best_val=97.7%
+[S1] ep240: loss=0.0079 val=97.4% best_val=97.7%
+[S1] ep250: loss=0.0153 val=97.6% best_val=97.7%
+[S1] ep260: loss=0.0058 val=97.4% best_val=97.8%
+[S1] ep270: loss=0.0051 val=97.6% best_val=97.8%
+[S1] ep280: loss=0.0045 val=97.7% best_val=97.8%
+[S1] ep290: loss=0.0040 val=97.6% best_val=97.8%
+[S1] ep300: loss=0.0041 val=97.7% best_val=97.8%
 
-[S1] Final: val=97.68% test=94.75%
+[S1] Final: val=97.81% test=94.66%
+[S1] Per-class acc: {'WALKING': 0.9879032258064516, 'WALKING_UP': 0.9363057324840764, 'WALKING_DOWN': 0.9595238095238096, 'SITTING': 0.8917322834645669, 'STANDING': 0.9694244604316546, 'LAYING': 1.0, 'SIT_TO_STAND': 0.8260869565217391, 'STAND_TO_SIT': 0.9, 'SIT_TO_LIE': 0.59375, 'LIE_TO_SIT': 0.72, 'STAND_TO_LIE': 0.7959183673469388, 'LIE_TO_STAND': 0.6666666666666666}
 
-Total time: 2.5min
-End time: 2026-04-18 02:10:33
+Total time: 1.9min
+End time: 2026-04-28 12:12:02

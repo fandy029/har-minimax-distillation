@@ -1,52 +1,53 @@
 
-==================================================
-  KUHAR - V1
-==================================================
-  Checkpoint: /home/fandy/workplace/thesis/results/checkpoints/kuhar_v1_best.pt
-  Log: /home/fandy/workplace/thesis/results/logs/kuhar_v1_train.log
-  History: /home/fandy/workplace/thesis/results/history/kuhar_v1_history.json
-  Train: 61210 Val: 15303 Test: 19129
-  [Limit] Max train: 20000
-  [Soft] Loaded: /home/fandy/workplace/thesis/results/soft_labels/kuhar_soft.npy
-  [SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=94.56%)
-  [LOAD] kuhar_pure_cnn_best.pt → model.load_state_dict()
-  [S1] Loaded: val_acc=94.56% | test_acc=94.03%
+=== KUHAR - V1 ===
+Start time: 2026-04-28 12:47:45
+Dataset config: {'classes': 18, 'cn': ['Stand', 'Sit', 'Talk-sit', 'Talk-stand', 'Stand-sit', 'Lay', 'Lay-stand', 'Pick', 'Jump', 'Push-up', 'Sit-up', 'Walk', 'Walk-backwards', 'Walk-circle', 'Run', 'Stair-up', 'Stair-down', 'Table-tennis'], 'loader': 'load_kuhar', 'channels': 8, 'max_train': 20000}
 
-[Stage 2] V1 蒸馏训练 (300 epochs, T=3.0, alpha=0.6)
-         用Stage1的权重初始化，用软标签训练...
-  [S2] ep 10: loss=0.6974 val=90.8% best=90.8%
-  [S2] ep 20: loss=0.5758 val=92.7% best=92.8%
-  [S2] ep 30: loss=0.5566 val=92.7% best=93.3%
-  [S2] ep 40: loss=0.4702 val=93.2% best=94.3%
-  [S2] ep 50: loss=0.4250 val=94.9% best=94.9%
-  [S2] ep 60: loss=0.4026 val=94.7% best=95.0%
-  [S2] ep 70: loss=0.3914 val=95.3% best=95.3%
-  [S2] ep 80: loss=0.3839 val=95.2% best=95.3%
-  [S2] ep 90: loss=0.3849 val=95.3% best=95.3%
-  [S2] ep100: loss=0.3740 val=94.8% best=95.3%
-  [S2] ep110: loss=0.3618 val=95.1% best=95.4%
-  [S2] ep120: loss=0.3520 val=95.3% best=95.4%
-  [S2] ep130: loss=0.3460 val=95.3% best=95.5%
-  [S2] ep140: loss=0.3409 val=95.2% best=95.5%
-  [S2] ep150: loss=0.3351 val=95.0% best=95.5%
-  [S2] ep160: loss=0.3329 val=95.4% best=95.5%
-  [S2] ep170: loss=0.3306 val=95.5% best=95.5%
-  [S2] ep180: loss=0.3293 val=95.5% best=95.5%
-  [S2] ep190: loss=0.3276 val=95.2% best=95.5%
-  [S2] ep200: loss=0.3275 val=95.4% best=95.5%
-  [S2] ep210: loss=0.3287 val=95.5% best=95.6%
-  [S2] ep220: loss=0.3300 val=95.1% best=95.6%
-  [S2] ep230: loss=0.3283 val=95.1% best=95.6%
-  [S2] ep240: loss=0.3241 val=95.3% best=95.6%
-  [S2] ep250: loss=0.3216 val=94.9% best=95.6%
-  [S2] ep260: loss=0.3200 val=95.0% best=95.6%
-  [S2] ep270: loss=0.3162 val=94.9% best=95.6%
-  [S2] ep280: loss=0.3158 val=95.1% best=95.6%
-  [S2] ep290: loss=0.3151 val=94.9% best=95.6%
-  [S2] ep300: loss=0.3126 val=95.1% best=95.6%
-  [S2] V1 保存: val_acc=95.64%
-  V1: 95.58%
+Data: Train=61210, Val=15303, Test=19129
+[Limit] Max train: 20000
+Model: CNN1D, in_dim=128, n_cls=18
+Soft labels truncated: 61210 -> 20000
+Soft labels: /home/fandy/workplace/thesis/results/soft_labels/kuhar_soft.npy, shape=(20000, 18)
+[SKIP Stage1] 跳过纯CNN训练，直接用已有权重 (val_acc=94.13%)
+[LOAD] kuhar_pure_cnn_best.pt
 
-  ✅ Result saved: /home/fandy/workplace/thesis/results/kuhar_v1.json
-  ✅ History saved: /home/fandy/workplace/thesis/results/history/kuhar_v1_history.json
-  Total time: 108.8min
+[S1] Loaded: val=94.13% test=94.02%
+[S1] Per-class acc: {'Stand': 0.9093009820912767, 'Sit': 0.9172976121141526, 'Talk-sit': 0.9167169583584792, 'Talk-stand': 0.9650959860383944, 'Stand-sit': 0.9765425803161653, 'Lay': 0.9187425860023725, 'Lay-stand': 0.9238451935081149, 'Pick': 0.953355155482815, 'Jump': 0.9826498422712934, 'Push-up': 0.9611231101511879, 'Sit-up': 0.9414225941422594, 'Walk': 0.9561855670103093, 'Walk-backwards': 0.9786476868327402, 'Walk-circle': 0.8798283261802575, 'Run': 0.9397810218978102, 'Stair-up': 0.9405684754521964, 'Stair-down': 0.9402390438247012, 'Table-tennis': 0.9807692307692307}
+
+=== Stage 2: V1 Distillation (T=3.0, alpha=0.6) ===
+[S2] ep 10: loss=0.7016 val=90.9% best_val=90.9%
+[S2] ep 20: loss=0.5809 val=92.5% best_val=92.5%
+[S2] ep 30: loss=0.5601 val=92.7% best_val=93.2%
+[S2] ep 40: loss=0.4753 val=93.6% best_val=93.9%
+[S2] ep 50: loss=0.4347 val=94.3% best_val=94.3%
+[S2] ep 60: loss=0.4079 val=93.7% best_val=94.6%
+[S2] ep 70: loss=0.3969 val=94.7% best_val=94.9%
+[S2] ep 80: loss=0.3925 val=94.6% best_val=94.9%
+[S2] ep 90: loss=0.3917 val=93.1% best_val=94.9%
+[S2] ep100: loss=0.3811 val=94.4% best_val=94.9%
+[S2] ep110: loss=0.3686 val=93.9% best_val=95.1%
+[S2] ep120: loss=0.3586 val=94.2% best_val=95.1%
+[S2] ep130: loss=0.3515 val=94.3% best_val=95.1%
+[S2] ep140: loss=0.3449 val=94.8% best_val=95.1%
+[S2] ep150: loss=0.3386 val=95.2% best_val=95.2%
+[S2] ep160: loss=0.3366 val=95.0% best_val=95.3%
+[S2] ep170: loss=0.3326 val=95.1% best_val=95.4%
+[S2] ep180: loss=0.3333 val=95.3% best_val=95.4%
+[S2] ep190: loss=0.3315 val=95.3% best_val=95.4%
+[S2] ep200: loss=0.3314 val=95.1% best_val=95.4%
+[S2] ep210: loss=0.3308 val=95.1% best_val=95.4%
+[S2] ep220: loss=0.3347 val=95.0% best_val=95.4%
+[S2] ep230: loss=0.3309 val=94.3% best_val=95.4%
+[S2] ep240: loss=0.3253 val=94.9% best_val=95.4%
+[S2] ep250: loss=0.3263 val=94.7% best_val=95.4%
+[S2] ep260: loss=0.3213 val=94.8% best_val=95.4%
+[S2] ep270: loss=0.3196 val=94.6% best_val=95.4%
+[S2] ep280: loss=0.3176 val=94.4% best_val=95.4%
+[S2] ep290: loss=0.3161 val=94.9% best_val=95.4%
+[S2] ep300: loss=0.3152 val=95.1% best_val=95.4%
+
+V1 Final: val=95.43% test=95.25%
+[V1] Per-class acc: {'Stand': 0.9404968226458694, 'Sit': 0.9254513686662784, 'Talk-sit': 0.9179239589619795, 'Talk-stand': 0.9796393251890634, 'Stand-sit': 0.9734829168791433, 'Lay': 0.9549228944246738, 'Lay-stand': 0.9406991260923845, 'Pick': 0.9656301145662848, 'Jump': 0.9826498422712934, 'Push-up': 0.9740820734341252, 'Sit-up': 0.9476987447698745, 'Walk': 0.9600515463917526, 'Walk-backwards': 0.9786476868327402, 'Walk-circle': 0.8884120171673819, 'Run': 0.9671532846715328, 'Stair-up': 0.9366925064599483, 'Stair-down': 0.9588313413014609, 'Table-tennis': 0.9807692307692307}
+
+Total time: 83.1min
+End time: 2026-04-28 14:11:02

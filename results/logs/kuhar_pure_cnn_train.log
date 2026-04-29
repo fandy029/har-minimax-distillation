@@ -1,6 +1,6 @@
 
 === KUHAR - PURE_CNN ===
-Start time: 2026-04-20 15:55:50
+Start time: 2026-04-28 08:36:09
 Dataset config: {'classes': 18, 'cn': ['Stand', 'Sit', 'Talk-sit', 'Talk-stand', 'Stand-sit', 'Lay', 'Lay-stand', 'Pick', 'Jump', 'Push-up', 'Sit-up', 'Walk', 'Walk-backwards', 'Walk-circle', 'Run', 'Stair-up', 'Stair-down', 'Table-tennis'], 'loader': 'load_kuhar', 'channels': 8, 'max_train': 20000}
 
 Data: Train=61210, Val=15303, Test=19129
@@ -9,38 +9,39 @@ Model: CNN1D, in_dim=128, n_cls=18
 Soft labels: one-hot (pure_cnn mode)
 
 === Stage 1: 纯CNN训练 (300 epochs) ===
-[S1] ep 10: loss=0.3988 val=77.2% best_val=77.2%
-[S1] ep 20: loss=0.2694 val=81.4% best_val=81.4%
-[S1] ep 30: loss=0.3053 val=73.8% best_val=81.4%
-[S1] ep 40: loss=0.2377 val=81.2% best_val=81.8%
-[S1] ep 50: loss=0.1913 val=83.1% best_val=83.1%
-[S1] ep 60: loss=0.1731 val=83.7% best_val=83.7%
-[S1] ep 70: loss=0.2227 val=81.0% best_val=83.7%
-[S1] ep 80: loss=0.1921 val=82.3% best_val=83.7%
-[S1] ep 90: loss=0.1731 val=82.2% best_val=83.7%
-[S1] ep100: loss=0.1582 val=82.7% best_val=83.7%
-[S1] ep110: loss=0.1420 val=85.0% best_val=85.0%
-[S1] ep120: loss=0.1318 val=84.3% best_val=85.7%
-[S1] ep130: loss=0.1214 val=85.6% best_val=86.2%
-[S1] ep140: loss=0.1178 val=84.8% best_val=86.2%
-[S1] ep150: loss=0.1448 val=85.2% best_val=86.2%
-[S1] ep160: loss=0.1354 val=87.4% best_val=87.5%
-[S1] ep170: loss=0.1207 val=87.4% best_val=88.4%
-[S1] ep180: loss=0.0936 val=89.3% best_val=89.8%
-[S1] ep190: loss=0.0799 val=88.8% best_val=91.3%
-[S1] ep200: loss=0.0691 val=91.6% best_val=91.8%
-[S1] ep210: loss=0.0574 val=91.3% best_val=92.2%
-[S1] ep220: loss=0.0455 val=93.1% best_val=93.1%
-[S1] ep230: loss=0.0356 val=93.3% best_val=93.6%
-[S1] ep240: loss=0.0303 val=93.4% best_val=94.0%
-[S1] ep250: loss=0.0252 val=93.9% best_val=94.0%
-[S1] ep260: loss=0.0230 val=93.6% best_val=94.2%
-[S1] ep270: loss=0.0203 val=94.3% best_val=94.4%
-[S1] ep280: loss=0.0173 val=94.1% best_val=94.4%
-[S1] ep290: loss=0.0164 val=94.2% best_val=94.6%
-[S1] ep300: loss=0.0161 val=94.3% best_val=94.6%
+[S1] ep 10: loss=0.4130 val=70.6% best_val=71.0%
+[S1] ep 20: loss=0.2680 val=77.7% best_val=79.2%
+[S1] ep 30: loss=0.2964 val=76.6% best_val=79.2%
+[S1] ep 40: loss=0.2261 val=78.9% best_val=81.0%
+[S1] ep 50: loss=0.1834 val=81.4% best_val=83.1%
+[S1] ep 60: loss=0.1703 val=82.7% best_val=84.0%
+[S1] ep 70: loss=0.2169 val=81.3% best_val=84.0%
+[S1] ep 80: loss=0.1950 val=81.0% best_val=84.0%
+[S1] ep 90: loss=0.1726 val=82.9% best_val=84.0%
+[S1] ep100: loss=0.1627 val=82.2% best_val=84.0%
+[S1] ep110: loss=0.1419 val=83.4% best_val=84.6%
+[S1] ep120: loss=0.1282 val=85.5% best_val=85.5%
+[S1] ep130: loss=0.1208 val=85.7% best_val=86.6%
+[S1] ep140: loss=0.1164 val=86.3% best_val=86.8%
+[S1] ep150: loss=0.1510 val=83.7% best_val=86.8%
+[S1] ep160: loss=0.1349 val=84.6% best_val=86.8%
+[S1] ep170: loss=0.1261 val=86.8% best_val=86.8%
+[S1] ep180: loss=0.1148 val=85.0% best_val=87.8%
+[S1] ep190: loss=0.0953 val=88.1% best_val=89.7%
+[S1] ep200: loss=0.0757 val=89.9% best_val=90.1%
+[S1] ep210: loss=0.0611 val=91.7% best_val=91.7%
+[S1] ep220: loss=0.0488 val=91.3% best_val=91.8%
+[S1] ep230: loss=0.0435 val=92.4% best_val=92.6%
+[S1] ep240: loss=0.0331 val=92.0% best_val=93.2%
+[S1] ep250: loss=0.0302 val=92.8% best_val=93.6%
+[S1] ep260: loss=0.0251 val=92.7% best_val=93.9%
+[S1] ep270: loss=0.0210 val=93.8% best_val=93.9%
+[S1] ep280: loss=0.0183 val=93.7% best_val=94.0%
+[S1] ep290: loss=0.0169 val=93.9% best_val=94.1%
+[S1] ep300: loss=0.0172 val=93.7% best_val=94.1%
 
-[S1] Final: val=94.56% test=94.18%
+[S1] Final: val=94.13% test=94.07%
+[S1] Per-class acc: {'Stand': 0.9104563835932987, 'Sit': 0.9172976121141526, 'Talk-sit': 0.9155099577549789, 'Talk-stand': 0.9656777196044212, 'Stand-sit': 0.9760326364099949, 'Lay': 0.9211150652431791, 'Lay-stand': 0.9257178526841449, 'Pick': 0.9541734860883797, 'Jump': 0.9826498422712934, 'Push-up': 0.9611231101511879, 'Sit-up': 0.9403765690376569, 'Walk': 0.9548969072164949, 'Walk-backwards': 0.9786476868327402, 'Walk-circle': 0.8841201716738197, 'Run': 0.9397810218978102, 'Stair-up': 0.9418604651162791, 'Stair-down': 0.9415670650730412, 'Table-tennis': 0.9807692307692307}
 
-Total time: 126.5min
-End time: 2026-04-20 18:02:29
+Total time: 99.4min
+End time: 2026-04-28 10:15:45

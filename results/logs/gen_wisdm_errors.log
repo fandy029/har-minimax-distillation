@@ -1,55 +1,42 @@
-[FINAL] 完成写入 /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy
 
-=== wisdm 软标签生成开始 2026-04-22 11:03:27 ===
+=== wisdm 软标签生成开始 2026-04-24 19:11:32 ===
 
-=== wisdm 软标签生成开始 2026-04-22 11:06:27 ===
+=== wisdm 软标签生成开始 2026-04-24 19:24:39 ===
 
-=== wisdm 软标签生成开始 2026-04-22 11:12:29 ===
+=== wisdm 软标签生成开始 2026-04-24 19:43:09 ===
 
-=== wisdm 软标签生成开始 2026-04-22 11:17:07 ===
+=== wisdm 软标签生成开始 2026-04-24 20:34:37 ===
 
-=== wisdm 软标签生成开始 2026-04-22 11:22:10 ===
+=== wisdm 软标签生成开始 2026-04-24 21:55:50 ===
 
-=== wisdm 软标签生成开始 2026-04-22 11:23:44 ===
+=== wisdm 软标签生成开始 2026-04-24 23:03:12 ===
 
-=== wisdm 软标签生成开始 2026-04-22 13:21:43 ===
-FALLBACK idx=3258 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e420e091b0680e60cd042af85043'}
-FALLBACK idx=3297 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e456720730f0eb342eb86aeb3c7a'}
-FALLBACK idx=3313 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e48c8003e7f7ef8529a5f705b555'}
-FALLBACK idx=3323 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e4c3156576c3570fc47d2164c8d2'}
-FALLBACK idx=3347 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e4faed63c3d2d6f6597e703fa82a'}
-FALLBACK idx=3349 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e530b2bc261024dc433a336d19ce'}
-FALLBACK idx=3353 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e56787204a88b20d438a28b6c6b9'}
-FALLBACK idx=3363 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e59d4046fa0a2d629b7cf9139617'}
-FALLBACK idx=3376 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e5d39caa9de62571045806a73c01'}
-FALLBACK idx=3377 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e60a96d85fe87abc42873868625a'}
-FALLBACK idx=3380 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e640b8ecae809df47891e3e22981'}
-FALLBACK idx=3383 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e6764607a62baaf5a12e9f66cb29'}
-FALLBACK idx=3396 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e6ad8c9d41ec37d5b2d12233025d'}
-FALLBACK idx=3401 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e6e332d51790310741e18c351806'}
-FALLBACK idx=3403 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e719197a53670968826ae712fd6e'}
-FALLBACK idx=3406 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e74fa8360da7c85223010d293e94'}
-FALLBACK idx=3407 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e785dbf9c8a49e34f6a332bbd87c'}
-FALLBACK idx=3427 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e7bb3c202e58956f85f214fdfce9'}
-FALLBACK idx=3444 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e7f14d83706939df1409c578ba06'}
-FALLBACK idx=3466 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e8272b84d2ab5d918be4966bb361'}
-FALLBACK idx=3468 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e85ebce4a7d595e72337a0bec2cd'}
-FALLBACK idx=3528 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e89471d0eaa462aa5b7ea85fdd85'}
-FALLBACK idx=3530 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e8ca770934659c5226c6bc7e39de'}
-FALLBACK idx=3531 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637e900609462a8eba890cf657541ff'}
-FALLBACK idx=3547 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e93634f5cc926e2dfc2f69bc82c2'}
-FALLBACK idx=3566 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e96de9b8130fa9636ff0a714c294'}
-FALLBACK idx=3567 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e9a3191bc76ed86f599663df12c0'}
-FALLBACK idx=3569 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'Token Plan 主要面向个人开发者的交互式使用场景。当前请求量较高，请稍后重试；如需支持更高并发或自动化任务，建议升级至更高级别套餐，或使用按量付费 API。 (2062)', 'http_code': '429'}, 'request_id': '0637e9d921ffbc39e88363eeaa4f26fb'}
-FALLBACK idx=3583 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637ea100a5157fd8e3d8724a435390f'}
-FALLBACK idx=3584 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637ea460820744f4651f08a2ba598d5'}
-FALLBACK idx=3585 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637ea7c2879b650eb778203b4710921'}
-FALLBACK idx=3590 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637eab282fdb7ded5f6abcf3be08906'}
-FALLBACK idx=3602 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637eae8b73097b0c6be2cd47faf856f'}
-FALLBACK idx=3606 class=3 err=Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'usage limit exceeded (2056)', 'http_code': '429'}, 'request_id': '0637eb1efd85e10af31907e03fd00d29'}
-=== 完成 2026-04-22 21:20:22 ===
-[FINAL] 完成写入 /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy
+=== wisdm 软标签生成开始 2026-04-24 23:31:25 ===
+FALLBACK idx=1388 class=4 err=429限流: Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'messa
 
-=== wisdm 软标签生成开始 2026-04-23 17:35:35 ===
-=== 完成 2026-04-23 17:38:07 ===
-[FINAL] 完成写入 /home/fandy/workplace/thesis/results/soft_labels/wisdm_soft.npy
+=== wisdm 软标签生成开始 2026-04-27 00:04:21 ===
+=== 完成 2026-04-27 02:40:10 ===
+
+=== wisdm 软标签生成开始 2026-04-27 10:41:48 ===
+=== 完成 2026-04-27 10:41:51 ===
+
+=== wisdm 软标签生成开始 2026-04-27 11:31:49 ===
+=== 完成 2026-04-27 11:31:52 ===
+
+=== wisdm 软标签生成开始 2026-04-27 13:10:56 ===
+=== 完成 2026-04-27 13:10:59 ===
+
+=== wisdm 软标签生成开始 2026-04-27 16:49:21 ===
+=== 完成 2026-04-27 16:49:23 ===
+
+=== wisdm 软标签生成开始 2026-04-27 18:39:36 ===
+=== 完成 2026-04-27 18:39:42 ===
+
+=== wisdm 软标签生成开始 2026-04-28 00:04:25 ===
+=== 完成 2026-04-28 00:04:28 ===
+
+=== wisdm 软标签生成开始 2026-04-28 00:12:26 ===
+=== 完成 2026-04-28 00:12:29 ===
+
+=== wisdm 软标签生成开始 2026-04-28 00:23:06 ===
+=== 完成 2026-04-28 00:23:09 ===
