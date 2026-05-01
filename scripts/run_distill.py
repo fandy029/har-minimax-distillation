@@ -36,6 +36,63 @@ VERSION_PARAMS = {
     'v3': {'T': 1.5, 'ALPHA': 0.85, 'epochs': 300},
 }
 
+# ============ 数据增强 ============
+def augment_mav(x, kernel_size=5):
+    """Moving Average Filter - 平滑信号"""
+    if len(x.shape) == 2:  # (T, C)
+        kernel = np.ones(kernel_size) / kernel_size
+        result = np.zeros_like(x)
+        for c in range(x.shape[1]):
+            result[:, c] = np.convolve(x[:, c], kernel, mode='same')
+        return result
+    return x
+
+def augment_jitter(x, sigma=0.03):
+    """Jitter - 加高斯噪声"""
+    noise = np.random.normal(0, sigma, x.shape)
+    return x + noise.astype(x.dtype)
+
+def augment_scale(x, sigma=0.1):
+    """Scale - 随机缩放"""
+    scale = np.random.normal(1.0, sigma, (1, x.shape[1]) if len(x.shape)==2 else (1,))
+    return x * scale
+
+def augment_time_shift(x, shift_max=5):
+    """Time Shift - 时间轴微移"""
+    if len(x.shape) != 2:
+        return x
+    T, C = x.shape
+    shift = np.random.randint(-shift_max, shift_max + 1)
+    if shift == 0:
+        return x
+    result = np.zeros_like(x)
+    if shift > 0:
+        result[shift:, :] = x[:-shift, :]
+        result[:shift, :] = x[0, :]
+    else:
+        result[:shift, :] = x[-shift:, :]
+        result[shift:, :] = x[0, :]
+    return result
+
+def apply_augmentation(x, prob=0.5):
+    """对单个样本应用随机数据增强"""
+    if np.random.rand() > prob:
+        return x
+    augs = [lambda x: x,  # no augmentation
+            augment_jitter,
+            lambda x: augment_scale(x, sigma=0.1),
+            lambda x: augment_mav(x, kernel_size=3),
+            lambda x: augment_mav(x, kernel_size=5),
+            lambda x: augment_time_shift(x, shift_max=3),
+    ]
+    aug = augs[np.random.randint(0, len(augs))]
+    return aug(x)
+
+# 过拟合数据集配置（需要更多增强）
+AUG_DATASETS = {'harth', 'gait', 'pamap2'}
+AUG_PROB = {'harth': 0.6, 'gait': 0.7, 'pamap2': 0.4}  # 增强概率
+WEIGHT_DECAY_OVERRIDE = {'harth': 5e-4, 'gait': 5e-4, 'pamap2': 2e-4}  # 增大学习率
+
 # 数据集配置
 DATASET_CONFIG = {
     'pamap2': {
@@ -539,10 +596,18 @@ def train(dataset, version, resume=False):
         print(f"         用focal_loss训练，不使用软标签...")
         log_f.write(f"\n=== Stage 1: 纯CNN训练 ({EPOCHS_PURE} epochs) ===\n")
     
+    # 使用增强weight_decay防止过拟合
+    wd = WEIGHT_DECAY_OVERRIDE.get(dataset, 1e-4)
+    use_aug = dataset in AUG_DATASETS
+    aug_prob = AUG_PROB.get(dataset, 0.0)
+    if use_aug:
+        print(f"  [Aug] 启用数据增强 (prob={aug_prob}), weight_decay={wd}")
+        log_f.write(f"[Aug] 启用数据增强 (prob={aug_prob}), weight_decay={wd}\n")
+    
     t1 = time.time()  # 总计时开始（无论Stage1是否跳过）
     if do_train_stage1:
         model.train()
-        opt = torch.optim.AdamW(model.parameters(), lr=5e-4, weight_decay=1e-4)
+        opt = torch.optim.AdamW(model.parameters(), lr=5e-4, weight_decay=wd)
         sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=20, T_mult=2)
         best_state = None; best_val = 0.0; best_test = 0
         
@@ -563,6 +628,11 @@ def train(dataset, version, resume=False):
                 idx = perm[i:i+BATCH]
                 bx = Xt[idx].to(DEVICE)
                 bh = yt[idx].to(DEVICE)
+                # 对HARTH/Gait/PAMAP2应用数据增强
+                if use_aug:
+                    bx_np = bx.cpu().numpy()
+                    bx_aug = np.array([apply_augmentation(bx_np[j], prob=aug_prob) for j in range(len(bx_np))])
+                    bx = torch.FloatTensor(bx_aug).to(DEVICE)
                 out = model(bx)
                 loss = focal_loss(out, bh)
                 opt.zero_grad(); loss.backward()
@@ -662,7 +732,7 @@ def train(dataset, version, resume=False):
         log_f.write(f"\n=== Stage 2: {version.upper()} Distillation (T={T}, alpha={ALPHA}) ===\n")
         
         model.train()
-        opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
+        opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=wd)
         sch = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, T_0=30, T_mult=2)
         best_ft_state = None; best_ft_val = 0.0; best_ft_test = 0
         t2 = time.time()
@@ -695,6 +765,11 @@ def train(dataset, version, resume=False):
             for i in range(0, len(Xt), BATCH):
                 idx = perm[i:i+BATCH]
                 bx = Xt[idx].to(DEVICE); bh = yt[idx].to(DEVICE); bs = ys[idx].to(DEVICE)
+                # 对HARTH/Gait/PAMAP2应用数据增强
+                if use_aug:
+                    bx_np = bx.cpu().numpy()
+                    bx_aug = np.array([apply_augmentation(bx_np[j], prob=aug_prob) for j in range(len(bx_np))])
+                    bx = torch.FloatTensor(bx_aug).to(DEVICE)
                 out = model(bx)
                 ce = F.cross_entropy(out, bh, reduction='none'); pt = torch.exp(-ce)
                 fl = ((1-pt)**2.0 * ce).mean()

@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API_KEY  = 'sk-cp-JstUWpAJpyIJBq9PRbmeaby_BUpj-Gqj6zXiXyCWevAU4coQCHp6WLvmWrEBHcwW1njIBhGAJH96A06_6asltqnw1pdqLkOZSn78Ym5xBQ8cFAD8om5csOc'
 API_URL = 'https://api.minimaxi.com/v1'
 MODEL   = 'MiniMax-M2.7-highspeed'
-TEMPERATURE = 0.7
+TEMPERATURE = 1.2  # 提高温度，鼓励更均匀的分布，减少one-hot
 MAX_TOKENS = 5000
 SLEEP_SEC = 1.0
 DEFAULT_RATIO = 0.40
@@ -24,14 +24,18 @@ DEFAULT_LIMIT = 400
 
 # ============ 软标签有效性判断 ============
 def is_valid_soft_label(row):
-    """判断这一行是否是有效的真软标签（不是one-hot，不是全零）"""
+    """判断这一行是否是有效的真软标签（不是one-hot，不是全零）
+    
+    放宽标准：允许较高的max_val，因为IMU活动识别中某些类别确实容易区分
+    只要不是完全one-hot（全给一个类）就算有效
+    """
     s = row.sum()
     if s < 0.99:
         return False
     max_val = row.max()
     second_val = np.sort(row)[-2]
-    # one-hot: 最大值接近1.0，且第二大值很小（说明是argmax独大）
-    if max_val > 0.97 and second_val < 0.20:
+    # one-hot: 最大值接近1.0，且第二大值极小（<0.05），才算独大
+    if max_val > 0.97 and second_val < 0.05:
         return False
     return True
 
@@ -264,7 +268,8 @@ def build_prompt_pamap2(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc.mean(axis=0)]}, gyro_mean={[f"{v:.3f}" for v in gyro.mean(axis=0)]}
 Physics: walking/jogging=periodic, sitting/standing=minimal motion, downstairs=negative Y pattern
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.03,"4":0.02}}}}'''
+Output a JSON object with probabilities for each class. The probabilities should reflect genuine uncertainty - include non-zero probabilities for plausible alternative classes.
+Output format: {{"0":0.4,"1":0.3,"2":0.15,"3":0.1,"4":0.05}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_uci_har(data, cn):
     vals = np.array(data)
@@ -278,18 +283,21 @@ def build_prompt_uci_har(data, cn):
 Classes: {", ".join(descs)}
 Key features: acc_means={[f"{v:.3f}" for v in means[:3]]}, acc_stds={[f"{v:.3f}" for v in stds[:3]]}
 Physics: WALKING~periodic, WALKING_UP~posY, WALKING_DOWN~negY, SITTING/STANDING~static, LAYING~supine
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.02,"4":0.02,"5":0.01}}}}'''
+Output a JSON object with probabilities for each class. Reflect genuine uncertainty - consider that some activities are physically similar.
+Output format: {{"0":0.35,"1":0.25,"2":0.2,"3":0.1,"4":0.07,"5":0.03}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_harth(data, cn, sr=50):
     acc = data[:, :3]; acc_m = np.sqrt((acc**2).sum(axis=1))
     y_a = acc[:, 1]
     fft_v = np.abs(np.fft.fft(acc_m)[1:len(acc_m)//2])
     dom_f = np.fft.fftfreq(len(acc_m), 1/sr)[np.argmax(fft_v)+1] if len(fft_v) > 0 else 0
+    peaks = np.sum((acc_m[1:-1]>acc_m[:-2])&(acc_m[1:-1]>acc_m[2:]))
     descs = [f'{i}={cn[i]}' for i in range(len(cn))]
     return f'''Classify IMU window. Classes: {", ".join(descs)}
-Features: acc_mag={acc_m.mean():.2f} y_mean={y_a.mean():.4f}, peaks={np.sum((acc_m[1:-1]>acc_m[:-2])&(acc_m[1:-1]>acc_m[2:]))}, freq={dom_f:.1f}Hz
-Physics: upstairs=posY, downstairs=negY, walk=posY, jog=high freq, sit/stand=low freq
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+Features: acc_mag={acc_m.mean():.2f} y_mean={y_a.mean():.4f}, peaks={peaks}, freq={dom_f:.1f}Hz
+Physics: upstairs=posY+regular, downstairs=negY+regular, walking=moderate periodic, jogging=high freq, sitting/standing=low movement
+IMPORTANT: Activities like 上楼/下楼 (upstairs/downstairs) and 左立/右立 (standing left/right) can look similar. Provide probability estimates that reflect this ambiguity.
+Output JSON: {{"0":0.3,"1":0.25,"2":0.2,"3":0.15,"4":0.07,"5":0.03}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_uci_har_new(data, cn):
     vals = np.array(data)
@@ -304,7 +312,8 @@ Classes: {", ".join(descs)}
 Key features: acc_means={[f"{v:.3f}" for v in means[:3]]}, acc_stds={[f"{v:.3f}" for v in stds[:3]]}
 Static: WALKING/WALKING_UP/WALKING_DOWN/SITTING/STANDING/LAYING
 Transitions: STAND_TO_SIT/SIT_TO_STAND/SIT_TO_LIE/LIE_TO_SIT/STAND_TO_LIE/LIE_TO_STAND
-Output JSON: {{"0":0.8,"1":0.05,...}}}}'''
+IMPORTANT: Transition activities can be ambiguous. Provide probabilities reflecting genuine uncertainty for similar activities.
+Output JSON: {{"0":0.2,"1":0.15,"2":0.1,...}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_motionsense(data, cn):
     acc = data[:, :3]; acc_mag = np.sqrt((acc**2).sum(axis=1))
@@ -313,7 +322,8 @@ def build_prompt_motionsense(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc.mean(axis=0)]}
 Physics: downstairs=negative Y, upstairs=positive Y, walking=jogging=moderate periodic, sitting/standing=stationary
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+IMPORTANT: downstairs/upstairs can be hard to distinguish from Y-axis alone. Provide probabilities reflecting this ambiguity.
+Output JSON: {{"0":0.3,"1":0.25,"2":0.2,"3":0.15,"4":0.07,"5":0.03}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_gait(data, cn):
     acc = data[:, :3]; acc_mag = np.sqrt((acc**2).sum(axis=1)); acc_mean = acc.mean(axis=0)
@@ -322,7 +332,8 @@ def build_prompt_gait(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc_mean]}
 Physics: slow_walk=lower freq, normal_walk=regular, standing=minimal motion, activity=diverse
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+IMPORTANT: These gait patterns can overlap significantly. Provide probabilities that reflect genuine similarity between slow walking and normal walking, etc.
+Output JSON: {{"0":0.35,"1":0.3,"2":0.25,"3":0.1}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_wisdm(data, cn):
     acc = data
@@ -336,7 +347,8 @@ def build_prompt_wisdm(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.2f} y_mean={y_a.mean():.4f}, peaks={peaks}, freq={dom_f:.1f}Hz
 Physics: jogging~periodic 2-4Hz, walking~periodic 1-2Hz, up/downstairs~Y-axis vertical bias, sitting/standing~low movement
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.03,"4":0.01,"5":0.01}}}}'''
+IMPORTANT: upstairs/downstairs can look similar. sitting/standing are both low movement. Provide probabilities reflecting these ambiguities.
+Output JSON: {{"0":0.3,"1":0.25,"2":0.2,"3":0.15,"4":0.07,"5":0.03}} (example only, use YOUR OWN assessment)'''
 
 def build_prompt_motionsense_dm(data, cn):
     acc = data[:, :3] if len(data.shape) == 3 else data[:, :3]
@@ -346,7 +358,8 @@ def build_prompt_motionsense_dm(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f}
 Physics: walking/jogging/downstairs/upstairs=periodic, sitting/standing=stationary
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+IMPORTANT: downstairs/upstairs can be hard to distinguish. walking/jogging look similar. Provide probabilities reflecting these ambiguities.
+Output JSON: {{"0":0.3,"1":0.25,"2":0.2,"3":0.15,"4":0.07,"5":0.03}} (example only, use YOUR OWN assessment)'''
 
 PROMPT_BUILDERS = {
     'pamap2': build_prompt_pamap2,
