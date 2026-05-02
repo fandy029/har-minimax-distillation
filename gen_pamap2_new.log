@@ -1,0 +1,16 @@
+=======================================================
+  软标签生成 - 参数确认
+=======================================================
+  数据集:        pamap2
+  类别数:        5
+  采样率:        35%（每类样本数 × 0.35）
+  每类上限:      400
+  数据形状:      3D (128,6)
+  强制重启:      是（忽略已有进度）
+=======================================================
+
+✅ 确认启动? [Y/n]: 
+🚀 启动: /usr/bin/python3 -u /home/fandy/workplace/thesis/scripts/gen_soft_labels_unified.py pamap2 --ratio 0.35 --limit 400 --force
+   日志: /home/fandy/workplace/thesis/results/logs/gen_pamap2.log
+   进程PID: 1033869
+   查看日志: tail -f /home/fandy/workplace/thesis/results/logs/gen_pamap2.log
