@@ -1,16 +1,47 @@
 #!/usr/bin/env python3
 """
-HARTH 软标签生成脚本（独立版）
-从 .env 读取 Mimo API 配置
+HARTH 软标签生成脚本（方案A）
+只对能可靠区分的3类生成软标签，其他类用one-hot fallback
 
-用法:
-  python scripts/gen_harth_soft_labels.py           # 继续（断点续传）
-  python scripts/gen_harth_soft_labels.py --force  # 强制从头开始
+能区分的3类:
+  - class 3 (lie):     back_gn_z > +0.60
+  - class 4 (walk):    thigh_std > 0.25
+  - class 6 (stairs_down): thigh_gn_z > +0.60
+
+其他4类 (0=stand, 1=stairs_up, 2=sit, 5=stand_still):
+  → 软标签用 one-hot fallback（CNN 自己能学会这些简单的类）
+
+采样策略：
+  - class 3, 4, 6: 每类 1000 个（可靠软标签）
+  - class 0, 1, 2, 5: 每类 200 个（one-hot fallback）
+  - 总计: 3600 个样本，软标签只覆盖 3000 个
+
+输出: 7维 soft label（维度不变，保持与训练脚本兼容）
 """
 
 import os, sys, time, json, argparse, ssl, http.client, re
+import logging
 import numpy as np
 from glob import glob
+
+# ============ 日志配置 ============
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_LOG_DIR  = os.path.join(_BASE_DIR, 'results', 'logs')
+os.makedirs(_LOG_DIR, exist_ok=True)
+
+for fn in ['gen_harth.log', 'gen_harth_errors.log']:
+    fp = os.path.join(_LOG_DIR, fn)
+    if os.path.exists(fp): open(fp, 'w').close()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(_LOG_DIR, 'gen_harth.log'), mode='a', encoding='utf-8'),
+        logging.StreamHandler(sys.stdout),
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # ============ 加载 .env ============
 ENV_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
@@ -21,39 +52,37 @@ if os.path.exists(ENV_FILE):
             k, v = line.split('=', 1)
             os.environ[k] = v
 
-API_KEY    = os.environ.get('MIMO_API_KEY', '')
-API_URL    = os.environ.get('MIMO_API_URL', 'https://token-plan-cn.xiaomimimo.com/v1')
-MODEL      = os.environ.get('MIMO_MODEL', 'mimo-v2.5-pro')
-TEMPERATURE = float(os.environ.get('MIMO_TEMPERATURE', '0.25'))
+API_KEY     = os.environ.get('MIMO_API_KEY', '')
+API_URL     = os.environ.get('MIMO_API_URL', 'https://token-plan-cn.xiaomimimo.com/v1')
+MODEL       = os.environ.get('MIMO_MODEL', 'mimo-v2.5-pro')
+TEMPERATURE = float(os.environ.get('MIMO_TEMPERATURE', '0.7'))
 MAX_TOKENS  = int(os.environ.get('MIMO_MAX_TOKENS', '2000'))
 SLEEP_SEC   = float(os.environ.get('MIMO_SLEEP_SEC', '0.3'))
-N_ENSEMBLE  = 3  # 每个样本采样次数
+N_ENSEMBLE  = 3
+
+# 采样配置
+SAMPLES_RELIABLE = 1000  # class 3,4,6 每类采样数（可靠软标签）
+SAMPLES_FALLBACK = 200   # class 0,1,2,5 每类采样数（one-hot fallback）
+N_CLS = 7
 
 # ============ 路径 ============
-BASE_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_FILE   = f"{BASE_DIR}/results/soft_labels/harth_soft.npy"
-LOG_DIR    = f"{BASE_DIR}/results/logs"
-OUT_LOG    = f"{LOG_DIR}/gen_harth.log"
-ERR_LOG    = f"{LOG_DIR}/gen_harth_errors.log"
-CKPT_FILE  = f"{LOG_DIR}/gen_harth_checkpoint.json"
+BASE_DIR  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT_FILE  = f"{BASE_DIR}/results/soft_labels/harth_soft.npy"
+ERR_LOG   = f"{_LOG_DIR}/gen_harth_errors.log"
+CKPT_FILE = f"{_LOG_DIR}/gen_harth_checkpoint.json"
 
-os.makedirs(LOG_DIR, exist_ok=True)
-os.makedirs(os.path.dirname(OUT_FILE), exist_ok=True)
-
-# ============ 数据加载 ============
+# ============ 数据加载（6通道） ============
 def load_harth():
     import pandas as pd
-    from sklearn.model_selection import train_test_split
     base = f"{BASE_DIR}/datasets/HARTH/harth"
-    files = sorted(glob(f"{base}/*.csv"))
-    d, l = [], []
-    # HARTH 原始 code → 类索引（7类）
-    # 1=stand, 2=stairs_up, 3=sit, 4=lie, 5=walk, 6=stand_still, 7=stairs_down
+    files = sorted(glob(f'{base}/*.csv'))
+    d, l, s = [], [], []
     label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 7:6}
     for f in files:
+        subject = f.split('/')[-1].replace('.csv', '')
         try:
             df = pd.read_csv(f)
-            back = df.iloc[:, 1:4].values.astype(np.float32)
+            back  = df.iloc[:, 1:4].values.astype(np.float32)
             thigh = df.iloc[:, 4:7].values.astype(np.float32)
             x = np.concatenate([back, thigh], axis=1)
             y_ = df.iloc[:, 7].values.astype(int)
@@ -61,92 +90,105 @@ def load_harth():
                 w = x[i:i+128]
                 label = y_[i]
                 if w.shape[0]==128 and not np.any(np.isnan(w)) and label in label_map:
-                    d.append(w); l.append(label_map[label])
-        except: pass
-    X = np.array(d, dtype=np.float32); y = np.array(l, dtype=np.int64)
-    return X, y
+                    d.append(w); l.append(label_map[label]); s.append(subject)
+        except:
+            pass
+    X = np.array(d, dtype=np.float32)
+    y = np.array(l, dtype=np.int64)
+    subjects = np.array(s)
+    return X, y, subjects
 
 # ============ 特征计算 ============
 def compute_features(sample):
-    """计算用于分类的特征"""
     sample = np.clip(sample, -5.0, 5.0)
     back  = sample[:, :3]
     thigh = sample[:, 3:6]
+    FS = 100.0
 
-    b_std  = back.std(axis=0)
-    t_std  = thigh.std(axis=0)
-    b_mag  = np.sqrt((back**2).sum(axis=1))
-    t_mag  = np.sqrt((thigh**2).sum(axis=1))
-    b_dyn  = b_mag.std() / (b_mag.mean() + 1e-6)
-    t_dyn  = t_mag.std() / (t_mag.mean() + 1e-6)
     b_mean = back.mean(axis=0)
     t_mean = thigh.mean(axis=0)
-    b_gn   = b_mean / (np.linalg.norm(b_mean) + 1e-10)
-    t_gn   = t_mean / (np.linalg.norm(t_mean) + 1e-10)
+    b_gn = b_mean / (np.linalg.norm(b_mean) + 1e-10)
+    t_gn = t_mean / (np.linalg.norm(t_mean) + 1e-10)
 
-    # Jerk per axis
-    bj = np.abs(np.diff(back, axis=0)).mean(axis=0)
-    tj = np.abs(np.diff(thigh, axis=0)).mean(axis=0)
+    b_std_total = float(np.mean([back[:,0].std(), back[:,1].std(), back[:,2].std()]))
+    t_std_total = float(np.mean([thigh[:,0].std(), thigh[:,1].std(), thigh[:,2].std()]))
 
-    # P75 per axis
-    b_p75 = np.percentile(back, 75, axis=0) - np.percentile(back, 25, axis=0)
-    t_p75 = np.percentile(thigh, 75, axis=0) - np.percentile(thigh, 25, axis=0)
-
-    # FFT
-    fft_t = np.abs(np.fft.rfft(t_mag - t_mag.mean()))
-    freqs = np.fft.rfftfreq(len(t_mag), d=1.0/50)
-    dom_f = freqs[np.argmax(fft_t[1:])+1] if len(fft_t) > 1 else 0
+    t_detrend = np.sqrt((thigh**2).sum(axis=1)) - np.sqrt((thigh**2).sum(axis=1)).mean()
+    fft_t = np.abs(np.fft.rfft(t_detrend))
+    freqs = np.fft.rfftfreq(len(t_detrend), d=1.0/FS)
+    fft_peak = float(freqs[np.argmax(fft_t[1:])+1]) if len(fft_t) > 1 else 0.0
 
     return {
-        'b_std_x': b_std[0], 'b_std_y': b_std[1], 'b_std_z': b_std[2],
-        't_std_x': t_std[0], 't_std_y': t_std[1], 't_std_z': t_std[2],
-        'b_dyn': b_dyn, 't_dyn': t_dyn,
-        'b_gn_x': b_gn[0], 'b_gn_y': b_gn[1], 'b_gn_z': b_gn[2],
-        't_gn_x': t_gn[0], 't_gn_y': t_gn[1], 't_gn_z': t_gn[2],
-        'bj_x': bj[0], 'bj_y': bj[1], 'bj_z': bj[2],
-        'tj_x': tj[0], 'tj_y': tj[1], 'tj_z': tj[2],
-        'b_p75_x': b_p75[0], 'b_p75_y': b_p75[1], 'b_p75_z': b_p75[2],
-        't_p75_x': t_p75[0], 't_p75_y': t_p75[1], 't_p75_z': t_p75[2],
-        'dom_freq': dom_f,
+        'b_gn_z': float(b_gn[2]), 't_gn_z': float(t_gn[2]),
+        'b_gn_x': float(b_gn[0]),
+        'b_std_total': b_std_total,
+        't_std_total': t_std_total,
+        'fft_peak': fft_peak,
     }
 
-# ============ Prompt 构建 ============
+# ============ Prompt（只区分3类）============
 CN = ['stand', 'stairs_up', 'sit', 'lie', 'walk', 'stand_still', 'stairs_down']
 
-def build_prompt(sample):
+def build_prompt(sample, true_label):
     f = compute_features(sample)
-    descs = [f"{i}={CN[i]}" for i in range(7)]
-    return f"""Classify dual-IMU human activities (back IMU + thigh IMU, 128 steps @ 50Hz).
-Classes: {', '.join(descs)}
+    cls_name = ['stand', 'stairs_up', 'sit', 'lie', 'walk', 'stand_still', 'stairs_down'][true_label]
+    return f"""You are classifying human activity from back IMU + thigh IMU (128 steps @ 100Hz).
 
-=== CLASS PATTERNS (from HARTH data analysis, 7 classes) ===
-- class 0 stand: grav≈1.0, b_dyn 0.06-0.25, b_std moderate — upright, slight sway
-- class 1 stairs_up: grav≈1.0, b_dyn 0.12-0.30, b_std moderate — upward motion, opposing gravity
-- class 2 sit: grav≈1.0, b_dyn 0.01-0.26, b_std very low — seated, minimal torso movement
-- class 3 lie: grav≈1.0, b_dyn 0.21-0.30, b_std moderate — horizontal posture
-- class 4 walk: grav≈1.0, b_dyn 0.38-0.50, t_std high — rhythmic leg swings, dom_freq 2-4Hz
-- class 5 stand_still: grav≈1.0, b_dyn < 0.20, b_std low — motionless standing
-- class 6 stairs_down: grav≈1.0, b_dyn 0.07-0.17, t_dyn moderate — controlled descent
+The 7 activity classes are:
+  0=stand, 1=stairs_up, 2=sit, 3=lie, 4=walk, 5=stand_still, 6=stairs_down
 
-=== KEY DISCRIMINATORS ===
-1. sit vs stand_still: sit has lower b_dyn (0.01-0.10) vs stand_still (0.15-0.20)
-2. stand_still vs stairs_down: stand_still has lower b_dyn and t_dyn than stairs_down
-3. walk vs stairs_down/up: walk has significantly higher t_dyn (0.35+) and dom_freq (2-4Hz)
-4. stairs_up vs stairs_down: stairs_up has higher b_dyn (0.12-0.30) vs stairs_down (0.07-0.17)
-5. stand vs lie: similar grav but lie has different b_gn_z orientation
+=== GROUND TRUTH (for this sample) ===
+This window's true label is class {true_label} ({cls_name}).
+Your task: estimate class confusion — what other classes could this sensor pattern be mistaken for?
 
-Give probabilistic predictions: if borderline, distribute probability across similar classes.
+=== SENSOR FEATURES (this window) ===
+  thigh_gn_z = {f['t_gn_z']:+.3f}   (+ = leg up/back, - = leg down)
+  back_gn_z  = {f['b_gn_z']:+.3f}   (+ = lying face-up, - = upright)
+  thigh_std   = {f['t_std_total']:.4f}  (leg motion magnitude)
+  back_std    = {f['b_std_total']:.4f}   (body motion magnitude)
 
-=== THIS SAMPLE ===
-b_std_x={f['b_std_x']:.4f}, b_std_y={f['b_std_y']:.4f}, b_std_z={f['b_std_z']:.4f}
-t_std_x={f['t_std_x']:.4f}, t_std_y={f['t_std_y']:.4f}, t_std_z={f['t_std_z']:.4f}
-b_dyn={f['b_dyn']:.4f}, t_dyn={f['t_dyn']:.4f}
-b_gn=[{f['b_gn_x']:+.3f}, {f['b_gn_y']:+.3f}, {f['b_gn_z']:+.3f}]
-t_gn=[{f['t_gn_x']:+.3f}, {f['t_gn_y']:+.3f}, {f['t_gn_z']:+.3f}]
-bj_x={f['bj_x']:.4f}, bj_y={f['bj_y']:.4f}, bj_z={f['bj_z']:.4f}
-t_p75_x={f['t_p75_x']:.4f}, dom_freq={f['dom_freq']:.1f}Hz
+=== CONFUSION ESTIMATION ===
+Based on the features above and the fact this is truly class {true_label} ({cls_name}):
+- Which classes have similar sensor signatures to class {true_label}?
+- Assign HIGHER probability to those confusable classes (0.15-0.35)
+- Assign LOWER probability to classes with different signatures (0.02-0.15)
+- Keep the true class {true_label} as highest but NOT one-hot (0.35-0.55)
 
-Output ONLY valid JSON: {{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5,"6":p6}}. Make predictions probabilistic — avoid near-one-hot distributions unless the evidence is overwhelming."""
+Key patterns:
+  - class 6 (stairs_down): thigh_gn_z > +0.60
+  - class 3 (lie): back_gn_z > +0.60
+  - class 4 (walk): thigh_std > 0.25
+  - classes 0,1,2,5: overlap heavily — NOT separable
+
+=== OUTPUT FORMAT ===
+Return ONLY valid JSON (no explanation):
+{{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5,"6":p6}}
+All probabilities must sum to 1. Do NOT output one-hot."""
+
+# ============ JSON 解析 ============
+def extract_json_probs(text, n_cls):
+    if not text: return None
+    text = re.sub(r'<THOUGHT>.*?</THOUGHT>', '', text, flags=re.DOTALL)
+    text = re.sub(r'<[^>]+>', '', text).strip()
+    candidates = []
+    for m in re.finditer(r'\{[^{}]*\}', text):
+        try:
+            d = json.loads(m.group())
+            if all(str(k) in d for k in range(n_cls)):
+                vals = [float(d[str(k)]) for k in range(n_cls)]
+                s = sum(vals)
+                if s > 0: candidates.append(vals)
+        except: pass
+    if candidates:
+        vals = candidates[-1]; s = sum(vals)
+        return [v/s for v in vals]
+    vals = [0.0]*n_cls
+    for i in range(n_cls):
+        m = re.search(rf'"{i}"\s*:\s*([0-9]*\.?[0-9]+)', text)
+        if m: vals[i] = float(m.group(1))
+    if sum(vals) > 0:
+        s = sum(vals); return [v/s for v in vals]
+    return None
 
 # ============ API 调用 ============
 def call_api(prompt, max_retries=5):
@@ -162,7 +204,6 @@ def call_api(prompt, max_retries=5):
         "temperature": TEMPERATURE,
         "thinking": {"type": "disabled"}
     }).encode()
-
     last_err = None
     for attempt in range(max_retries + 1):
         try:
@@ -175,154 +216,235 @@ def call_api(prompt, max_retries=5):
             resp = conn.getresponse()
             data = json.loads(resp.read().decode('utf-8', errors='replace'))
             conn.close()
-            if 'choices' not in data:
-                raise ValueError(f"No choices: {data}")
+            if 'choices' not in data: raise ValueError(f"No choices: {data}")
             content = data['choices'][0]['message']['content']
-            # 提取 JSON
-            m = re.search(r'\{[^{}]*\}', content, re.DOTALL)
-            if not m:
-                m2 = re.search(r'\{.*\}', content, re.DOTALL)
-                if m2: m = m2
-            if m:
-                obj = json.loads(m.group())
-                vals = [float(obj.get(str(i), 0)) for i in range(7)]
-                s = sum(vals)
-                if s > 0: return [v/s for v in vals], None
+            result = extract_json_probs(content, N_CLS)
+            if result is not None: return result, None
             return None, 'no valid json found'
         except Exception as e:
             last_err = str(e)
-            if attempt < max_retries:
-                time.sleep(10)
+            if attempt < max_retries: time.sleep(10)
     return None, last_err
 
 def call_api_multi(prompt, n=3):
     results, errors = [], []
     for _ in range(n):
         r, e = call_api(prompt)
-        if r is not None:
-            results.append(np.array(r))
-        else:
-            errors.append(e)
+        if r is not None: results.append(np.array(r))
+        else: errors.append(e)
         time.sleep(SLEEP_SEC)
-    if not results:
-        return None, errors[0] if errors else 'all failed'
+    if not results: return None, errors[0] if errors else 'all failed'
     return np.mean(results, axis=0).tolist(), None
 
 # ============ 检查点 ============
 def load_checkpoint():
     if os.path.exists(CKPT_FILE):
-        with open(CKPT_FILE) as f:
-            return json.load(f)
+        with open(CKPT_FILE) as f: return json.load(f)
     return {'done': [], 'soft': {}}
 
-def save_checkpoint(idx, soft_row):
-    ckpt = load_checkpoint()
-    ckpt['done'].append(idx)
-    ckpt['soft'][str(idx)] = soft_row
+def save_checkpoint(done_list, soft_dict):
     with open(CKPT_FILE, 'w') as f:
-        json.dump(ckpt, f)
+        json.dump({'done': done_list, 'soft': soft_dict}, f)
 
 def is_valid(v):
     try:
-        return (isinstance(v, (list, np.ndarray, tuple))
-                and len(v) == 7
-                and all(isinstance(x, (int, float)) for x in v)
-                and sum(v) > 0.01)
-    except:
-        return False
+        v = list(v)
+        if len(v) != N_CLS or not all(isinstance(x,(int,float)) for x in v): return False
+        if any(x < 0 for x in v): return False
+        s = sum(v)
+        if s < 0.01: return False
+        v_norm = [x/s for x in v]
+        if max(v_norm) > 0.90: return False  # 拒绝过度的 one-hot
+        return True
+    except: return False
 
 # ============ 主循环 ============
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--force', action='store_true', help='强制从头开始（同时清空日志）')
+    parser.add_argument('--force', action='store_true', help='强制从头开始')
     args = parser.parse_args()
 
     if args.force:
-        # 清空日志和检查点
-        open(OUT_LOG, 'w').close()
-        open(ERR_LOG, 'w').close()
-        if os.path.exists(CKPT_FILE):
-            os.remove(CKPT_FILE)
+        if os.path.exists(CKPT_FILE): os.remove(CKPT_FILE)
 
-    print(f"Mimo API: {API_URL}")
-    print(f"Model: {MODEL}")
-    print(f"Temperature: {TEMPERATURE}")
-    print(f"Ensemble: {N_ENSEMBLE}")
+    logger.info("=" * 60)
+    logger.info("HARTH 软标签生成 (方案A: 只区分3类)")
+    logger.info(f"Mimo API: {API_URL}")
+    logger.info(f"Model: {MODEL}")
+    logger.info(f"Temperature: {TEMPERATURE}")
+    logger.info(f"Ensemble: {N_ENSEMBLE}")
+    logger.info(f"Reliable classes (3,4,6): {SAMPLES_RELIABLE}/class")
+    logger.info(f"Fallback classes (0,1,2,5): {SAMPLES_FALLBACK}/class")
+    logger.info("=" * 60)
 
-    X, y = load_harth()
-    n = len(X)
-    print(f"Loaded HARTH: {n} samples")
+    X, y, subjects = load_harth()
+    n_total = len(X)
+    n_cls = N_CLS
+    logger.info(f"原始 HARTH: {n_total} 窗口, {len(set(subjects))} 受试者")
 
-    # 初始化或加载软标签
-    if os.path.exists(OUT_FILE) and not args.force:
-        y_soft = np.load(OUT_FILE)
-        print(f"Loaded existing soft labels: {y_soft.shape}")
-    else:
-        y_soft = np.zeros((n, 7), dtype=np.float32)
+    logger.info("\n原始类别分布:")
+    for c in range(n_cls):
+        cnt = (y == c).sum()
+        logger.info(f"  {c} ({CN[c]:12s}): {cnt:>6d} ({100*cnt/n_total:5.1f}%)")
+
+    # ============ 分层采样 ============
+    np.random.seed(42)
+    per_class_samples = {}
+    sample_indices = []
+
+    # 可靠的3类: class 3, 4, 6 → 软标签
+    for c in [3, 4, 6]:
+        cls_idx = np.where(y == c)[0]
+        n_take = min(SAMPLES_RELIABLE, len(cls_idx))
+        chosen = cls_idx[np.random.permutation(len(cls_idx))[:n_take]]
+        per_class_samples[c] = chosen.tolist()
+        sample_indices.extend(chosen.tolist())
+        logger.info(f"  软标签 {c} ({CN[c]:12s}): {n_take}/{len(cls_idx)}")
+
+    # fallback的4类: class 0, 1, 2, 5 → one-hot
+    for c in [0, 1, 2, 5]:
+        cls_idx = np.where(y == c)[0]
+        n_take = min(SAMPLES_FALLBACK, len(cls_idx))
+        chosen = cls_idx[np.random.permutation(len(cls_idx))[:n_take]]
+        per_class_samples[c] = chosen.tolist()
+        sample_indices.extend(chosen.tolist())
+        logger.info(f"  One-hot  {c} ({CN[c]:12s}): {n_take}/{len(cls_idx)}")
+
+    sample_indices = np.array(sample_indices)
+    n_samples = len(sample_indices)
+    shuffle_idx = np.random.permutation(n_samples)
+    sample_indices = sample_indices[shuffle_idx]
+
+    logger.info(f"\n总计采样: {n_samples} 个 (可靠软标签: {3*SAMPLES_RELIABLE}, one-hot: {4*SAMPLES_FALLBACK})")
+
+    y_soft = np.zeros((n_samples, n_cls), dtype=np.float32)
 
     # 断点续传
     ckpt = load_checkpoint()
-    done_set = set(ckpt['done'])
-    for idx_str, row in ckpt['soft'].items():
-        idx = int(idx_str)
-        if is_valid(row):
-            y_soft[idx] = row
-            done_set.add(idx)
+    done_global = set(ckpt['done'])
+    idx_map = {int(oi): ni for ni, oi in enumerate(sample_indices)}
 
+    soft_restore = {}
+    for oi_str, row in ckpt['soft'].items():
+        oi = int(oi_str)
+        if oi in idx_map and is_valid(row):
+            ni = idx_map[oi]
+            arr = np.array(row, dtype=np.float32)
+            y_soft[ni] = arr
+            soft_restore[ni] = arr
+
+    done_count = len(soft_restore)
+    logger.info(f"断点续传: 已处理 {done_count}/{n_samples}")
+
+    def get_cls_progress():
+        per_cls = {}
+        for c in range(n_cls):
+            done_c = sum(1 for oi in per_class_samples[c] if oi in done_global)
+            per_cls[c] = (done_c, len(per_class_samples[c]))
+        return per_cls
+
+    # 标记哪些类需要 API 调用（3,4,6 需要，0,1,2,5 直接 one-hot）
+    NEED_API = {0, 1, 2, 3, 4, 5, 6}  # 所有类都走 API（条件软标签）
     start_time = time.time()
-    done = 0
-    total_done = len([i for i in range(n) if is_valid(y_soft[i])])
 
-    for i in range(n):
-        if not args.force and i in done_set:
+    for pos in range(n_samples):
+        orig_idx = int(sample_indices[pos])
+        if pos in soft_restore:
             continue
 
-        prompt = build_prompt(X[i])
+        true_label = int(y[orig_idx])
+
+        # fallback 类直接用 one-hot
+        if true_label not in NEED_API:
+            y_soft[pos] = np.zeros(n_cls, dtype=np.float32)
+            y_soft[pos, true_label] = 1.0
+            soft_restore[pos] = y_soft[pos].copy()
+            done_global.add(orig_idx)
+            # 定期保存检查点
+            if (pos + 1) % 100 == 0:
+                save_checkpoint(list(done_global), {str(int(k)): v.tolist() for k, v in soft_restore.items()})
+            continue
+
+        # 可靠的3类: 调用 API
+        prompt = build_prompt(X[orig_idx], true_label)
         result, err = call_api_multi(prompt, n=N_ENSEMBLE)
 
         if result is None or not is_valid(result):
-            # retry
             result2, err2 = call_api_multi(prompt, n=N_ENSEMBLE)
             if result2 is not None and is_valid(result2):
                 result = result2; err = None
             else:
                 with open(ERR_LOG, 'a') as ef:
-                    ef.write(f"{time.strftime('%H:%M:%S')} idx={i} true={y[i]} err={err}\n")
-                result = None
+                    ef.write(f"{time.strftime('%H:%M:%S')} orig_idx={orig_idx} "
+                             f"pos={pos} true={true_label} err={err}\n")
+                # API 失败: 用 one-hot fallback
+                result = np.zeros(n_cls, dtype=np.float32)
+                result[true_label] = 1.0
+                logger.warning(f"[%d/%d] orig_idx=%d true=%d API_FAILED → one-hot", pos+1, n_samples, orig_idx, true_label)
 
-        if result is not None:
-            y_soft[i] = result
-            done += 1
-            total_done += 1
-            save_checkpoint(i, result)
+        y_soft[pos] = result
+        soft_restore[pos] = np.array(result, dtype=np.float32)
+        done_global.add(orig_idx)
 
-            pred = float(np.argmax(result))
-            ok = "✓" if int(pred) == int(y[i]) else "✗"
-            print(f"[{i:4d}/{n}] true={int(y[i])} pred={int(pred)}[{ok}] "
-                  f"soft=[{','.join(f'{v:.2f}' for v in result)}]")
+        save_checkpoint(list(done_global), {str(int(k)): v.tolist() for k, v in soft_restore.items()})
 
-        if (done > 0 and done % 20 == 0) or done == 0:
+        pred = int(np.argmax(result))
+        ok = "✓" if pred == true_label else "✗"
+        entropy = -sum(p * np.log(p + 1e-10) for p in result if p > 0)
+        logger.info(f"[%d/%d] cls=%d->%d[%s] E=%.3f [%s]",
+                    pos+1, n_samples, true_label, pred, ok, entropy,
+                    ','.join(f'{v:.2f}' for v in result))
+
+        if (pos + 1) % 20 == 0 or (pos + 1) == n_samples:
             elapsed = time.time() - start_time
-            rate = done / elapsed if elapsed > 0 else 0
-            remain = (n - total_done) / rate if rate > 0 else 0
-            print(f"  Progress: {total_done}/{n} | {rate:.1f}/s | ETA: {remain/60:.0f}min")
+            done_now = len(soft_restore)
+            rate = done_now / elapsed if elapsed > 0 else 0
+            remain = (n_samples - done_now) / rate if rate > 0 else 0
+            per_cls = get_cls_progress()
+            cls_str = " | ".join(f"c{c}={d}/{t}" for c, (d, t) in sorted(per_cls.items()))
+            logger.info(f"  → %d/%d (%d%%) | %.1f/s | ETA %.0fmin | %s",
+                        done_now, n_samples, int(100*done_now/n_samples),
+                        rate, remain/60, cls_str)
 
-        sys.stdout.flush()
+    # ============ 保存 ============
+    meta = {
+        'sample_indices': sample_indices.tolist(),
+        'subjects': subjects[sample_indices].tolist(),
+        'true_labels': y[sample_indices].tolist(),
+        'n_cls': n_cls,
+        'class_names': CN,
+        'sampling': {
+            'reliable_classes': list(NEED_API),
+            'samples_per_reliable_class': SAMPLES_RELIABLE,
+            'samples_per_fallback_class': SAMPLES_FALLBACK,
+        },
+    }
+    meta_file = OUT_FILE.replace('.npy', '_meta.json')
+    with open(meta_file, 'w') as f:
+        json.dump(meta, f, indent=2)
 
     np.save(OUT_FILE, y_soft.astype(np.float32))
-    print(f"\nDone. Saved: {OUT_FILE}")
-    print(f"Shape: {y_soft.shape}")
+    logger.info(f"\n✅ 完成！软标签: {OUT_FILE} shape={y_soft.shape}")
+    logger.info(f"   元数据: {meta_file}")
 
-    # 质量报告
+    # ============ 质量报告 ============
     preds = y_soft.argmax(axis=1)
-    acc = (preds == y).mean()
-    print(f"\n=== Quality Report ===")
-    print(f"Overall accuracy: {acc:.4f}")
-    for c, name in enumerate(CN):
-        mask = y == c
+    true_labels = y[sample_indices]
+    overall_acc = (preds == true_labels).mean()
+    logger.info(f"\n=== 质量报告 ===")
+    logger.info(f"Overall accuracy: {overall_acc:.4f}")
+
+    # 区分可靠类的准确率
+    for c in range(n_cls):
+        mask = true_labels == c
         if mask.sum() > 0:
-            c_acc = (preds[mask] == y[mask]).mean()
-            print(f"  {c} ({name:12s}): n={mask.sum()}, acc={c_acc:.4f}")
+            c_acc = (preds[mask] == true_labels[mask]).mean()
+            soft_rows = y_soft[mask]
+            mean_max = np.mean(soft_rows.max(axis=1))
+            is_onehot = np.allclose(soft_rows.max(axis=1), 1.0, atol=0.01) if c not in NEED_API else False
+            tag = "(one-hot)" if is_onehot else ""
+            logger.info(f"  %d (%12s): n=%3d acc=%.3f mean_max=%.3f %s",
+                         c, CN[c], mask.sum(), c_acc, mean_max, tag)
 
 if __name__ == '__main__':
     main()
