@@ -1,28 +1,3 @@
-[2026-05-06 09:49:20] --force: 清除旧日志和断点，从头开始
-[2026-05-06 09:49:20] Gait 软标签生成开始 (scripts/gait/gait_gen.py)
-[2026-05-06 09:49:20] Mimo API: https://token-plan-cn.xiaomimimo.com/v1
-[2026-05-06 09:49:20] Model: mimo-v2.5-pro
-[2026-05-06 09:49:20] Temperature: 0.3
-[2026-05-06 09:49:20] 加载 Gait 数据...
-[2026-05-06 09:49:21]   训练数据: 673 样本, 4 类
-[2026-05-06 09:49:21]   class 0 (sit_on_bed): 161 样本
-[2026-05-06 09:49:21]   class 1 (sit_on_chair): 38 样本
-[2026-05-06 09:49:21]   class 2 (lying): 436 样本
-[2026-05-06 09:49:21]   class 3 (ambulating): 38 样本
-[2026-05-06 09:49:21] 总计采样: 673 个窗口（每类 ~3000）
-[2026-05-06 09:49:21]   断点续传: 无，从头开始
-[2026-05-06 09:49:22]   [1/673] idx=137 true=0(sit_on_bed) pred=2(lying)[✗] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:26]   [2/673] idx=53 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:28]   [3/673] idx=262 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:31]   [4/673] idx=449 true=2(lying) pred=2(lying)[✓] ent=1.025 top=[2:0.650,0:0.150]
-[2026-05-06 09:49:37]   [5/673] idx=387 true=3(ambulating) pred=2(lying)[✗] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:37]   进度: 5/673, 准确率=60.0%, 正确样本=3, 已保存
-[2026-05-06 09:49:41]   [6/673] idx=78 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:47]   [7/673] idx=450 true=3(ambulating) pred=0(sit_on_bed)[✗] ent=1.110 top=[0:0.550,1:0.250]
-[2026-05-06 09:49:51]   [8/673] idx=85 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
-[2026-05-06 09:49:54]   [9/673] idx=213 true=2(lying) pred=1(sit_on_chair)[✗] ent=1.110 top=[1:0.550,3:0.250]
-[2026-05-06 09:49:57]   [10/673] idx=107 true=0(sit_on_bed) pred=0(sit_on_bed)[✓] ent=1.192 top=[0:0.450,1:0.300]
-[2026-05-06 09:49:57]   进度: 10/673, 准确率=60.0%, 正确样本=6, 已保存
 [2026-05-06 09:50:28] Gait 软标签生成开始 (scripts/gait/gait_gen.py)
 [2026-05-06 09:50:28] Mimo API: https://token-plan-cn.xiaomimimo.com/v1
 [2026-05-06 09:50:28] Model: mimo-v2.5-pro
@@ -39,6 +14,71 @@
 [2026-05-06 09:50:33]   [11/673] idx=366 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
 [2026-05-06 09:50:38]   [12/673] idx=170 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
 [2026-05-06 09:50:41]   [13/673] idx=49 true=2(lying) pred=2(lying)[✓] ent=0.588 top=[2:0.850,0:0.050]
+Traceback (most recent call last):
+  File "/home/fandy/workplace/thesis/scripts/gait/gait_gen.py", line 400, in <module>
+    main()
+  File "/home/fandy/workplace/thesis/scripts/gait/gait_gen.py", line 322, in main
+    raw_result, err = call_api(prompt)
+                      ^^^^^^^^^^^^^^^^
+  File "/home/fandy/workplace/thesis/scripts/gait/gait_gen.py", line 209, in call_api
+    r = client.chat.completions.create(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/openai/_utils/_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 1211, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/openai/_base_client.py", line 1297, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/openai/_base_client.py", line 1005, in request
+    response = self._client.send(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fandy/.local/lib/python3.12/site-packages/httpcore/_backends/sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1233, in recv
+    return self.read(buflen)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/ssl.py", line 1106, in read
+    return self._sslobj.read(len)
+           ^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
 [2026-05-06 09:50:58] Gait 软标签生成开始 (scripts/gait/gait_gen.py)
 [2026-05-06 09:50:58] Mimo API: https://token-plan-cn.xiaomimimo.com/v1
 [2026-05-06 09:50:58] Model: mimo-v2.5-pro

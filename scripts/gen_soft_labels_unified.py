@@ -65,7 +65,7 @@ def extract_json_probs(text, n_cls):
 def load_pamap2():
     base = BASE_DIR + '/datasets/PAMAP2/PAMAP2_Dataset'
     d, l = [], []
-    PAMAP_MAP = {9:0, 2:1, 3:2, 4:3, 5:4}
+    PAMAP_MAP = {1:0, 2:1, 3:2, 4:3, 5:4}  # 1=lying,2=sitting,3=standing,4=walking,5=jogging
     for folder in ['Protocol', 'Optional']:
         for f in sorted(glob(f"{base}/{folder}/*.dat")):
             try:
@@ -98,11 +98,14 @@ def load_harth():
     base = BASE_DIR + '/datasets/HARTH/harth'
     files = sorted(glob(f"{base}/*.csv"))
     d, l = [], []
-    label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5}
+    label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 7:6}
     for f in files:
         try:
             df = pd.read_csv(f)
-            x = df.iloc[:, 1:4].values.astype(np.float32)
+            # Columns: timestamp, back_x, back_y, back_z, thigh_x, thigh_y, thigh_z, label
+            back  = df.iloc[:, 1:4].values.astype(np.float32)
+            thigh = df.iloc[:, 4:7].values.astype(np.float32)
+            x = np.concatenate([back, thigh], axis=1)  # 6 channels
             y_ = df.iloc[:, 7].values.astype(int)
             for i in range(0, len(x)-127, 64):
                 w = x[i:i+128]
@@ -264,7 +267,7 @@ def build_prompt_pamap2(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc.mean(axis=0)]}, gyro_mean={[f"{v:.3f}" for v in gyro.mean(axis=0)]}
 Physics: walking/jogging=periodic, sitting/standing=minimal motion, downstairs=negative Y pattern
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.03,"4":0.02}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_uci_har(data, cn):
     vals = np.array(data)
@@ -278,18 +281,32 @@ def build_prompt_uci_har(data, cn):
 Classes: {", ".join(descs)}
 Key features: acc_means={[f"{v:.3f}" for v in means[:3]]}, acc_stds={[f"{v:.3f}" for v in stds[:3]]}
 Physics: WALKING~periodic, WALKING_UP~posY, WALKING_DOWN~negY, SITTING/STANDING~static, LAYING~supine
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.02,"4":0.02,"5":0.01}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_harth(data, cn, sr=50):
-    acc = data[:, :3]; acc_m = np.sqrt((acc**2).sum(axis=1))
-    y_a = acc[:, 1]
-    fft_v = np.abs(np.fft.fft(acc_m)[1:len(acc_m)//2])
-    dom_f = np.fft.fftfreq(len(acc_m), 1/sr)[np.argmax(fft_v)+1] if len(fft_v) > 0 else 0
+    # data: (128, 6) = back(3) + thigh(3)
+    back  = data[:, :3]; thigh = data[:, 3:6]
+    back_m  = np.sqrt((back**2).sum(axis=1))
+    thigh_m = np.sqrt((thigh**2).sum(axis=1))
+    # Gravity direction (low-pass) for orientation
+    from scipy.ndimage import uniform_filter1d
+    back_g  = uniform_filter1d(back,  10, axis=0)[:, 2]  # back gz
+    thigh_g = uniform_filter1d(thigh, 10, axis=0)[:, 2]   # thigh gz
+    back_std  = back_m.std()
+    thigh_std = thigh_m.std()
+    peaks = np.sum((thigh_m[1:-1] > thigh_m[:-2]) & (thigh_m[1:-1] > thigh_m[2:]))
     descs = [f'{i}={cn[i]}' for i in range(len(cn))]
-    return f'''Classify IMU window. Classes: {", ".join(descs)}
-Features: acc_mag={acc_m.mean():.2f} y_mean={y_a.mean():.4f}, peaks={np.sum((acc_m[1:-1]>acc_m[:-2])&(acc_m[1:-1]>acc_m[2:]))}, freq={dom_f:.1f}Hz
-Physics: upstairs=posY, downstairs=negY, walk=posY, jog=high freq, sit/stand=low freq
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+    return f'''Classify human activity from back IMU + thigh IMU (128 steps @ 50Hz, 6 channels).
+Classes: {", ".join(descs)}
+Features (back):  gz={back_g.mean():+.3f} std={back_std:.4f}
+Features (thigh): gz={thigh_g.mean():+.3f} std={thigh_std:.4f} peaks={peaks}
+Discriminative rules:
+  - thigh_gz > +0.60: stairs_down (thigh kicks backward-upward during descent)
+  - thigh_gz < -0.60: stairs_up (thigh moves forward-upward)
+  - back_gz  > +0.60: lie (lying face-up)
+  - thigh_std > 0.25: walk (rhythmic leg motion)
+  - else: stand/sit/stand_still (minimal motion, indistinguishable)
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_uci_har_new(data, cn):
     vals = np.array(data)
@@ -304,7 +321,7 @@ Classes: {", ".join(descs)}
 Key features: acc_means={[f"{v:.3f}" for v in means[:3]]}, acc_stds={[f"{v:.3f}" for v in stds[:3]]}
 Static: WALKING/WALKING_UP/WALKING_DOWN/SITTING/STANDING/LAYING
 Transitions: STAND_TO_SIT/SIT_TO_STAND/SIT_TO_LIE/LIE_TO_SIT/STAND_TO_LIE/LIE_TO_STAND
-Output JSON: {{"0":0.8,"1":0.05,...}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_motionsense(data, cn):
     acc = data[:, :3]; acc_mag = np.sqrt((acc**2).sum(axis=1))
@@ -313,7 +330,7 @@ def build_prompt_motionsense(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc.mean(axis=0)]}
 Physics: downstairs=negative Y, upstairs=positive Y, walking=jogging=moderate periodic, sitting/standing=stationary
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_gait(data, cn):
     acc = data[:, :3]; acc_mag = np.sqrt((acc**2).sum(axis=1)); acc_mean = acc.mean(axis=0)
@@ -322,7 +339,7 @@ def build_prompt_gait(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f} acc_mean={[f"{v:.3f}" for v in acc_mean]}
 Physics: slow_walk=lower freq, normal_walk=regular, standing=minimal motion, activity=diverse
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_wisdm(data, cn):
     acc = data
@@ -336,7 +353,7 @@ def build_prompt_wisdm(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.2f} y_mean={y_a.mean():.4f}, peaks={peaks}, freq={dom_f:.1f}Hz
 Physics: jogging~periodic 2-4Hz, walking~periodic 1-2Hz, up/downstairs~Y-axis vertical bias, sitting/standing~low movement
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,"3":0.03,"4":0.01,"5":0.01}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 def build_prompt_motionsense_dm(data, cn):
     acc = data[:, :3] if len(data.shape) == 3 else data[:, :3]
@@ -346,7 +363,7 @@ def build_prompt_motionsense_dm(data, cn):
 Classes: {", ".join(descs)}
 Features: acc_mag={acc_mag.mean():.3f}
 Physics: walking/jogging/downstairs/upstairs=periodic, sitting/standing=stationary
-Output JSON: {{"0":0.8,"1":0.1,"2":0.05,...}}}}'''
+Output ONLY valid JSON with {len(cn)} probabilities that sum to 1: {{"0":p0,"1":p1,...}}}}'''
 
 PROMPT_BUILDERS = {
     'pamap2': build_prompt_pamap2,
@@ -363,7 +380,7 @@ PROMPT_BUILDERS = {
 # ============ 数据集配置 ============
 DATASET_CONFIG = {
     'pamap2': {
-        'cn': ['downstairs', 'sitting', 'standing', 'walking', 'jogging'],
+        'cn': ['lying', 'sitting', 'standing', 'walking', 'jogging'],
         'samples_per_class': 30,
     },
     'uci_har': {
@@ -371,7 +388,7 @@ DATASET_CONFIG = {
         'samples_per_class': 200,
     },
     'harth': {
-        'cn': ['左立','走路','上楼','下楼','右立','站立'],
+        'cn': ['stand','stairs_up','sit','lie','walk','stand_still','stairs_down'],
         'samples_per_class': 200,
     },
     'uci_har_new': {
@@ -578,17 +595,28 @@ if __name__ == "__main__":
         y_soft = np.zeros((len(X_tr), n_cls), dtype=np.float32)
         if force_restart:
             deleted = []
+            # 软标签文件（需删除重新生成）
             if os.path.exists(out_file):
                 os.remove(out_file)
                 deleted.append(os.path.basename(out_file))
-            err_log = BASE_DIR + '/results/logs/gen_' + dataset + '_errors.log'
-            if os.path.exists(err_log):
-                os.remove(err_log)
-                deleted.append(os.path.basename(err_log))
-            if deleted:
-                print("  --force 模式：已删除 " + ', '.join(deleted) + "，从头开始")
-            else:
-                print("  --force 模式：从头开始")
+            tmp_file = out_file.replace('.npy', '.tmp.npy')
+            if os.path.exists(tmp_file):
+                os.remove(tmp_file)
+                deleted.append(os.path.basename(tmp_file))
+            # 日志文件：截断不清除 fd（open+close 保留文件描述符）
+            for log_name in ['gen_' + dataset + '.log', 'gen_' + dataset + '_errors.log']:
+                log_path = BASE_DIR + '/results/logs/' + log_name
+                if os.path.exists(log_path):
+                    open(log_path, 'w').close()
+                    deleted.append(log_name)
+            # 并行版本遗留日志
+            for base in ['gen_full_' + dataset, 'gen_full_' + dataset + '_errors']:
+                for suffix in ['', '.log']:
+                    full_log = BASE_DIR + '/results/logs/' + base + suffix + '.log'
+                    if os.path.exists(full_log):
+                        os.remove(full_log)
+                        deleted.append(os.path.basename(full_log))
+            print("  --force 模式：已清除 " + (', '.join(deleted) if deleted else '旧文件') + "，从头开始")
     
 
     total_target = sum(dynamic_spc.values())
@@ -660,7 +688,12 @@ if __name__ == "__main__":
                 class_done += 1
                 done += 1
                 extra = " (" + str(reject_count) + "次重试后)" if reject_count > 0 else ""
-                print("    [" + str(done) + "] idx=" + str(idx) + ": REAL" + extra + " sum=" + str(result.sum()) + " max=" + str(result.max()))
+                pred = int(np.argmax(result))
+                true_l = int(y_tr[idx])
+                ok = "✓" if pred == true_l else "✗"
+                ent = float(-(result * np.log(np.clip(result, 1e-8, 1))).sum())
+                top2 = sorted(enumerate(result), key=lambda x: -x[1])[:2]
+                print("    [" + str(done) + "] idx=" + str(idx) + " true=" + str(true_l) + "(" + cn[true_l] + ") pred=" + str(pred) + "(" + cn[pred] + ")[" + ok + "] ent=" + str(round(ent,3)) + " top=[" + str(top2[0][0]) + ":" + str(round(top2[0][1],3)) + "," + str(top2[1][0]) + ":" + str(round(top2[1][1],3)) + "]" + extra)
 
             if done > 0 and done % 5 == 0:
                 tmp_file = out_file.replace('.npy', '.tmp.npy')
@@ -668,9 +701,27 @@ if __name__ == "__main__":
                 os.replace(tmp_file, out_file)
                 err_f.flush()
                 real_count = int(np.sum([1 for i in range(len(y_soft)) if is_valid_soft_label(y_soft[i])]))
-                print("  进度: +" + str(done) + "已处理, 累计" + str(real_count) + "真软标签, 已保存")
+                # 计算当前准确率（仅对有软标签的行）
+                valid_rows = np.array([i for i in range(len(y_soft)) if is_valid_soft_label(y_soft[i])])
+                if len(valid_rows) > 0:
+                    valid_labels = y_tr[valid_rows]
+                    valid_preds = np.argmax(y_soft[valid_rows], axis=1)
+                    correct = int(np.sum(valid_preds == valid_labels))
+                    acc_pct = correct / len(valid_rows) * 100
+                    print("  进度: +" + str(done) + "已处理, 累计" + str(real_count) + "真软标签, 准确率=" + str(round(acc_pct,1)) + "%(" + str(correct) + "/" + str(len(valid_rows)) + "), 已保存")
+                else:
+                    print("  进度: +" + str(done) + "已处理, 累计" + str(real_count) + "真软标签, 已保存")
 
             time.sleep(SLEEP_SEC)
+
+        # 本类完成，输出准确率统计
+        c_valid = np.array([i for i in cidx if is_valid_soft_label(y_soft[i])])
+        if len(c_valid) > 0:
+            c_correct = int(np.sum(np.argmax(y_soft[c_valid], axis=1) == y_tr[c_valid]))
+            c_acc = c_correct / len(c_valid) * 100
+            print("  >>> Class " + str(c) + " (" + str(cn[c]) + ") 完成: " + str(len(c_valid)) + "个软标签, 准确率=" + str(round(c_acc,1)) + "%(" + str(c_correct) + "/" + str(len(c_valid)) + ")")
+        else:
+            print("  >>> Class " + str(c) + " (" + str(cn[c]) + ") 完成: 0个软标签")
         print()
 
     for i in range(len(X_tr)):

@@ -10,10 +10,10 @@ DATASETS = ['pamap2', 'kuhar', 'uci_har', 'harth', 'uci_har_new', 'motionsense',
 VERSIONS = ['pure_cnn', 'v1', 'v2', 'v3']
 
 DATASET_INFO = {
-    'pamap2':         (5,  '3D CNN',  '6通道 128步'),
+    'pamap2':         (5,  '3D CNN',  '6通道 128步'),  # 实际使用5类(lying/sitting/standing/walking/jogging)
     'kuhar':          (18, '3D CNN',  '8通道 128步'),
     'uci_har':        (6,  '2D MLP',  '561维特征'),
-    'harth':          (6,  '3D CNN',  '3通道 128步'),
+    'harth':          (7,  '3D CNN',  '3通道 128步'),  # 7类: stand/stairs_up/sit/lie/walk/stand_still/stairs_down
     'uci_har_new':    (12, '2D MLP',  '561维特征'),
     'motionsense':    (6,  '3D CNN',  '3通道 128步'),
     'gait':           (4,  '3D CNN',  '6通道 128步'),

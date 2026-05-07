@@ -40,7 +40,7 @@ VERSION_PARAMS = {
 DATASET_CONFIG = {
     'pamap2': {
         'classes': 5,
-        'cn': ['downstairs', 'sitting', 'standing', 'walking', 'jogging'],
+        'cn': ['lying', 'sitting', 'standing', 'walking', 'jogging'],
         'loader': 'load_pamap2',
         'channels': 6,
         'max_train': 2200,
@@ -60,8 +60,8 @@ DATASET_CONFIG = {
         'max_train': 6000,
     },
     'harth': {
-        'classes': 6,
-        'cn': ['左立','走路','上楼','下楼','右立','站立'],
+        'classes': 7,
+        'cn': ['stand', 'stairs_up', 'sit', 'lie', 'walk', 'stand_still', 'stairs_down'],
         'loader': 'load_harth',
         'channels': 3,
         'max_train': 20000,
@@ -108,7 +108,7 @@ DATASET_CONFIG = {
 def load_pamap2():
     base = BASE_DIR + '/datasets/PAMAP2/PAMAP2_Dataset'
     d, l = [], []
-    PAMAP_MAP = {9:0, 2:1, 3:2, 4:3, 5:4}
+    PAMAP_MAP = {1:0, 2:1, 3:2, 4:3, 5:4}  # 1=lying,2=sitting,3=standing,4=walking,5=jogging
     for folder in ['Protocol', 'Optional']:
         for f in sorted(glob(f"{base}/{folder}/*.dat")):
             try:
@@ -160,7 +160,7 @@ def load_harth():
     base = BASE_DIR + '/datasets/HARTH/harth'
     files = sorted(glob(f"{base}/*.csv"))
     d, l = [], []
-    label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5}
+    label_map = {1:0, 2:1, 3:2, 4:3, 5:4, 6:5, 7:6}
     for f in files:
         try:
             df = pd.read_csv(f)
