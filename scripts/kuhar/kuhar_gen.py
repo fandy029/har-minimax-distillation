@@ -429,7 +429,7 @@ def main():
         sys.exit(1)
 
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
         log("--force: 清除旧日志和断点，从头开始")
@@ -499,7 +499,7 @@ def main():
                     true_correct += 1
                     class_corr[tl] += 1
                     correct_indices.append(idx)
-        log(f"  续跑恢复: 完成={done_count}, 正确={true_correct}, 正确样本={len(correct_indices)}")
+        log(f"  续跑恢复: 完成={done_count}, 正确={true_correct}, 正确样本数={len(correct_indices)}")
 
     for pos, orig_idx in enumerate(sample_indices):
         if orig_idx in done_set:
@@ -528,21 +528,10 @@ def main():
             done_count += 1
             continue
 
-        # 重试直到 pred==true 或达到最大次数
-        retry_pred_count = 2
-        while retry_pred_count < 3:
-            pred_label = int(np.argmax(probs))
-            if pred_label == true_label:
-                break
-            probs2, _ = call_api(prompt)
-            if probs2 is None:
-                break
-            probs = probs2
-            retry_pred_count += 1
-            log(f'  [RETRY {retry_pred_count}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[int(np.argmax(probs))]}({int(np.argmax(probs))})')
         ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
         top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
         soft_all[orig_idx] = probs
+        pred_label = int(np.argmax(probs))
         ok = "✓" if pred_label == true_label else "✗"
         class_gen[true_label] += 1
         line = (f"  [{done_count:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
@@ -577,7 +566,7 @@ def main():
                 json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
             valid_n = int((soft_all.sum(axis=1) > 0).sum())
             acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
-            log(f"  进度: {len(done_set)}/{total}, 准确率={acc_pct:.1f}%, 正确样本={len(correct_indices)}, 已保存")
+            log(f"  进度: {done_count}/{total}, 准确率={true_correct/done_count*100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
 
         time.sleep(SLEEP_SEC)
 

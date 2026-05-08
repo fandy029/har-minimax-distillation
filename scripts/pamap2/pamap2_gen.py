@@ -274,7 +274,7 @@ def main():
         sys.exit(1)
 
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
 
@@ -335,7 +335,7 @@ def main():
         raw_result, err = call_api(build_prompt(X[orig_idx]))
 
         retry_count = 0
-        while raw_result is None and retry_count < 3:
+        while raw_result is None and retry_count < 2:
             time.sleep(5)
             raw_result, err = call_api(build_prompt(X[orig_idx]))
             retry_count += 1
@@ -382,7 +382,7 @@ def main():
             if correct_indices:
                 np.save(CORRECT_FILE, soft_all[correct_indices])
             json.dump({'done': [int(x) for x in done_set]}, open(CKPT_FILE, 'w'))
-            log(f"  进度: {len(done_set)}/{total}, 准确率={true_correct / done_count * 100:.1f}%, 已保存")
+            log(f"  进度: {done_count}/{total}, 准确率={true_correct / done_count * 100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
 
         time.sleep(SLEEP_SEC)
 

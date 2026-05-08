@@ -20,3 +20,50 @@ Traceback (most recent call last):
                                                                                          ^^^
 UnboundLocalError: cannot access local variable 'idx' where it is not associated with a value
 已有实例在运行
+python3: can't open file '/home/fandy/workplace/thesis/scripts/uci_har_new/uci_har_new_gen.py': [Errno 2] No such file or directory
+已有实例在运行
+[2026-05-08 12:49:31] Gait 软标签生成开始 (scripts/gait/gait_gen.py)
+[2026-05-08 12:49:31] Mimo API: https://token-plan-cn.xiaomimimo.com/v1
+[2026-05-08 12:49:31] Model: mimo-v2.5-pro
+[2026-05-08 12:49:31] Temperature: 0.3
+[2026-05-08 12:49:31] 加载 Gait 数据...
+[2026-05-08 12:49:31]   训练数据: 673 样本, 4 类
+[2026-05-08 12:49:31]   class 0 (sit_on_bed): 161 样本
+[2026-05-08 12:49:31]   class 1 (sit_on_chair): 38 样本
+[2026-05-08 12:49:31]   class 2 (lying): 436 样本
+[2026-05-08 12:49:31]   class 3 (ambulating): 38 样本
+[2026-05-08 12:49:31] 总计采样: 673 个窗口（每类 ~3000）
+[2026-05-08 12:49:31]   断点续传: 655/673 已处理
+[2026-05-08 12:49:31]   续跑恢复: 完成=655, 正确=506, 正确样本数=506
+[2026-05-08 12:49:38]   [RETRY] | true=sit_on_bed(0) | pred=lying(2)
+[2026-05-08 12:49:38]   [656/673] | true=sit_on_bed(0) | pred=lying(2) |  ✗ | ent=0.83 | top=2:0.75, 0:0.10
+[2026-05-08 12:49:42]   [657/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:49:45]   [658/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=1.11 | top=2:0.60, 0:0.15
+[2026-05-08 12:49:47]   [659/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:49:49]   [660/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.94 | top=2:0.70, 0:0.10
+[2026-05-08 12:49:49]   进度: 660/673, 准确率=77.3%, 正确样本=510, 已保存
+[2026-05-08 12:49:54]   [661/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:49:56]   [662/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.80 | top=2:0.75, 3:0.15
+[2026-05-08 12:49:59]   [663/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:50:03]   [664/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:50:07]   [665/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:50:07]   进度: 665/673, 准确率=77.4%, 正确样本=515, 已保存
+[2026-05-08 12:50:11]   [RETRY] | true=sit_on_bed(0) | pred=ambulating(3)
+[2026-05-08 12:50:11]   [666/673] | true=sit_on_bed(0) | pred=ambulating(3) |  ✗ | ent=1.21 | top=3:0.50, 1:0.25
+[2026-05-08 12:50:16]   [667/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:50:19]   [RETRY] | true=sit_on_bed(0) | pred=ambulating(3)
+[2026-05-08 12:50:19]   [668/673] | true=sit_on_bed(0) | pred=ambulating(3) |  ✗ | ent=0.59 | top=3:0.85, 0:0.05
+[2026-05-08 12:50:21]   [669/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=1.03 | top=2:0.65, 0:0.15
+[2026-05-08 12:50:23]   [670/673] | true=sit_on_chair(1) | pred=sit_on_chair(1) |  ✓ | ent=1.11 | top=1:0.55, 3:0.25
+[2026-05-08 12:50:23]   进度: 670/673, 准确率=77.3%, 正确样本=518, 已保存
+[2026-05-08 12:50:33]   [671/673] | true=lying(2) | pred=lying(2) |  ✓ | ent=0.59 | top=2:0.85, 0:0.05
+[2026-05-08 12:50:36]   [RETRY] | true=ambulating(3) | pred=sit_on_chair(1)
+[2026-05-08 12:50:36]   [672/673] | true=ambulating(3) | pred=sit_on_chair(1) |  ✗ | ent=1.00 | top=1:0.65, 0:0.15
+[2026-05-08 12:50:39]   [RETRY] | true=sit_on_bed(0) | pred=lying(2)
+[2026-05-08 12:50:39]   [673/673] | true=sit_on_bed(0) | pred=lying(2) |  ✗ | ent=1.03 | top=2:0.65, 1:0.15
+[2026-05-08 12:50:40] 
+=== 生成完成 ===
+[2026-05-08 12:50:40]   有效软标签: 673/673
+[2026-05-08 12:50:40]   整体准确率: 77.1% (519/673)
+[2026-05-08 12:50:40]   正确样本数: 519
+[2026-05-08 12:50:40]   输出: /home/fandy/workplace/thesis/results/soft_labels/gait_soft.npy

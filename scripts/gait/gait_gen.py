@@ -248,7 +248,7 @@ def main():
 
     # --force: 清空日志和断点
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
         log(f"--force: 清除旧日志和断点，从头开始", to_stdout=False)
@@ -330,7 +330,7 @@ def main():
         # API 调用
         raw_result, err = call_api(prompt)
         retry_count = 0
-        while raw_result is None and retry_count < 3:
+        while raw_result is None and retry_count < 2:
             time.sleep(5)
             raw_result, err = call_api(prompt)
             retry_count += 1
@@ -353,7 +353,7 @@ def main():
         ok = "✓" if pred_label == true_label else "✗"
         ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
         top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-        line = (f"  [{len(done_set)+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        line = (f"  [{done_count:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
         log(line)
         log_final(line)
         class_gen[true_label] += 1
@@ -386,7 +386,7 @@ def main():
                 json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
             valid_n = int((soft_all.sum(axis=1) > 0).sum())
             acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
-            log(f"  进度: {len(done_set)}/{total}, 准确率={acc_pct:.1f}%, 正确样本={len(correct_indices)}, 已保存")
+            log(f"  进度: {done_count}/{total}, 准确率={true_correct/done_count*100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
 
         time.sleep(SLEEP_SEC)
 

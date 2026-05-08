@@ -23,6 +23,8 @@ FINAL_FILE = os.path.join(LOG_DIR, 'gen_harth_final.log')
 ERR_FILE   = os.path.join(LOG_DIR, 'gen_harth_errors.log')
 CORR_LOG   = os.path.join(LOG_DIR, 'gen_harth_correct.log')
 LOCK_FILE  = os.path.join(OUT_DIR, '.gen_harth.lock')
+SOFT_FILE  = os.path.join(OUT_DIR, 'harth_soft.npy')
+CORRECT_FILE = os.path.join(OUT_DIR, 'harth_soft_correct_only.npy')
 
 # ============ API 配置（使用本地 api_config.py）============
 import sys
@@ -289,7 +291,7 @@ def main():
 
     # --force: 清空日志和断点（从头开始）
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
         print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] --force: 清除旧日志和断点，从头开始")
@@ -399,7 +401,7 @@ def main():
         # API 调用
         result, err = call_api(prompt)
         retry_count = 0
-        while result is None and retry_count < 3:
+        while result is None and retry_count < 2:
             time.sleep(5)
             result, err = call_api(prompt)
             retry_count += 1
@@ -422,7 +424,7 @@ def main():
         ok = "✓" if pred_label == true_label else "✗"
         ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
         top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-        line = (f"  [{len(done_set)+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        line = (f"  [{done_count:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
         log(line)
         log_final(line)
         class_gen[true_label] += 1
@@ -449,24 +451,21 @@ def main():
 
         # 每5个保存一次（两份：全量 + 仅正确预测）
         if done_count % 5 == 0:
-            np.save(os.path.join(OUT_DIR, 'harth_soft.npy'), soft_all)
+            np.save(SOFT_FILE, soft_all)
             soft_correct = soft_all[correct_indices]
-            np.save(os.path.join(OUT_DIR, 'harth_soft_correct_only.npy'), soft_correct)
+            np.save(CORRECT_FILE, soft_correct)
             with open(CKPT_FILE, 'w') as f:
                 json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
             valid_n = int((soft_all.sum(axis=1) > 0).sum())
             acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
-            log(f"  进度: {len(done_set)}/{total}, 准确率={acc_pct:.1f}%, "
-                f"正确样本={len(correct_indices)}, 已保存")
+            log(f"  进度: {done_count}/{total}, 准确率={true_correct/done_count*100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
 
         time.sleep(SLEEP_SEC)
 
     # 最终保存（两份：全量 + 仅正确预测）
-    out_path = os.path.join(OUT_DIR, 'harth_soft.npy')
-    out_correct = os.path.join(OUT_DIR, 'harth_soft_correct_only.npy')
-    np.save(out_path, soft_all)
+    np.save(SOFT_FILE, soft_all)
     soft_correct = soft_all[correct_indices]
-    np.save(out_correct, soft_correct)
+    np.save(CORRECT_FILE, soft_correct)
     valid_n = int((soft_all.sum(axis=1) > 0).sum())
     acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
 
@@ -474,7 +473,7 @@ def main():
     log(f"\n=== 生成完成 ===")
     log(f"  有效软标签: {valid_n}/{len(X)}")
     log(f"  整体准确率: {acc_pct:.1f}% ({true_correct}/{done_count})")
-    log(f"  仅正确版本: {out_correct} ({len(correct_indices)} 样本)")
+    log(f"  仅正确版本: {CORRECT_FILE} ({len(correct_indices)} 样本)")
     for c in range(N_CLS):
         g = class_gen[c]
         cc = class_corr[c]
@@ -483,7 +482,7 @@ def main():
 
     with open(CKPT_FILE, 'w') as f:
         json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
-    log(f"  输出: {out_path}")
+    log(f"  输出: {SOFT_FILE}")
 
 if __name__ == '__main__':
     main()

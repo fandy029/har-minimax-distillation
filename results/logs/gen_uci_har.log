@@ -1,274 +1,255 @@
-[2026-05-08 11:52:14] UCI-HAR 软标签生成开始
-[2026-05-08 11:52:14] Mimo API: https://token-plan-cn.xiaomimimo.com/v1 | Model: mimo-v2.5-pro | T=0.3
-[2026-05-08 11:52:15]   训练数据: 5881 样本, 6 类
-[2026-05-08 11:52:15]   class 0 (WALKING): 981 样本
-[2026-05-08 11:52:15]   class 1 (WALKING_UP): 858 样本
-[2026-05-08 11:52:15]   class 2 (WALKING_DOWN): 789 样本
-[2026-05-08 11:52:15]   class 3 (SITTING): 1029 样本
-[2026-05-08 11:52:15]   class 4 (STANDING): 1099 样本
-[2026-05-08 11:52:15]   class 5 (LAYING): 1125 样本
-[2026-05-08 11:52:15]   总计采样: 5881 个窗口（每类最多 3000）
-[2026-05-08 11:52:25]   [001/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 11:52:32]   [002/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 11:52:39]   [003/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.73 | top=5:0.82, 4:0.07
-[2026-05-08 11:52:47]   [004/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 11:53:02]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2)
-[2026-05-08 11:53:02]   [005/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
-[2026-05-08 11:53:02]   进度: 5/5881, 准确率=100.0%, 已保存
-[2026-05-08 11:53:09]   [006/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.80 | top=4:0.78, 3:0.13
-[2026-05-08 11:53:26]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 11:53:26]   [007/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.26 | top=0:0.62, 1:0.12
-[2026-05-08 11:53:38]   [008/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 11:53:47]   [009/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.35 | top=1:0.58, 0:0.12
-[2026-05-08 11:53:55]   [010/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:53:55]   进度: 10/5881, 准确率=90.0%, 已保存
-[2026-05-08 11:54:02]   [011/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
-[2026-05-08 11:54:14]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 11:54:14]   [012/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 11:54:25]   [013/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.34 | top=1:0.58, 0:0.12
-[2026-05-08 11:54:32]   [014/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:54:39]   [015/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.49 | top=5:0.90, 0:0.02
-[2026-05-08 11:54:39]   进度: 15/5881, 准确率=86.7%, 已保存
-[2026-05-08 11:54:49]   [016/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 11:54:56]   [017/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.70, 4:0.18
-[2026-05-08 11:55:07]   [018/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:55:14]   [019/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 11:55:23]   [020/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 11:55:23]   进度: 20/5881, 准确率=90.0%, 已保存
-[2026-05-08 11:55:33]   [021/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 11:55:47]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 11:55:47]   [022/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 11:56:01]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
-[2026-05-08 11:56:01]   [023/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 11:56:11]   [024/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.72, 3:0.15
-[2026-05-08 11:56:27]   [RETRY] | true=WALKING(0) | pred=STANDING(4)
-[2026-05-08 11:56:27]   [025/5881] | true=WALKING(0) | pred=STANDING(4) |  ✗ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 11:56:27]   进度: 25/5881, 准确率=80.0%, 已保存
-[2026-05-08 11:56:33]   [026/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 11:56:40]   [027/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 11:56:55]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 11:56:55]   [028/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 11:57:02]   [029/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 11:57:14]   [RETRY] | true=WALKING_UP(1) | pred=WALKING_DOWN(2)
-[2026-05-08 11:57:14]   [030/5881] | true=WALKING_UP(1) | pred=WALKING_DOWN(2) |  ✗ | ent=1.38 | top=2:0.55, 1:0.15
-[2026-05-08 11:57:14]   进度: 30/5881, 准确率=76.7%, 已保存
-[2026-05-08 11:57:34]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2)
-[2026-05-08 11:57:34]   [031/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
-[2026-05-08 11:57:42]   [032/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
-[2026-05-08 11:57:50]   [033/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.04 | top=3:0.68, 4:0.18
-[2026-05-08 11:57:58]   [034/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
-[2026-05-08 11:58:06]   [035/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.80 | top=4:0.78, 3:0.13
-[2026-05-08 11:58:06]   进度: 35/5881, 准确率=80.0%, 已保存
-[2026-05-08 11:58:22]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 11:58:22]   [036/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.26 | top=0:0.62, 1:0.12
-[2026-05-08 11:58:32]   [037/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 11:58:39]   [038/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.19 | top=2:0.65, 0:0.10
-[2026-05-08 11:58:47]   [039/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 11:58:55]   [040/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:58:55]   进度: 40/5881, 准确率=80.0%, 已保存
-[2026-05-08 11:59:05]   [041/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:59:11]   [042/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.70, 4:0.18
-[2026-05-08 11:59:26]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 11:59:26]   [043/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 11:59:41]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 11:59:41]   [044/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 11:59:48]   [045/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 11:59:48]   进度: 45/5881, 准确率=77.8%, 已保存
-[2026-05-08 11:59:56]   [046/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.02 | top=3:0.70, 4:0.15
-[2026-05-08 12:00:04]   [047/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:00:22]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 12:00:22]   [048/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:00:29]   [049/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.25 | top=1:0.62, 0:0.12
-[2026-05-08 12:00:36]   [050/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:00:36]   进度: 50/5881, 准确率=78.0%, 已保存
-[2026-05-08 12:01:01]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 12:01:01]   [051/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:01:13]   [052/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:01:20]   [053/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.49 | top=5:0.90, 0:0.02
-[2026-05-08 12:01:27]   [054/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:01:46]   [055/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
-[2026-05-08 12:01:46]   进度: 55/5881, 准确率=78.2%, 已保存
-[2026-05-08 12:02:00]   [056/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.16 | top=4:0.65, 3:0.15
-[2026-05-08 12:02:08]   [057/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 12:02:14]   [058/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:02:20]   [059/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.16 | top=4:0.65, 3:0.15
-[2026-05-08 12:02:27]   [060/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 12:02:27]   进度: 60/5881, 准确率=80.0%, 已保存
-[2026-05-08 12:02:34]   [061/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.77 | top=3:0.80, 4:0.10
-[2026-05-08 12:02:41]   [062/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:02:51]   [063/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:03:01]   [064/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:03:08]   [065/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.96 | top=2:0.75, 0:0.05
-[2026-05-08 12:03:08]   进度: 65/5881, 准确率=81.5%, 已保存
-[2026-05-08 12:03:14]   [066/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.86 | top=3:0.75, 4:0.15
-[2026-05-08 12:03:23]   [067/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.73 | top=5:0.82, 4:0.07
-[2026-05-08 12:03:37]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
-[2026-05-08 12:03:37]   [068/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:03:46]   [069/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.32 | top=2:0.58, 5:0.15
-[2026-05-08 12:03:56]   [070/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.90 | top=3:0.70, 4:0.22
-[2026-05-08 12:03:56]   进度: 70/5881, 准确率=81.4%, 已保存
-[2026-05-08 12:04:02]   [071/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:04:12]   [072/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.97 | top=4:0.70, 3:0.18
-[2026-05-08 12:04:19]   [073/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 12:04:31]   [074/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.35 | top=2:0.58, 0:0.12
-[2026-05-08 12:04:37]   [075/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:04:37]   进度: 75/5881, 准确率=82.7%, 已保存
-[2026-05-08 12:04:44]   [076/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:04:53]   [077/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:04:59]   [078/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.64 | top=3:0.85, 4:0.07
-[2026-05-08 12:05:06]   [079/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.56 | top=5:0.88, 3:0.03
-[2026-05-08 12:05:13]   [080/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.74 | top=5:0.82, 3:0.06
-[2026-05-08 12:05:13]   进度: 80/5881, 准确率=83.8%, 已保存
-[2026-05-08 12:05:21]   [081/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.71 | top=3:0.82, 4:0.10
-[2026-05-08 12:05:29]   [082/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:05:35]   [083/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:05:45]   [084/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 12:05:52]   [085/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:05:52]   进度: 85/5881, 准确率=84.7%, 已保存
-[2026-05-08 12:06:00]   [086/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:06:07]   [087/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.04 | top=3:0.68, 4:0.18
-[2026-05-08 12:06:14]   [088/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:06:20]   [089/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.02 | top=4:0.70, 3:0.15
-[2026-05-08 12:06:26]   [090/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:06:26]   进度: 90/5881, 准确率=85.6%, 已保存
-[2026-05-08 12:06:42]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 12:06:42]   [091/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 12:06:48]   [092/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:06:54]   [093/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:07:00]   [094/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:07:07]   [095/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.16 | top=4:0.65, 3:0.15
-[2026-05-08 12:07:07]   进度: 95/5881, 准确率=85.3%, 已保存
-[2026-05-08 12:07:18]   [096/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:07:27]   [097/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.12
-[2026-05-08 12:07:37]   [098/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.17 | top=3:0.62, 4:0.20
-[2026-05-08 12:07:47]   [099/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:07:53]   [100/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.96 | top=2:0.75, 0:0.05
-[2026-05-08 12:07:53]   100轮: 86/100(86.0%) WALKING=9/16(56%) WALKING_UP=10/15(67%) WALKING_DOWN=13/14(93%) SITTING=16/17(94%) STANDING=24/24(100%) LAYING=14/14(100%)
-[2026-05-08 12:07:53]   进度: 100/5881, 准确率=86.0%, 已保存
-[2026-05-08 12:07:58]   [101/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:08:06]   [102/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:08:20]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
-[2026-05-08 12:08:20]   [103/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.91 | top=4:0.72, 3:0.18
-[2026-05-08 12:08:26]   [104/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:08:33]   [105/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.34 | top=2:0.58, 0:0.12
-[2026-05-08 12:08:33]   进度: 105/5881, 准确率=85.7%, 已保存
-[2026-05-08 12:08:46]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 12:08:46]   [106/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:08:53]   [107/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:09:05]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
-[2026-05-08 12:09:05]   [108/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=1.10 | top=4:0.66, 3:0.18
-[2026-05-08 12:09:12]   [109/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:09:18]   [110/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:09:18]   进度: 110/5881, 准确率=84.5%, 已保存
-[2026-05-08 12:09:30]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 12:09:30]   [111/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:09:43]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 12:09:43]   [112/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:09:49]   [113/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:09:55]   [114/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.87 | top=3:0.72, 4:0.20
-[2026-05-08 12:10:08]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
-[2026-05-08 12:10:08]   [115/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:10:08]   进度: 115/5881, 准确率=82.6%, 已保存
-[2026-05-08 12:10:15]   [116/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.37 | top=2:0.55, 0:0.15
-[2026-05-08 12:10:20]   [117/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 12:10:27]   [118/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:10:40]   [119/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.35 | top=2:0.58, 0:0.12
-[2026-05-08 12:10:50]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 12:10:50]   [120/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:10:50]   进度: 120/5881, 准确率=82.5%, 已保存
-[2026-05-08 12:10:57]   [121/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.97 | top=3:0.72, 4:0.15
-[2026-05-08 12:11:04]   [122/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:11:10]   [123/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
-[2026-05-08 12:11:16]   [124/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:11:22]   [125/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.75 | top=3:0.80, 4:0.12
-[2026-05-08 12:11:22]   进度: 125/5881, 准确率=83.2%, 已保存
-[2026-05-08 12:11:27]   [126/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:11:37]   [127/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:11:49]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
-[2026-05-08 12:11:49]   [128/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.91 | top=4:0.72, 3:0.18
-[2026-05-08 12:11:56]   [129/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.04 | top=4:0.68, 3:0.18
-[2026-05-08 12:12:02]   [130/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:12:02]   进度: 130/5881, 准确率=83.1%, 已保存
-[2026-05-08 12:12:08]   [131/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:12:16]   [132/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.04 | top=3:0.70, 4:0.14
-[2026-05-08 12:12:27]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
-[2026-05-08 12:12:27]   [133/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
-[2026-05-08 12:12:34]   [134/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.70, 4:0.18
-[2026-05-08 12:12:41]   [135/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.24 | top=0:0.62, 1:0.12
-[2026-05-08 12:12:41]   进度: 135/5881, 准确率=83.0%, 已保存
-[2026-05-08 12:12:48]   [136/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 12:12:55]   [137/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.03 | top=0:0.72, 1:0.08
-[2026-05-08 12:13:05]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
-[2026-05-08 12:13:05]   [138/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 12:13:13]   [139/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.17 | top=0:0.65, 1:0.12
-[2026-05-08 12:13:20]   [140/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:13:20]   进度: 140/5881, 准确率=82.9%, 已保存
-[2026-05-08 12:13:26]   [141/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.70, 4:0.18
-[2026-05-08 12:13:32]   [142/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.49 | top=5:0.90, 0:0.02
-[2026-05-08 12:13:39]   [143/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
-[2026-05-08 12:13:45]   [144/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.96 | top=2:0.75, 0:0.05
-[2026-05-08 12:14:00]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
-[2026-05-08 12:14:00]   [145/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:14:00]   进度: 145/5881, 准确率=82.8%, 已保存
-[2026-05-08 12:14:12]   [RETRY] | true=WALKING(0) | pred=WALKING_DOWN(2)
-[2026-05-08 12:14:12]   [146/5881] | true=WALKING(0) | pred=WALKING_DOWN(2) |  ✗ | ent=1.19 | top=2:0.65, 0:0.12
-[2026-05-08 12:14:21]   [147/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
-[2026-05-08 12:14:32]   [148/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.87 | top=4:0.75, 3:0.15
-[2026-05-08 12:14:38]   [149/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.26 | top=0:0.62, 1:0.12
-[2026-05-08 12:14:46]   [150/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.81 | top=4:0.78, 3:0.12
-[2026-05-08 12:14:46]   进度: 150/5881, 准确率=82.7%, 已保存
-[2026-05-08 12:14:52]   [151/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:14:59]   [152/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.09 | top=4:0.65, 3:0.20
-[2026-05-08 12:15:07]   [153/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.96 | top=2:0.75, 0:0.05
-[2026-05-08 12:15:14]   [154/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.86 | top=3:0.75, 4:0.15
-[2026-05-08 12:15:20]   [155/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
-[2026-05-08 12:15:20]   进度: 155/5881, 准确率=83.2%, 已保存
-[2026-05-08 12:15:28]   [156/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.30 | top=2:0.60, 0:0.10
-[2026-05-08 12:15:36]   [157/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.16 | top=3:0.62, 4:0.18
-[2026-05-08 12:15:43]   [158/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:15:50]   [159/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:15:59]   [160/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.78 | top=3:0.78, 4:0.14
-[2026-05-08 12:15:59]   进度: 160/5881, 准确率=83.8%, 已保存
-[2026-05-08 12:16:06]   [161/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:16:15]   [162/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:16:24]   [163/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
-[2026-05-08 12:16:34]   [164/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.73 | top=4:0.82, 3:0.08
-[2026-05-08 12:16:41]   [165/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:16:41]   进度: 165/5881, 准确率=84.2%, 已保存
-[2026-05-08 12:16:56]   [RETRY] | true=SITTING(3) | pred=LAYING(5)
-[2026-05-08 12:16:56]   [166/5881] | true=SITTING(3) | pred=LAYING(5) |  ✗ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:17:02]   [167/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.08 | top=2:0.70, 0:0.10
-[2026-05-08 12:17:17]   [RETRY] | true=LAYING(5) | pred=WALKING_DOWN(2)
-[2026-05-08 12:17:17]   [168/5881] | true=LAYING(5) | pred=WALKING_DOWN(2) |  ✗ | ent=1.13 | top=2:0.65, 0:0.15
-[2026-05-08 12:17:24]   [169/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.65 | top=5:0.85, 3:0.05
-[2026-05-08 12:17:31]   [170/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.58, 0:0.12
-[2026-05-08 12:17:31]   进度: 170/5881, 准确率=83.5%, 已保存
-[2026-05-08 12:17:39]   [171/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:17:47]   [172/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
-[2026-05-08 12:17:54]   [173/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
-[2026-05-08 12:18:08]   [RETRY] | true=WALKING(0) | pred=WALKING_DOWN(2)
-[2026-05-08 12:18:08]   [174/5881] | true=WALKING(0) | pred=WALKING_DOWN(2) |  ✗ | ent=0.96 | top=2:0.75, 0:0.05
-[2026-05-08 12:18:19]   [175/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.34 | top=2:0.45, 1:0.30
-[2026-05-08 12:18:19]   进度: 175/5881, 准确率=83.4%, 已保存
-[2026-05-08 12:18:29]   [176/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:18:37]   [177/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:18:46]   [178/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.25 | top=1:0.62, 0:0.12
-[2026-05-08 12:18:55]   [179/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.45, 0:0.35
-[2026-05-08 12:19:01]   [180/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
-[2026-05-08 12:19:01]   进度: 180/5881, 准确率=83.9%, 已保存
-[2026-05-08 12:19:06]   [181/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
-[2026-05-08 12:19:18]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
-[2026-05-08 12:19:18]   [182/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.07 | top=0:0.70, 1:0.10
-[2026-05-08 12:19:23]   [183/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
-[2026-05-08 12:19:28]   [184/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:19:35]   [185/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:19:35]   进度: 185/5881, 准确率=83.8%, 已保存
-[2026-05-08 12:19:45]   [186/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
-[2026-05-08 12:19:51]   [187/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.65 | top=5:0.85, 3:0.05
-[2026-05-08 12:19:58]   [188/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
-[2026-05-08 12:20:07]   [189/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:20:20]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
-[2026-05-08 12:20:20]   [190/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.12
-[2026-05-08 12:20:20]   进度: 190/5881, 准确率=83.7%, 已保存
-[2026-05-08 12:20:29]   [191/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
-[2026-05-08 12:20:37]   [192/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 13:50:42] UCI-HAR 软标签生成开始
+[2026-05-08 13:50:42] Mimo API: https://token-plan-cn.xiaomimimo.com/v1 | Model: mimo-v2.5-pro | T=0.3
+[2026-05-08 13:50:44]   训练数据: 5881 样本, 6 类
+[2026-05-08 13:50:44]   class 0 (WALKING): 981 样本
+[2026-05-08 13:50:44]   class 1 (WALKING_UP): 858 样本
+[2026-05-08 13:50:44]   class 2 (WALKING_DOWN): 789 样本
+[2026-05-08 13:50:44]   class 3 (SITTING): 1029 样本
+[2026-05-08 13:50:44]   class 4 (STANDING): 1099 样本
+[2026-05-08 13:50:44]   class 5 (LAYING): 1125 样本
+[2026-05-08 13:50:44]   总计采样: 5881 个窗口（每类最多 3000）
+[2026-05-08 13:50:53]   [000/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
+[2026-05-08 13:51:01]   [001/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 13:51:12]   [002/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.96 | top=5:0.70, 3:0.18
+[2026-05-08 13:51:21]   [003/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 13:51:29]   [004/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
+[2026-05-08 13:51:29]   进度: 5/5881, 准确率=100.0%, 正确样本数=5, 已保存
+[2026-05-08 13:51:40]   [005/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 13:51:56]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 13:51:56]   [006/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.17 | top=0:0.65, 1:0.12
+[2026-05-08 13:52:05]   [007/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.26 | top=2:0.62, 1:0.10
+[2026-05-08 13:52:14]   [008/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.25 | top=1:0.62, 0:0.12
+[2026-05-08 13:52:23]   [009/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 13:52:23]   进度: 10/5881, 准确率=90.0%, 正确样本数=9, 已保存
+[2026-05-08 13:52:33]   [010/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.94 | top=3:0.70, 4:0.20
+[2026-05-08 13:52:54]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 13:52:54]   [011/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.40 | top=1:0.55, 0:0.10
+[2026-05-08 13:53:10]   [RETRY] | true=WALKING_UP(1) | pred=WALKING_UP(1)
+[2026-05-08 13:53:10]   [012/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.47 | top=1:0.45, 0:0.25
+[2026-05-08 13:53:20]   [013/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 13:53:34]   [014/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 13:53:34]   进度: 15/5881, 准确率=86.7%, 正确样本数=13, 已保存
+[2026-05-08 13:53:40]   [015/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 13:53:50]   [016/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
+[2026-05-08 13:53:57]   [017/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 13:54:07]   [018/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 13:54:18]   [019/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.37 | top=0:0.55, 1:0.15
+[2026-05-08 13:54:18]   进度: 20/5881, 准确率=90.0%, 正确样本数=18, 已保存
+[2026-05-08 13:54:29]   [020/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.27 | top=0:0.62, 1:0.08
+[2026-05-08 13:54:49]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 13:54:49]   [021/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 13:55:04]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
+[2026-05-08 13:55:04]   [022/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 13:55:16]   [023/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 13:55:36] UCI-HAR 软标签生成开始
+[2026-05-08 13:55:36] Mimo API: https://token-plan-cn.xiaomimimo.com/v1 | Model: mimo-v2.5-pro | T=0.3
+[2026-05-08 13:55:38]   训练数据: 5881 样本, 6 类
+[2026-05-08 13:55:38]   class 0 (WALKING): 981 样本
+[2026-05-08 13:55:38]   class 1 (WALKING_UP): 858 样本
+[2026-05-08 13:55:38]   class 2 (WALKING_DOWN): 789 样本
+[2026-05-08 13:55:38]   class 3 (SITTING): 1029 样本
+[2026-05-08 13:55:38]   class 4 (STANDING): 1099 样本
+[2026-05-08 13:55:38]   class 5 (LAYING): 1125 样本
+[2026-05-08 13:55:38]   总计采样: 5881 个窗口（每类最多 3000）
+[2026-05-08 13:55:38]   断点续传: 20/5881 已处理
+[2026-05-08 13:55:38]   续跑恢复: 完成=20, 正确=18, 正确样本数=18
+[2026-05-08 13:55:46]   [020/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 13:56:09]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 13:56:09]   [021/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.23 | top=0:0.62, 1:0.12
+[2026-05-08 13:56:26]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
+[2026-05-08 13:56:26]   [022/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 13:56:33]   [023/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.76, 3:0.13
+[2026-05-08 13:56:56]   [RETRY] | true=WALKING(0) | pred=STANDING(4)
+[2026-05-08 13:56:56]   [024/5881] | true=WALKING(0) | pred=STANDING(4) |  ✗ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 13:56:56]   进度: 25/5881, 准确率=80.0%, 正确样本数=20, 已保存
+[2026-05-08 13:57:05]   [025/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 13:57:16]   [026/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.34 | top=1:0.58, 0:0.12
+[2026-05-08 13:57:32]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 13:57:32]   [027/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
+[2026-05-08 13:57:42]   [028/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 13:58:05]   [RETRY] | true=WALKING_UP(1) | pred=WALKING_DOWN(2)
+[2026-05-08 13:58:05]   [029/5881] | true=WALKING_UP(1) | pred=WALKING_DOWN(2) |  ✗ | ent=1.44 | top=2:0.45, 1:0.25
+[2026-05-08 13:58:05]   进度: 30/5881, 准确率=76.7%, 正确样本数=23, 已保存
+[2026-05-08 13:58:22]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2)
+[2026-05-08 13:58:22]   [030/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.27 | top=2:0.62, 5:0.10
+[2026-05-08 13:58:30]   [031/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.03 | top=4:0.68, 3:0.18
+[2026-05-08 13:58:39]   [032/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.10 | top=3:0.62, 4:0.24
+[2026-05-08 13:58:48]   [033/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.97 | top=3:0.62, 4:0.30
+[2026-05-08 13:58:57]   [034/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 13:58:57]   进度: 35/5881, 准确率=80.0%, 正确样本数=28, 已保存
+[2026-05-08 13:59:12]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 13:59:12]   [035/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 13:59:21]   [036/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 13:59:29]   [037/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.94 | top=2:0.75, 0:0.08
+[2026-05-08 13:59:36]   [038/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 13:59:49]   [039/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.16 | top=4:0.65, 3:0.15
+[2026-05-08 13:59:49]   进度: 40/5881, 准确率=80.0%, 正确样本数=32, 已保存
+[2026-05-08 13:59:58]   [040/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.19 | top=4:0.62, 3:0.18
+[2026-05-08 14:00:07]   [041/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
+[2026-05-08 14:00:26]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:00:26]   [042/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.34 | top=1:0.58, 0:0.12
+[2026-05-08 14:00:44]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:00:44]   [043/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.34 | top=1:0.58, 0:0.12
+[2026-05-08 14:00:51]   [044/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:00:51]   进度: 45/5881, 准确率=77.8%, 正确样本数=35, 已保存
+[2026-05-08 14:01:03]   [045/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:01:15]   [046/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:01:38]   [RETRY] | true=WALKING(0) | pred=WALKING(0)
+[2026-05-08 14:01:38]   [047/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:01:50]   [048/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:01:57]   [049/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.37 | top=1:0.55, 0:0.15
+[2026-05-08 14:01:57]   进度: 50/5881, 准确率=80.0%, 正确样本数=40, 已保存
+[2026-05-08 14:02:11]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:02:11]   [050/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.37 | top=1:0.55, 0:0.15
+[2026-05-08 14:02:22]   [051/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.98 | top=4:0.72, 3:0.14
+[2026-05-08 14:02:31]   [052/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:02:40]   [053/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.33 | top=1:0.58, 0:0.12
+[2026-05-08 14:02:52]   [054/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:02:52]   进度: 55/5881, 准确率=80.0%, 正确样本数=44, 已保存
+[2026-05-08 14:03:02]   [055/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.91 | top=4:0.72, 3:0.18
+[2026-05-08 14:03:10]   [056/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:03:20]   [057/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:03:30]   [058/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.97 | top=4:0.62, 3:0.30
+[2026-05-08 14:03:40]   [059/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.19 | top=2:0.65, 1:0.12
+[2026-05-08 14:03:40]   进度: 60/5881, 准确率=81.7%, 正确样本数=49, 已保存
+[2026-05-08 14:03:49]   [060/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:03:58]   [061/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:04:09]   [062/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.33 | top=0:0.58, 1:0.12
+[2026-05-08 14:04:16]   [063/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:04:27]   [064/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:04:27]   进度: 65/5881, 准确率=83.1%, 正确样本数=54, 已保存
+[2026-05-08 14:04:39]   [065/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.70, 4:0.18
+[2026-05-08 14:04:51]   [066/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.49 | top=5:0.90, 0:0.02
+[2026-05-08 14:05:09]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
+[2026-05-08 14:05:09]   [067/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 14:05:15]   [068/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:05:22]   [069/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:05:22]   进度: 70/5881, 准确率=82.9%, 正确样本数=58, 已保存
+[2026-05-08 14:05:33]   [070/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.27 | top=0:0.55, 1:0.25
+[2026-05-08 14:05:40]   [071/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 14:05:47]   [072/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:05:55]   [073/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:06:03]   [074/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 14:06:03]   进度: 75/5881, 准确率=84.0%, 正确样本数=63, 已保存
+[2026-05-08 14:06:13]   [075/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
+[2026-05-08 14:06:25]   [076/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 14:06:32]   [077/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:06:46]   [078/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
+[2026-05-08 14:06:56]   [079/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:06:56]   进度: 80/5881, 准确率=85.0%, 正确样本数=68, 已保存
+[2026-05-08 14:07:08]   [080/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:07:17]   [081/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:07:28]   [082/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.65 | top=5:0.85, 3:0.05
+[2026-05-08 14:07:36]   [083/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.26 | top=2:0.62, 0:0.10
+[2026-05-08 14:07:46]   [084/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 14:07:46]   进度: 85/5881, 准确率=85.9%, 正确样本数=73, 已保存
+[2026-05-08 14:07:55]   [085/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
+[2026-05-08 14:08:02]   [086/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:08:15]   [087/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.34 | top=1:0.58, 0:0.12
+[2026-05-08 14:08:25]   [088/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 14:08:34]   [089/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 14:08:34]   进度: 90/5881, 准确率=86.7%, 正确样本数=78, 已保存
+[2026-05-08 14:08:52]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 14:08:52]   [090/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:09:03]   [091/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 14:09:11]   [092/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:09:22]   [093/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:09:32]   [094/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:09:32]   进度: 95/5881, 准确率=86.3%, 正确样本数=82, 已保存
+[2026-05-08 14:09:42]   [095/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.34 | top=1:0.58, 0:0.11
+[2026-05-08 14:09:52]   [096/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:10:02]   [097/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.04 | top=3:0.70, 4:0.14
+[2026-05-08 14:10:11]   [098/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 14:10:22]   [099/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:10:22]   100轮: 87/100(87.0%) WALKING=10/16(62%) WALKING_UP=10/15(67%) WALKING_DOWN=13/14(93%) SITTING=16/17(94%) STANDING=24/24(100%) LAYING=14/14(100%)
+[2026-05-08 14:10:22]   进度: 100/5881, 准确率=87.0%, 正确样本数=87, 已保存
+[2026-05-08 14:10:32]   [100/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 14:10:39]   [101/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 14:10:59]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
+[2026-05-08 14:10:59]   [102/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=1.19 | top=4:0.62, 3:0.18
+[2026-05-08 14:11:12]   [103/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 14:11:30]   [104/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.42 | top=2:0.52, 0:0.18
+[2026-05-08 14:11:30]   进度: 105/5881, 准确率=86.7%, 正确样本数=91, 已保存
+[2026-05-08 14:11:52]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 14:11:52]   [105/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.17 | top=0:0.65, 1:0.12
+[2026-05-08 14:12:01]   [106/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:12:17]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
+[2026-05-08 14:12:17]   [107/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:12:24]   [108/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.75 | top=3:0.80, 4:0.12
+[2026-05-08 14:12:32]   [109/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.06 | top=4:0.70, 3:0.12
+[2026-05-08 14:12:32]   进度: 110/5881, 准确率=85.5%, 正确样本数=94, 已保存
+[2026-05-08 14:12:52]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 14:12:52]   [110/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.12
+[2026-05-08 14:13:10]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:13:10]   [111/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:13:19]   [112/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:13:29]   [113/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:13:52]   [RETRY] | true=WALKING_UP(1) | pred=WALKING(0)
+[2026-05-08 14:13:52]   [114/5881] | true=WALKING_UP(1) | pred=WALKING(0) |  ✗ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 14:13:52]   进度: 115/5881, 准确率=83.5%, 正确样本数=96, 已保存
+[2026-05-08 14:14:02]   [115/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:14:15]   [116/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 14:14:22]   [117/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.62 | top=5:0.86, 3:0.04
+[2026-05-08 14:14:36]   [118/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.93 | top=2:0.75, 0:0.08
+[2026-05-08 14:14:51]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:14:51]   [119/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:14:51]   进度: 120/5881, 准确率=83.3%, 正确样本数=100, 已保存
+[2026-05-08 14:15:03]   [120/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.78 | top=3:0.78, 4:0.14
+[2026-05-08 14:15:13]   [121/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:15:29]   [122/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.16 | top=2:0.65, 0:0.15
+[2026-05-08 14:15:41]   [123/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.68 | top=5:0.84, 3:0.05
+[2026-05-08 14:15:51]   [124/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.90 | top=3:0.70, 4:0.22
+[2026-05-08 14:15:51]   进度: 125/5881, 准确率=84.0%, 正确样本数=105, 已保存
+[2026-05-08 14:16:06]   [125/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.49 | top=5:0.90, 0:0.02
+[2026-05-08 14:16:14]   [126/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:16:36]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
+[2026-05-08 14:16:36]   [127/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=1.16 | top=4:0.65, 3:0.15
+[2026-05-08 14:16:45]   [128/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=1.02 | top=4:0.70, 3:0.15
+[2026-05-08 14:16:55]   [129/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.56 | top=5:0.88, 3:0.03
+[2026-05-08 14:16:55]   进度: 130/5881, 准确率=83.8%, 正确样本数=109, 已保存
+[2026-05-08 14:17:03]   [130/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.91 | top=4:0.75, 3:0.12
+[2026-05-08 14:17:13]   [131/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.81 | top=3:0.78, 4:0.12
+[2026-05-08 14:17:38]   [RETRY] | true=WALKING(0) | pred=WALKING_UP(1)
+[2026-05-08 14:17:38]   [132/5881] | true=WALKING(0) | pred=WALKING_UP(1) |  ✗ | ent=1.33 | top=1:0.58, 0:0.12
+[2026-05-08 14:17:49]   [133/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.07 | top=3:0.68, 4:0.16
+[2026-05-08 14:17:57]   [134/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.33 | top=0:0.58, 1:0.12
+[2026-05-08 14:17:57]   进度: 135/5881, 准确率=83.7%, 正确样本数=113, 已保存
+[2026-05-08 14:18:07]   [135/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 14:18:18]   [136/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.24 | top=0:0.62, 1:0.12
+[2026-05-08 14:18:32]   [RETRY] | true=SITTING(3) | pred=STANDING(4)
+[2026-05-08 14:18:32]   [137/5881] | true=SITTING(3) | pred=STANDING(4) |  ✗ | ent=0.94 | top=4:0.74, 3:0.12
+[2026-05-08 14:18:43]   [138/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.19 | top=0:0.65, 1:0.10
+[2026-05-08 14:18:57]   [139/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.84 | top=3:0.78, 4:0.10
+[2026-05-08 14:18:57]   进度: 140/5881, 准确率=83.6%, 正确样本数=117, 已保存
+[2026-05-08 14:19:11]   [140/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.16 | top=3:0.65, 4:0.15
+[2026-05-08 14:19:24]   [141/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 14:19:33]   [142/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.99 | top=4:0.72, 3:0.12
+[2026-05-08 14:19:40]   [143/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=0.81 | top=2:0.80, 0:0.05
+[2026-05-08 14:20:00]   [RETRY] | true=WALKING_DOWN(2) | pred=WALKING(0)
+[2026-05-08 14:20:00]   [144/5881] | true=WALKING_DOWN(2) | pred=WALKING(0) |  ✗ | ent=1.14 | top=0:0.65, 2:0.13
+[2026-05-08 14:20:00]   进度: 145/5881, 准确率=83.4%, 正确样本数=121, 已保存
+[2026-05-08 14:20:26]   [RETRY] | true=WALKING(0) | pred=WALKING_DOWN(2)
+[2026-05-08 14:20:26]   [145/5881] | true=WALKING(0) | pred=WALKING_DOWN(2) |  ✗ | ent=1.27 | top=2:0.60, 0:0.15
+[2026-05-08 14:20:44]   [146/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.91 | top=4:0.72, 3:0.18
+[2026-05-08 14:20:56]   [147/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 14:21:06]   [148/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:21:15]   [149/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.80 | top=4:0.78, 3:0.13
+[2026-05-08 14:21:15]   进度: 150/5881, 准确率=83.3%, 正确样本数=125, 已保存
+[2026-05-08 14:21:24]   [150/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:21:33]   [151/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.86 | top=4:0.75, 3:0.15
+[2026-05-08 14:21:43]   [152/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.08 | top=2:0.70, 0:0.08
+[2026-05-08 14:21:53]   [153/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.91 | top=3:0.72, 4:0.18
+[2026-05-08 14:22:07]   [154/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.94 | top=5:0.70, 3:0.20
+[2026-05-08 14:22:07]   进度: 155/5881, 准确率=83.9%, 正确样本数=130, 已保存
+[2026-05-08 14:22:20]   [155/5881] | true=WALKING_DOWN(2) | pred=WALKING_DOWN(2) |  ✓ | ent=1.09 | top=2:0.70, 0:0.08
+[2026-05-08 14:22:28]   [156/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=1.23 | top=3:0.60, 4:0.20
+[2026-05-08 14:22:38]   [157/5881] | true=WALKING_UP(1) | pred=WALKING_UP(1) |  ✓ | ent=1.30 | top=1:0.60, 0:0.10
+[2026-05-08 14:22:50]   [158/5881] | true=WALKING(0) | pred=WALKING(0) |  ✓ | ent=1.25 | top=0:0.62, 1:0.12
+[2026-05-08 14:23:02]   [159/5881] | true=SITTING(3) | pred=SITTING(3) |  ✓ | ent=0.98 | top=3:0.72, 4:0.14
+[2026-05-08 14:23:02]   进度: 160/5881, 准确率=84.4%, 正确样本数=135, 已保存
+[2026-05-08 14:23:12]   [160/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 14:23:23]   [161/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 14:23:34]   [162/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.78 | top=5:0.80, 3:0.08
+[2026-05-08 14:23:45]   [163/5881] | true=STANDING(4) | pred=STANDING(4) |  ✓ | ent=0.77 | top=4:0.80, 3:0.10
+[2026-05-08 14:23:54]   [164/5881] | true=LAYING(5) | pred=LAYING(5) |  ✓ | ent=0.65 | top=5:0.85, 4:0.05
+[2026-05-08 14:23:54]   进度: 165/5881, 准确率=84.8%, 正确样本数=140, 已保存
