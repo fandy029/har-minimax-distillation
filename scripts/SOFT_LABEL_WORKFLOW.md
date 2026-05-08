@@ -21,11 +21,11 @@
 scripts/
   api_config.py                           # 统一配置
   <dataset_name>/
-    gen.py                              # 生成脚本
+   <dataset>_gen.py                              # 生成脚本
 
 results/
   soft_labels/                              # OUT_DIR
-    <dataset>_soft.npy                  # 全量软标签 (N, N_CLS)
+<dataset>_soft.npy                  # 全量软标签 (N, N_CLS)
     <dataset>_soft_correct_only.npy     # 仅正确预测的软标签
     .gen_<dataset>.lock                  # 单例锁
   logs/                                     # LOG_DIR
@@ -480,7 +480,7 @@ assert max(result2) >= 0.95  # 模版值被 is_valid 拒绝
 
 ### 第一阶段：数据理解（必须做）
 
-- [ ] **读取数据集描述文档**：特别注意传感器类型、采样率、安装位置、重力是否去除
+- [ ] **读取数据集描述文档**：特别注意传感器类型、采样率、安装位置。每一类至少看20个数据从而总结规律。
 - [ ] **确认重力状态**：
   ```python
   # 检查静态类的 acc_mean
@@ -601,11 +601,6 @@ assert max(result2) >= 0.95  # 模版值被 is_valid 拒绝
     - 蒸馏损失推荐
     - 采样平衡建议
     - CNN 架构参考参数
-  }
-  - 已知局限：{
-    - LLM 分类上限
-    - 难区分类对
-    - 特征方向异常
   }
   ```
 - [ ] 代码调试完成后，用实际数据（文件数、窗口数、准确率等）填充 README

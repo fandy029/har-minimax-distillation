@@ -135,41 +135,79 @@ def build_prompt(window):
         tag = ' <-- BEST MATCH' if rank == 0 else ''
         rank_lines.append(f'  #{rank+1} class {ci} ({CLASS_NAMES[ci]:12s}) dist={dists[ci]:.2f}{tag}')
 
-    return f"""Classify this 2.56s window of back+thigh IMU sensor data.
+    # 按能量层级（thigh_std）分组
+    # GROUP A: thigh_std < 0.1  → 静态姿势
+    # GROUP B: 0.1 ≤ thigh_std < 0.5 → 低强度
+    # GROUP C: 0.5 ≤ thigh_std < 0.9 → 中等强度
+    # GROUP D: thigh_std ≥ 0.9 → 高强度
+    if thigh_std_mag < 0.1:
+        group = 'A'
+        group_desc = 'STATIC (thigh motion nearly absent)'
+    elif thigh_std_mag < 0.5:
+        group = 'B'
+        group_desc = 'LOW-MODERATE (leg movement present, no rhythmic gait)'
+    elif thigh_std_mag < 0.9:
+        group = 'C'
+        group_desc = 'MODERATE (regular walking gait)'
+    else:
+        group = 'D'
+        group_desc = 'HIGH (running or vigorous motion)'
 
-Classes: {", ".join(descs)}
+    return f"""You classify human activity from back+thigh IMU sensor data (2.56s window).
 
-=== THIS WINDOW ===
-  thigh_std = {thigh_std_mag:.3f}  (leg motion intensity -- most important)
-  thigh_mag = {thigh_mag:.3f}  (leg acceleration magnitude)
-  thigh_z   = {thigh_gz:+.3f}  (thigh gravity: +~sitting, ~0~standing)
-  back_std  = {back_std_mag:.3f}  (torso motion intensity)
-  back_mag  = {back_mag:.3f}  (torso acceleration magnitude)
-  back_z    = {back_gz:+.3f}  (torso z-axis gravity)
+CLASSES (grouped by thigh motion intensity):
+  GROUP A — {group_desc}:
+    Class(5): stand     thigh_std~0.042(Lowest), thigh_z~-0.12(vertical), back_std~0.024(Lowest)
+    Class(6): sit       thigh_std~0.011(Lowest), thigh_z~+0.90(HIGHEST+), back_std~0.007(Lowest)
+    Class(7): lying     thigh_std~0.012(Lowest), thigh_z~+0.13(mid), back_std~0.007(Lowest)
+  GROUP B — LOW-MODERATE (leg movement, no regular gait):
+    Class(2): shuffle   thigh_std~0.142(very low), thigh_z~-0.07, back_std~0.067(Lowest)
+    Class(3): stairs_up thigh_std~0.424(low), thigh_z~-0.01, back_std~0.223
+    Class(4): stairs_dn thigh_std~0.530(low-mod), thigh_z~-0.03, back_std~0.345
+  GROUP C — MODERATE (regular walking gait):
+    Class(0): walk      thigh_std~0.630(moderate), thigh_z~-0.07, back_std~0.295
+  GROUP D — HIGH (running / vigorous motion):
+    Class(1): run       thigh_std~1.128(HIGHEST), thigh_mag~2.201(HIGHEST), back_std~0.881(HIGHEST)
 
-=== DISTANCE RANKING (precomputed Euclidean distance to each class) ===
-{chr(10).join(rank_lines)}
+=== THIS SAMPLE ===
+  thigh_std = {thigh_std_mag:.3f}   thigh_mag = {thigh_mag:.3f}   thigh_z = {thigh_gz:+.3f}
+  back_std  = {back_std_mag:.3f}   back_mag  = {back_mag:.3f}   back_z  = {back_gz:+.3f}
 
-=== EXAMPLE REASONING (for Walk) ===
-Your reasoning (2-3 sentences, plain text, in English):
-Based on the features: thigh_std=0.630, thigh_mag=1.325, thigh_z=-0.072, back_std=0.295
-Comparing to class signatures: Walk(0) has thigh_std~0.630, thigh_mag~1.325. Stairs-down(4) has thigh_std~0.530, thigh_mag~1.277. Shuffle(2) has thigh_std~0.142.
-My conclusion: thigh_std=0.630 matches Walk(0). Stairs-down has slightly lower values, Shuffle has much lower intensity.
-{{"0":0.55,"1":0.02,"2":0.02,"3":0.05,"4":0.15,"5":0.02,"6":0.02,"7":0.02}}
+=== YOUR REASONING (3 Steps) ===
+Step 1 — Group: thigh_std={thigh_std_mag:.3f} -> GROUP {group} ({group_desc}).
+Step 2 — Within group, compare thigh_z, thigh_std, back_std. Which 2-3 classes are closest?
+Step 3 — Conclude with the strongest match.
 
-=== YOUR TASK ===
-First, write 2-3 sentences of REASONING in plain text explaining which class this window most likely belongs to and why. Then output the probability distribution as JSON.
+=== EXAMPLE 1: Group A Static -> sit ===
+Sample: thigh_std=0.011(Lowest), thigh_z=+0.898(HIGHEST+), back_std=0.007(Lowest)
+Step 1: thigh_std=0.011 < 0.1 -> GROUP A (STATIC).
+Step 2: thigh_z=+0.898 is unique to sit(+0.90). stand has thigh_z~-0.12, lying has +0.13.
+Step 3: thigh_z=+0.898 confirms sit. stand has opposite gravity direction, lying has much lower thigh_z.
+{{"0":0.01,"1":0.01,"2":0.01,"3":0.01,"4":0.01,"5":0.02,"6":0.82,"7":0.11}}
 
-=== REASONING FORMAT ===
-Your reasoning (2-3 sentences, plain text, in English):
-Based on the features: [mention thigh_std, thigh_mag, thigh_z first]
-Comparing to class signatures: [compare to 2-3 most similar classes from the ranking]
-My conclusion: [state the most likely class]
+=== EXAMPLE 2: Group C Moderate -> walk ===
+Sample: thigh_std=0.630(moderate), thigh_z=-0.072, back_std=0.295
+Step 1: thigh_std=0.630 is 0.5~0.9 -> GROUP C (MODERATE, walking).
+Step 2: walk(0) has thigh_std~0.630, thigh_z~-0.07. stairs_down(4) has thigh_std~0.530, slightly lower. stairs_up(3) has ~0.424.
+Step 3: thigh_std=0.630 matches walk best. stairs_down has lower intensity, stairs_up has even lower.
+{{"0":0.58,"1":0.02,"2":0.02,"3":0.08,"4":0.18,"5":0.02,"6":0.02,"7":0.02}}
 
-=== JSON OUTPUT ===
-After your reasoning, output the probabilities as valid JSON:
-{{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5,"6":p6,"7":p7}}
-IMPORTANT: Probabilities must sum to 1. Primary=0.45-0.65, close neighbors=0.05-0.20, others=0.02-0.05. Never output one-hot. Never use 0.833 or 0.056 patterns."""
+=== FORBIDDEN TEMPLATE PATTERNS ===
+NEVER use these exact probability pairs (robotic defaults):
+  0.556/0.152 - FORBIDDEN   0.529/0.144 - FORBIDDEN
+  0.514/0.280 - FORBIDDEN   0.833/0.056 - FORBIDDEN
+Probabilities must vary based on actual feature comparison.
+
+=== YOUR RESPONSE FORMAT ===
+YOUR ENTIRE RESPONSE MUST FOLLOW THIS EXACT STRUCTURE:
+
+---REASONING---
+Step 1: [which energy group and why]
+Step 2: [compare with 2-3 closest classes in that group]
+Step 3: [conclusion: most likely class]
+
+---PROBABILITIES---
+{{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5,"6":p6,"7":p7}}"""
 
 # ============ API 调用 ============
 def call_api(prompt):
@@ -197,6 +235,7 @@ def extract_probs(text):
     text = re.sub(r'<think>[\s\S]*?</think>', '', text)
     text = re.sub(r'<RESULT>[\s\S]*?</RESULT>', '', text)
     text = re.sub(r'<[^>]+>', '', text).strip()
+    text = re.sub(r'---\w+---', '', text).strip()
 
     # 找 JSON 对象
     for m in re.finditer(r'\{[^{}]*\}', text):
@@ -384,8 +423,9 @@ def main():
                         break
 
         if not is_valid(probs):
-            log_err(f"ONEHOT_REJECT idx={orig_idx} true={true_label} → one-hot")
-            soft_all[orig_idx, true_label] = 1.0
+            # 模型过于确信 (max>=0.95)：保留原始分布，不替换为 one-hot
+            log_err(f"HIGH_CONFIDENCE idx={orig_idx} true={true_label}")
+            soft_all[orig_idx] = probs      # 保留模型原始判断
             class_gen[true_label] += 1
         else:
             soft_all[orig_idx] = probs

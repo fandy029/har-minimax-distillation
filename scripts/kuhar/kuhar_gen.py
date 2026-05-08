@@ -37,7 +37,7 @@ CLASS_NAMES = [
     'Stair-up', 'Stair-down', 'Table-tennis'
 ]
 N_CLS = len(CLASS_NAMES)   # 18
-MAX_PER_CLASS = 3000
+MAX_PER_CLASS = 3000  
 
 # ============ 输出路径 ============
 OUT_DIR  = os.path.join(BASE_DIR, 'results', 'soft_labels')
@@ -266,6 +266,27 @@ def compute_features(window):
     # 垂直方向偏差（上下楼梯方向性）
     y_bias = acc[:, 1].mean()
 
+    # Kurtosis and skewness (关键区分特征)
+    def moments(sig):
+        m = sig - sig.mean()
+        m2 = (m**2).mean(); m3 = (m**3).mean(); m4 = (m**4).mean()
+        std = np.sqrt(m2) + 1e-10
+        return float(m3/(std**3)), float(m4/(std**4) - 3)
+    skew_am, kurt_am = moments(acc_mag)
+    skew_ax, kurt_ax = moments(acc[:, 0])
+    skew_ay, kurt_ay = moments(acc[:, 1])
+    skew_az, kurt_az = moments(acc[:, 2])
+    skew_gm, kurt_gm = moments(gyro_mag)
+
+    # 互相关（Stand vs Sit 区分有效）
+    def safe_corr(a, b):
+        if np.std(a) < 1e-8 or np.std(b) < 1e-8: return 0.0
+        return float(np.corrcoef(a, b)[0, 1])
+    corr_xy = safe_corr(acc[:, 0], acc[:, 1])
+    corr_xz = safe_corr(acc[:, 0], acc[:, 2])
+    corr_yz = safe_corr(acc[:, 1], acc[:, 2])
+    gyro_corr_xy = safe_corr(gyro[:, 0], gyro[:, 1])
+
     return {
         'acc_mag_mean': float(acc_mag.mean()),
         'acc_mag_std':  float(acc_mag.std()),
@@ -298,108 +319,105 @@ def compute_features(window):
         'impulsiveness': impulsiveness,
         'jerk':          float(np.sqrt(np.mean((np.diff(acc, axis=0))**2))),
         'z_grav':        float(abs(acc_mean[2]) / (np.linalg.norm(acc_mean) + 1e-8)),
+        'kurt_am':      kurt_am,
+        'kurt_ax':      kurt_ax,
+        'kurt_ay':      kurt_ay,
+        'kurt_az':      kurt_az,
+        'kurt_gm':      kurt_gm,
+        'skew_am':      skew_am,
+        'skew_ax':      skew_ax,
+        'skew_ay':      skew_ay,
+        'skew_az':      skew_az,
+        'skew_gm':      skew_gm,
+        'corr_xy':       corr_xy,
+        'corr_xz':       corr_xz,
+        'corr_yz':       corr_yz,
+        'gyro_corr_xy':  gyro_corr_xy,
     }
 
 
 
 def build_prompt(window):
     """
-    KuHar prompt v84: 能量分层分类 + 明确禁止模板值
-    模型能正确判断能量层，但在同层内套模板。分层指引帮助精确区分。
+    KuHar prompt v95: MiMo直连版 — 简洁结构 + 核心特征 + 清晰决策链
+    去掉复杂阈值表，用简明的特征含义引导判断
     """
     f = compute_features(window)
-    e = f['energy_acc']
+    return f'''You are a HAR expert. Classify a 1.28-second waist sensor window into ONE of 18 activities.
 
-    # 自动判断能量层（用于 prompt 提示）
-    if e < 0.2:    band = 'STATIC_VERY_LOW'
-    elif e < 10:   band = 'LOW_MODERATE'
-    elif e < 80:   band = 'MODERATE_HIGH'
-    else:          band = 'HIGH_EXTREME'
+=== ACTIVITY DESCRIPTIONS (use these to understand each class) ===
+0=Stand: completely still, upright waist (z_grav ~0.69), very low energy ~0.003
+1=Sit: completely still, seated waist (z_grav ~0.78), very low energy ~0.002
+2=Talk-sit: sitting and speaking, very still (energy 0.02-0.09) but slight periodic speaking motion
+3=Talk-stand: standing and speaking, very still (energy 0.5-3) but slight periodic speaking motion
+4=Stand-sit: transitioning between standing and sitting, moderate Y-axis movement, gyro_y_std high (~0.77)
+5=Lay: horizontal body, z_grav very low (<0.55), very low energy ~0.004
+6=Lay-stand: transitioning from lying to standing, moderate Y-axis movement, gyro_y_std lower (~0.43)
+7=Pick: bending to pick something up, moderate energy (~4.5), acc_y_std high (~0.94)
+8=Jump: explosive vertical hops, very high energy (~177), high jerk, impulsive (kurtosis >3)
+9=Push-up: slow horizontal pushing motion, moderate energy (~8.9), LOW impulsiveness (~1.99) — this is key
+10=Sit-up: sit to lie or lie to sit, energy ~3.1, acc_y_std ~0.53
+11=Walk: normal walking, energy ~20, rhythmic pattern, acc_y_std ~1.9
+12=Walk-back: walking backwards, similar to Walk but slightly different cadence, energy ~15
+13=Walk-circle: walking in circles, irregular direction changes, energy ~15, acc_y_std variable
+14=Run: running, very high energy (~323), acc_y_std >5, regular high-frequency steps
+15=Stairs-up: climbing stairs up, energy ~12, acc_y_std ~1.5, gyro_x ~0.50
+16=Stairs-down: descending stairs, energy ~36, acc_y_std ~2.5, gyro_x ~0.53
+17=Ping-pong: table tennis, energy ~35, fast rotation, gyro_x ~1.0 (much higher than Stairs-down)
 
-    return f"""You classify human activity from 3-axis acc+gyro (128 steps @100Hz, gravity removed).
+=== SENSOR FEATURES ===
+  energy_acc: {f['energy_acc']:.3f}   (total motion energy, key discriminator by intensity tier)
+  acc_y_std: {f['acc_y_std']:.4f}    (Y-axis variation — walking/running/transitional movements)
+  gyro_x_std: {f['gyro_x_std']:.4f}  (X-axis rotation — ping-pong/stairs key)
+  gyro_y_std: {f['gyro_y_std']:.4f}  (Y-axis rotation — stand-sit vs lay-stand key)
+  jerk: {f['jerk']:.4f}               (suddenness of motion — Jump high, Push-up low)
+  n_peaks_acc: {f['n_peaks_acc']}     (periodic peaks — walking/running high, still low)
+  impulsiveness: {f['impulsiveness']:.2f} (peak/rms ratio — Jump high, Push-up low)
+  z_grav: {f['z_grav']:.4f}          (vertical orientation: >0.65=upright, <0.55=horizontal)
+  kurt_az: {f['kurt_az']:.2f}        (peak sharpness — Jump>3, Run moderate)
 
-CLASSES (grouped by energy level):
-  GROUP A — STATIC (energy<0.1):    0=Stand, 1=Sit, 5=Lay, 2=Talk-sit
-  GROUP B — LOW MODERATE (0.1-12):  3=Talk-stand, 4=Stand-sit, 6=Lay-stand, 7=Pick, 9=Push-up, 10=Sit-up
-  GROUP C — MODERATE (10-80):       11=Walk, 12=Walk-back, 13=Walk-circle, 15=Stair-up, 16=Stair-down, 17=Table-tennis
-  GROUP D — HIGH EXTREME (>80):     8=Jump, 14=Run
+=== DECISION GUIDE ===
+Step 1 — INTENSITY: energy < 0.1 → static (Stand/Sit/Lay/Talk-sit)
+                energy 0.1-5 → transitional (Talk-stand/Stand-sit/Lay-stand/Sit-up/Pick)
+                energy 5-20 → light activity (Stairs-up/Walk-back/Walk-circle/Push-up)
+                energy 20-50 → moderate (Walk/Stairs-down/Ping-pong)
+                energy > 100 → intense (Jump/Run)
 
-=== THIS SAMPLE ===
-  energy={e:.4f}   jerk={f['jerk']:.4f}   n_peaks={f['n_peaks_acc']}
-  gyro_mag={f['gyro_mag_mean']:.4f}   gyro_x={f['gyro_x_mean']:+.4f}
-  impulsiveness={f['impulsiveness']:.2f}   dom_freq={f['dom_freq']:.1f}Hz
+Step 2 — ORIENTATION (for static/very-low energy):
+  z_grav > 0.65 → upright (Stand or Talk-stand or Stand-sit)
+  z_grav < 0.55 → horizontal (Lay)
+  z_grav 0.55-0.65 → seated (Sit or Talk-sit)
 
-Based on energy={e:.4f}, this sample is in GROUP **{band}**.
+Step 3 — TRANSITIONAL (energy 0.1-5):
+  gyro_y_std > 0.65 → Stand-sit (high Y rotation during transition)
+  gyro_y_std < 0.50 → Lay-stand (lower Y rotation)
+  acc_y_std > 0.55, energy > 2.5 → Sit-up
+  acc_y_std < 0.25, energy < 1.0 → Talk-stand (near-still while standing)
 
-=== REASONING (3 STEPS) ===
-Step 1 — Energy: energy={e:.4f} -> GROUP {"A" if e<0.1 else "B" if e<10 else "C" if e<80 else "D"}.
-Step 2 — Within group, compare jerk, n_peaks, gyro_mag. Which 2-3 classes are closest?
-Step 3 — Conclude with the strongest match.
+Step 4 — DYNAMIC (energy 5-50):
+  impulsiveness < 2.1 → Push-up (only class with impulsiveness <2.1!)
+  energy 10-15, acc_y_std 0.7-1.5 → Stairs-up
+  energy 13-18, acc_y_std >1.5 → Walk-circle
+  energy ~15, acc_y_std 1.4-1.9 → Walk-back
+  energy ~20, acc_y_std ~1.9 → Walk
+  energy ~35-40, gyro_x_std > 0.8 → Ping-pong (rotation is the key differentiator)
+  energy ~35-40, gyro_x_std < 0.7 → Stairs-down
 
-=== GROUP SIGNATURES ===
-GROUP A — Static (energy<0.1, gravity removed):
-  Sit(1):    e=0.002, jerk=0.017, n_peaks=36(HIGHEST), gyro_mag=0.009(LOWEST)
-  Stand(0):  e=0.003, jerk=0.020, n_peaks=33, gyro_mag=0.013
-  Lay(5):    e=0.004, jerk=0.021(HIGHEST), n_peaks=32(LOWEST), gyro_mag=0.019
-  Talk-sit(2): e=0.022, jerk=0.036, n_peaks=24, gyro_mag=0.036
+Step 5 — HIGH INTENSITY (energy > 100):
+  energy > 250 AND acc_y_std > 5 → Run
+  energy < 250 AND kurt_az > 3 → Jump
 
-GROUP B — Low-Moderate (0.1-12):
-  Stand-sit(4):   e=1.26, jerk=0.16(LOWEST), n_peaks=19, auto1=0.95(HIGHEST)
-  Sit-up(10):     e=1.49, jerk=0.30, n_peaks=22(HIGHEST), gyro_mag=0.85
-  Lay-stand(6):   e=1.70, jerk=0.29, n_peaks=20, gyro_mag=0.84
-  Talk-stand(3):  e=2.10, jerk=0.23, n_peaks=16(LOWEST), gyro_mag=0.69
-  Pick(7):        e=4.14, jerk=0.38(HIGHEST), n_peaks=18, gyro_mag=0.74
-  Push-up(9):     e=4.96, jerk=0.42, n_peaks=20, gyro_mag=0.51(UNIQUE: lowest of all 18 classes!)
+Step 6 — STATIC DETAIL (energy < 0.1):
+  z_grav > 0.70, acc_y_std > 0.020 → Stand
+  z_grav > 0.70, acc_y_std < 0.018 → Sit
+  z_grav 0.60-0.70, n_peaks_acc > 25 → Sit (minor body movement)
+  energy > 0.010, n_peaks_acc < 20 → Talk-sit (periodic speaking)
 
-GROUP C — Walk, Stairs, Table-tennis (10-80):
-  Stair-up(15):     e=12.4, jerk=0.54(LOWEST), dom_freq=3.1
-  Walk-back(12):    e=14.3, jerk=0.70, dom_freq=1.6(LOWEST), gyro_mag=0.62(LOWEST)
-  Walk-circle(13):  e=15.1, gyro_x=+0.66(UNIQUE: POSITIVE!), gyro_mag=0.92
-  Walk(11):         e=25.4, jerk=0.96, dom_freq=3.9(HIGHEST), gyro_mag=0.70
-  Stair-down(16):   e=33.1, jerk=1.08, dom_freq=2.3
-  Table-tennis(17): e=33.5, jerk=1.17(HIGHEST), dom_freq=0.8, gyro_mag=1.14(HIGHEST)
-
-GROUP D — High (>80):
-  Jump(8):  e=157, jerk=3.00, n_peaks=13(LOWEST), impuls=3.35(HIGHER)
-  Run(14):  e=258, jerk=4.14, n_peaks=16, impuls=2.80
-
-=== EXAMPLE 1: Static -> Sit ===
-Sample: energy=0.002, n_peaks=36, jerk=0.016, gyro_mag=0.009
-Step 1: e=0.002 < 0.1 -> GROUP A
-Step 2: n_peaks=36 matches Sit(36) vs Stand(33) vs Lay(32). jerk=0.016 matches Sit(0.017). gyro_mag=0.009 matches Sit(0.009).
-Step 3: Sit(1). Lay has lower n_peaks and higher gyro_mag. Stand has middle n_peaks.
-Output: {{"0":0.20,"1":0.55,"2":0.05,"3":0.01,"4":0.01,"5":0.15,"6":0.01,"7":0.01,"8":0.01,"9":0.01,"10":0.01,"11":0.01,"12":0.01,"13":0.01,"14":0.01,"15":0.01,"16":0.01,"17":0.01}}
-
-=== EXAMPLE 2: Moderate -> Walk-circle ===
-Sample: energy=15.1, gyro_x=+0.66, gyro_mag=0.92, jerk=0.78
-Step 1: e=15.1 -> GROUP C
-Step 2: gyro_x=+0.66 is strongly POSITIVE. ONLY Walk-circle(13) has gyro_x > +0.15 consistently.
-Step 3: Walk-circle(13). Non-circle walks have gyro_x near zero.
-Output: {{"0":0.01,"1":0.01,"2":0.01,"3":0.01,"4":0.01,"5":0.01,"6":0.01,"7":0.01,"8":0.01,"9":0.01,"10":0.01,"11":0.08,"12":0.08,"13":0.60,"14":0.01,"15":0.05,"16":0.08,"17":0.03}}
-
-=== FORBIDDEN TEMPLATE PATTERNS ===
-NEVER use these exact probability pairs (they are robotic defaults, not real reasoning):
-  0.556/0.152 - FORBIDDEN   0.529/0.144 - FORBIDDEN
-  0.514/0.280 - FORBIDDEN   0.660/0.142 - FORBIDDEN
-Probabilities must vary based on actual feature comparison - never repeat the same distribution.
-
-=== YOUR RESPONSE FORMAT ===
-YOUR ENTIRE RESPONSE MUST FOLLOW THIS EXACT STRUCTURE (no deviations):
-
----REASONING---
-Step 1: [which energy group and why]
-Step 2: [compare with 2-3 closest classes in that group]
-Step 3: [conclusion: most likely class]
-
----PROBABILITIES---
+=== OUTPUT FORMAT ===
+First give a brief classification reason (1-2 sentences), then output ONLY this JSON:
 {{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5,"6":p6,"7":p7,"8":p8,"9":p9,"10":p10,"11":p11,"12":p12,"13":p13,"14":p14,"15":p15,"16":p16,"17":p17}}
-
-RULES:
-- The JSON must be immediately after "---PROBABILITIES---" on its own line
-- All 18 probabilities must be present (keys 0 through 17)
-- Sum to 1.0. Primary=0.40-0.65, neighbors=0.05-0.25, others=0.01-0.05
-- Do NOT write anything after the JSON
-"""# ============ 主生成逻辑 ============
+All 18 probabilities, sum to 1.0. The true label is NOT given — decide based on the features above.
+'''# ============ 主生成逻辑 ============
 def main():
     # 单例锁
     lock_fd = open(LOCK_FILE, 'w')
@@ -516,7 +534,6 @@ def main():
 
         if not is_valid(probs):
             # 模型过于确信 (max >= 0.95)：保留模型原判断，但不做 one-hot 替换
-            log_err(f"HIGH_CONFIDENCE idx={orig_idx} true={true_label} ent={ent:.3f} max={np.max(probs):.3f}")
             soft_all[orig_idx] = probs  # 保留原始分布，不改为 one-hot
             class_gen[true_label] += 1
             line = (f"  [{done_count}/{total}] idx={orig_idx} "

@@ -1,0 +1,210 @@
+Decision Tree (depth=8, leaves=85)
+Train accuracy: 0.713
+
+=== TOP FEATURES ===
+  acc_y_std: 0.2225
+  total_energy: 0.1100
+  energy_acc: 0.1088
+  gyro_x_std: 0.0783
+  gyro_y_std: 0.0577
+  kurt_acc_z: 0.0541
+  acc_z_std: 0.0500
+  gyro_x_mean: 0.0422
+  skew_gyro_mag: 0.0248
+  gyro_mag_median: 0.0241
+  gyro_auto2: 0.0198
+  kurt_acc_x: 0.0194
+  gyro_auto1: 0.0192
+  gyro_mag_iqr: 0.0192
+  energy_gyro: 0.0131
+  acc_auto2: 0.0130
+  acc_var_ratio: 0.0093
+  n_peaks_acc: 0.0085
+  jerk_mean: 0.0085
+  n_peaks_gyro: 0.0083
+
+=== TREE RULES ===
+|--- total_energy <= -0.24
+|   |--- acc_y_std <= -0.55
+|   |   |--- gyro_x_std <= -0.26
+|   |   |   |--- kurt_acc_z <= 0.42
+|   |   |   |   |--- acc_x_std <= -0.59
+|   |   |   |   |   |--- jerk_mean <= -0.56
+|   |   |   |   |   |   |--- acc_var_ratio <= -0.03
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_var_ratio >  -0.03
+|   |   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- jerk_mean >  -0.56
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |--- acc_x_std >  -0.59
+|   |   |   |   |   |--- grav_ratio_z <= -0.96
+|   |   |   |   |   |   |--- class: 5
+|   |   |   |   |   |--- grav_ratio_z >  -0.96
+|   |   |   |   |   |   |--- corr_acc_xz <= 0.17
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- corr_acc_xz >  0.17
+|   |   |   |   |   |   |   |--- class: 1
+|   |   |   |--- kurt_acc_z >  0.42
+|   |   |   |   |--- acc_x_std <= -0.59
+|   |   |   |   |   |--- class: 1
+|   |   |   |   |--- acc_x_std >  -0.59
+|   |   |   |   |   |--- acc_z_range <= -0.55
+|   |   |   |   |   |   |--- class: 5
+|   |   |   |   |   |--- acc_z_range >  -0.55
+|   |   |   |   |   |   |--- class: 5
+|   |   |--- gyro_x_std >  -0.26
+|   |   |   |--- kurt_acc_z <= -0.25
+|   |   |   |   |--- gyro_y_std <= -0.59
+|   |   |   |   |   |--- corr_gyro_xz <= 0.03
+|   |   |   |   |   |   |--- acc_x_range <= -0.59
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_x_range >  -0.59
+|   |   |   |   |   |   |   |--- class: 5
+|   |   |   |   |   |--- corr_gyro_xz >  0.03
+|   |   |   |   |   |   |--- acc_x_max <= -0.53
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_x_max >  -0.53
+|   |   |   |   |   |   |   |--- class: 0
+|   |   |   |   |--- gyro_y_std >  -0.59
+|   |   |   |   |   |--- acc_z_max <= -0.47
+|   |   |   |   |   |   |--- acc_y_std <= -0.56
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_y_std >  -0.56
+|   |   |   |   |   |   |   |--- class: 0
+|   |   |   |   |   |--- acc_z_max >  -0.47
+|   |   |   |   |   |   |--- class: 5
+|   |   |   |--- kurt_acc_z >  -0.25
+|   |   |   |   |--- gyro_y_std <= -0.59
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- gyro_y_std >  -0.59
+|   |   |   |   |   |--- acc_y_std <= -0.56
+|   |   |   |   |   |   |--- acc_mag_max <= -0.56
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_mag_max >  -0.56
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- acc_y_std >  -0.56
+|   |   |   |   |   |   |--- acc_x_std <= -0.58
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- acc_x_std >  -0.58
+|   |   |   |   |   |   |   |--- class: 5
+|   |--- acc_y_std >  -0.55
+|   |   |--- acc_z_std <= -0.62
+|   |   |   |--- gyro_x_std <= -0.26
+|   |   |   |   |--- acc_auto1 <= -0.62
+|   |   |   |   |   |--- class: 2
+|   |   |   |   |--- acc_auto1 >  -0.62
+|   |   |   |   |   |--- class: 2
+|   |   |   |--- gyro_x_std >  -0.26
+|   |   |   |   |--- energy_acc <= -0.28
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- energy_acc >  -0.28
+|   |   |   |   |   |--- class: 2
+|   |   |--- acc_z_std >  -0.62
+|   |   |   |--- acc_xz_diff <= -0.18
+|   |   |   |   |--- class: 2
+|   |   |   |--- acc_xz_diff >  -0.18
+|   |   |   |   |--- diff_gyro_mean <= 0.02
+|   |   |   |   |   |--- acc_xy_diff <= -0.03
+|   |   |   |   |   |   |--- gyro_y_std <= -0.58
+|   |   |   |   |   |   |   |--- class: 2
+|   |   |   |   |   |   |--- gyro_y_std >  -0.58
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- acc_xy_diff >  -0.03
+|   |   |   |   |   |   |--- class: 2
+|   |   |   |   |--- diff_gyro_mean >  0.02
+|   |   |   |   |   |--- class: 2
+|--- total_energy >  -0.24
+|   |--- energy_acc <= 1.04
+|   |   |--- acc_y_std <= 0.07
+|   |   |   |--- gyro_y_std <= -0.31
+|   |   |   |   |--- gyro_mag_median <= -0.35
+|   |   |   |   |   |--- acc_xz_diff <= -0.30
+|   |   |   |   |   |   |--- class: 7
+|   |   |   |   |   |--- acc_xz_diff >  -0.30
+|   |   |   |   |   |   |--- gyro_mag_median <= -0.45
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- gyro_mag_median >  -0.45
+|   |   |   |   |   |   |   |--- class: 3
+|   |   |   |   |--- gyro_mag_median >  -0.35
+|   |   |   |   |   |--- acc_z_std <= -0.08
+|   |   |   |   |   |   |--- acc_x_mean <= -0.25
+|   |   |   |   |   |   |   |--- class: 6
+|   |   |   |   |   |   |--- acc_x_mean >  -0.25
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- acc_z_std >  -0.08
+|   |   |   |   |   |   |--- class: 12
+|   |   |   |--- gyro_y_std >  -0.31
+|   |   |   |   |--- acc_z_std <= 0.26
+|   |   |   |   |   |--- gyro_x_std <= -0.13
+|   |   |   |   |   |   |--- skew_gyro_mag <= -0.88
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- skew_gyro_mag >  -0.88
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- gyro_x_std >  -0.13
+|   |   |   |   |   |   |--- energy_acc <= -0.24
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- energy_acc >  -0.24
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |--- acc_z_std >  0.26
+|   |   |   |   |   |--- n_peaks_acc <= 0.62
+|   |   |   |   |   |   |--- jerk_mean <= 0.09
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- jerk_mean >  0.09
+|   |   |   |   |   |   |   |--- class: 8
+|   |   |   |   |   |--- n_peaks_acc >  0.62
+|   |   |   |   |   |   |--- class: 10
+|   |   |--- acc_y_std >  0.07
+|   |   |   |--- gyro_x_mean <= 0.96
+|   |   |   |   |--- acc_y_std <= 1.02
+|   |   |   |   |   |--- kurt_acc_x <= -0.59
+|   |   |   |   |   |   |--- gyro_auto2 <= -0.87
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- gyro_auto2 >  -0.87
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- kurt_acc_x >  -0.59
+|   |   |   |   |   |   |--- kurt_acc_z <= -0.38
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- kurt_acc_z >  -0.38
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |--- acc_y_std >  1.02
+|   |   |   |   |   |--- gyro_auto1 <= -0.21
+|   |   |   |   |   |   |--- pow_high <= -0.23
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |   |--- pow_high >  -0.23
+|   |   |   |   |   |   |   |--- class: 12
+|   |   |   |   |   |--- gyro_auto1 >  -0.21
+|   |   |   |   |   |   |--- skew_acc_z <= -0.76
+|   |   |   |   |   |   |   |--- class: 16
+|   |   |   |   |   |   |--- skew_acc_z >  -0.76
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |--- gyro_x_mean >  0.96
+|   |   |   |   |--- energy_gyro <= -0.05
+|   |   |   |   |   |--- impulsiveness <= 0.39
+|   |   |   |   |   |   |--- jerk_total <= 0.08
+|   |   |   |   |   |   |   |--- class: 15
+|   |   |   |   |   |   |--- jerk_total >  0.08
+|   |   |   |   |   |   |   |--- truncated branch of depth 2
+|   |   |   |   |   |--- impulsiveness >  0.39
+|   |   |   |   |   |   |--- class: 16
+|   |   |   |   |--- energy_gyro >  -0.05
+|   |   |   |   |   |--- class: 17
+|   |--- energy_acc >  1.04
+|   |   |--- acc_y_std <= 1.25
+|   |   |   |--- gyro_auto2 <= -1.67
+|   |   |   |   |--- class: 8
+|   |   |   |--- gyro_auto2 >  -1.67
+|   |   |   |   |--- skew_gyro_mag <= 1.01
+|   |   |   |   |   |--- class: 8
+|   |   |   |   |--- skew_gyro_mag >  1.01
+|   |   |   |   |   |--- class: 8
+|   |   |--- acc_y_std >  1.25
+|   |   |   |--- gyro_mag_iqr <= 6.62
+|   |   |   |   |--- gyro_mag_median <= 1.02
+|   |   |   |   |   |--- class: 14
+|   |   |   |   |--- gyro_mag_median >  1.02
+|   |   |   |   |   |--- fft_max <= 2.76
+|   |   |   |   |   |   |--- class: 14
+|   |   |   |   |   |--- fft_max >  2.76
+|   |   |   |   |   |   |--- class: 14
+|   |   |   |--- gyro_mag_iqr >  6.62
+|   |   |   |   |--- class: 8
