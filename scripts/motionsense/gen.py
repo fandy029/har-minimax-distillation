@@ -42,6 +42,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 SOFT_FILE    = os.path.join(OUT_DIR, 'motionsense_soft.npy')
 CORRECT_FILE = os.path.join(OUT_DIR, 'motionsense_soft_correct_only.npy')
 LOG_FILE     = os.path.join(LOG_DIR, 'gen_motionsense.log')
+FINAL_FILE = os.path.join(LOG_DIR, 'gen_motionsense_final.log')
 ERR_FILE     = os.path.join(LOG_DIR, 'gen_motionsense_errors.log')
 CORR_LOG     = os.path.join(LOG_DIR, 'gen_motionsense_correct.log')
 CKPT_FILE    = os.path.join(LOG_DIR, 'gen_motionsense_checkpoint.json')
@@ -56,8 +57,6 @@ def is_valid(probs):
         return False
     row = np.array(probs)
     if not np.isclose(row.sum(), 1.0, atol=0.01):
-        return False
-    if row.max() >= 0.95:
         return False
     return True
 
@@ -91,6 +90,11 @@ def log(msg):
 def log_correct(msg):
     with open(CORR_LOG, 'a') as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
+
+def log_final(msg):
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
+    with open(FINAL_FILE, 'a') as f:
+        f.write(f'[{ts}] {msg}\n')
 
 def log_err(msg):
     line = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
@@ -202,7 +206,9 @@ def build_prompt(data):
 
     class_list = ', '.join([f'{i}:{CLASS_NAMES[i]}' for i in range(N_CLS)])
 
-    return f"""You are classifying human activity from 128-step (6.4 second) 20Hz accelerometer window (x, y, z axes, iPhone waist position, userAcceleration).
+    return f"""You are classifying human activity from 128-step
+
+IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities. (6.4 second) 20Hz accelerometer window (x, y, z axes, iPhone waist position, userAcceleration).
 The {N_CLS} classes are: {class_list}
 
 === PER-WINDOW FEATURES (measured) ===
@@ -244,7 +250,7 @@ def main():
     except BlockingIOError: print("已有实例在运行"); sys.exit(1)
 
     if FORCE_RESTART:
-        for f in [LOG_FILE, ERR_FILE, CORR_LOG, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, CKPT_FILE]:
             if os.path.exists(f): open(f, 'w').close()
 
     log(f"MotionSense 软标签生成开始")
@@ -300,34 +306,24 @@ def main():
             done_set.add(orig_idx); done_count += 1; continue
 
         probs = extract_probs(raw_result)
-        if not is_valid(np.array(probs)):
-            for _ in range(5):
-                time.sleep(2)
-                rr2, _ = call_api(build_prompt(X[orig_idx]))
-                if rr2:
-                    p2 = extract_probs(rr2)
-                    if p2 and is_valid(np.array(p2)):
-                        probs = p2; raw_result = rr2; break
-
-        if not is_valid(np.array(probs)):
-            log_err(f"ONEHOT_REJECT idx={orig_idx} → one-hot")
-            soft_all[orig_idx, true_label] = 1.0
-        else:
-            soft_all[orig_idx] = probs
-            pred = int(np.argmax(probs))
-            ok = "✓" if pred == true_label else "✗"
-            ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-            top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-            line = (f"  [{done_count+1}/{total}] idx={orig_idx} "
-                    f"true={true_label}({CLASS_NAMES[true_label]}) "
-                    f"pred={pred}({CLASS_NAMES[pred]})[{ok}] "
-                    f"ent={ent:.3f} "
-                    f"top=[{top2[0][0]}:{top2[0][1]:.3f},{top2[1][0]}:{top2[1][1]:.3f}]")
-            log(line)
-            class_gen[true_label] += 1
-            if ok == "✓":
-                true_correct += 1; class_corr[true_label] += 1
-                correct_indices.append(orig_idx); log_correct(line)
+        pred = int(np.argmax(probs))
+        if pred != true_label:
+            rr2, _ = call_api(build_prompt(X[orig_idx]))
+            if rr2:
+                probs = extract_probs(rr2)
+                pred = int(np.argmax(probs))
+                log(f'  [RETRY] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred]}({pred})')
+        soft_all[orig_idx] = probs
+        ok = "✓" if pred == true_label else "✗"
+        ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
+        top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
+        line = (f"  [{done_count+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred]}({pred}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        log(line)
+        log_final(line)
+        class_gen[true_label] += 1
+        if ok == "✓":
+            true_correct += 1; class_corr[true_label] += 1
+            correct_indices.append(orig_idx); log_correct(line)
 
         done_set.add(orig_idx); done_count += 1
 

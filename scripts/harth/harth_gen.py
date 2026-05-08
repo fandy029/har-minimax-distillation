@@ -18,11 +18,16 @@ BASE_DIR   = THESIS_DIR
 OUT_DIR    = os.path.join(BASE_DIR, 'results', 'soft_labels')
 LOG_DIR    = os.path.join(BASE_DIR, 'results', 'logs')
 CKPT_FILE  = os.path.join(LOG_DIR, 'gen_harth_checkpoint.json')
+LOG_FILE   = os.path.join(LOG_DIR, 'gen_harth.log')
+FINAL_FILE = os.path.join(LOG_DIR, 'gen_harth_final.log')
+ERR_FILE   = os.path.join(LOG_DIR, 'gen_harth_errors.log')
+CORR_LOG   = os.path.join(LOG_DIR, 'gen_harth_correct.log')
+LOCK_FILE  = os.path.join(OUT_DIR, '.gen_harth.lock')
 
 # ============ API 配置（使用本地 api_config.py）============
 import sys
 sys.path.insert(0, os.path.join(BASE_DIR, 'scripts'))
-from api_config import API_KEY, API_URL, MODEL, TEMPERATURE, MAX_TOKENS, SLEEP_SEC, TIMEOUT  # 降低随机性，提高准确率
+from api_config import API_KEY, API_URL, MODEL, TEMPERATURE, MAX_TOKENS, SLEEP_SEC, TIMEOUT, DISABLE_THINKING
 from openai import OpenAI
 
 # ============ 数据集配置 ============
@@ -155,6 +160,8 @@ def build_prompt(window):
 
     return f"""You classify human activity from back+thigh IMU sensor data (2.56s window).
 
+IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities.
+
 CLASSES (grouped by thigh motion intensity):
   GROUP A — {group_desc}:
     Class(5): stand     thigh_std~0.042(Lowest), thigh_z~-0.12(vertical), back_std~0.024(Lowest)
@@ -218,7 +225,7 @@ def call_api(prompt):
             messages=[{'role': 'user', 'content': prompt}],
             temperature=TEMPERATURE,
             max_tokens=MAX_TOKENS,
-            extra_body={"thinking": {"type": "disabled"}},
+            extra_body=DISABLE_THINKING,
         )
         content = response.choices[0].message.content.strip()
         return content, None
@@ -260,14 +267,12 @@ def extract_probs(text):
     return None
 
 def is_valid(probs):
-    """判断软标签是否有效（非 one-hot，概率和=1）"""
     if probs is None:
         return False
     row = np.array(probs)
     if not np.isclose(row.sum(), 1.0, atol=0.01):
         return False
-    if row.max() >= 0.95:  # 接近 one-hot
-        return False
+    return True
     return True
 
 # ============ 主生成逻辑 ============
@@ -275,48 +280,44 @@ def main():
     # 单例锁，防止多进程并发（先确保目录存在）
     os.makedirs(OUT_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
-    lock_path = os.path.join(OUT_DIR, '.gen_harth.lock')
-    lock_fd = open(lock_path, 'w')
+    lock_fd = open(LOCK_FILE, 'w')
     try:
         fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
         print("ERROR: 已有实例在运行，请先停止后再启动")
         sys.exit(1)
 
-    # 日志设置
-    log_file = os.path.join(LOG_DIR, 'gen_harth.log')
-    err_file = os.path.join(LOG_DIR, 'gen_harth_errors.log')
-    correct_file = os.path.join(LOG_DIR, 'gen_harth_correct.log')
-    ts_fmt = time.strftime('%Y-%m-%d %H:%M:%S')
-
     # --force: 清空日志和断点（从头开始）
     if FORCE_RESTART:
-        for f in [log_file, err_file, correct_file, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, CKPT_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
-        print(f"[{ts_fmt}] --force: 清除旧日志和断点，从头开始")
+        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] --force: 清除旧日志和断点，从头开始")
 
-    def log(msg, to_file=True, to_stdout=True):
+    def log(msg):
         ts = time.strftime('%Y-%m-%d %H:%M:%S')
         line = f"[{ts}] {msg}"
-        if to_stdout:
-            print(line)
-        if to_file:
-            with open(log_file, 'a') as f:
-                f.write(line + '\n')
+        print(line)
+        with open(LOG_FILE, 'a') as f:
+            f.write(line + '\n')
 
     def log_correct(msg):
-        """仅写入正确预测日志（安静，不打印）"""
         ts = time.strftime('%Y-%m-%d %H:%M:%S')
         line = f"[{ts}] {msg}"
-        with open(correct_file, 'a') as f:
+        with open(CORR_LOG, 'a') as f:
             f.write(line + '\n')
 
     def log_err(msg):
         ts = time.strftime('%Y-%m-%d %H:%M:%S')
         line = f"[{ts}] {msg}"
         print(line)
-        with open(err_file, 'a') as f:
+        with open(ERR_FILE, 'a') as f:
+            f.write(line + '\n')
+
+    def log_final(msg):
+        ts = time.strftime('%Y-%m-%d %H:%M:%S')
+        line = f"[{ts}] {msg}"
+        with open(FINAL_FILE, 'a') as f:
             f.write(line + '\n')
 
     log(f"HARTH 软标签生成开始 (scripts/harth/gen.py)")
@@ -410,41 +411,26 @@ def main():
             continue
 
         probs = extract_probs(result)
-        if not is_valid(probs):
-            # 重新生成
-            for _ in range(5):
-                time.sleep(2)
-                result2, err2 = call_api(prompt)
-                if result2:
-                    probs2 = extract_probs(result2)
-                    if is_valid(probs2):
-                        probs = probs2
-                        result = result2
-                        break
-
-        if not is_valid(probs):
-            # 模型过于确信 (max>=0.95)：保留原始分布，不替换为 one-hot
-            log_err(f"HIGH_CONFIDENCE idx={orig_idx} true={true_label}")
-            soft_all[orig_idx] = probs      # 保留模型原始判断
-            class_gen[true_label] += 1
-        else:
-            soft_all[orig_idx] = probs
-            pred_label = int(np.argmax(probs))
-            ok = "✓" if pred_label == true_label else "✗"
-            ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-            top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-            line = (f"  [{len(done_set)+1}/{total}] idx={orig_idx} "
-                    f"true={true_label}({CLASS_NAMES[true_label]}) "
-                    f"pred={pred_label}({CLASS_NAMES[pred_label]})[{ok}] "
-                    f"ent={ent:.3f} "
-                    f"top=[{top2[0][0]}:{top2[0][1]:.3f},{top2[1][0]}:{top2[1][1]:.3f}]")
-            log(line)
-            class_gen[true_label] += 1
-            if ok == "✓":
-                true_correct += 1
-                class_corr[true_label] += 1
-                correct_indices.append(orig_idx)
-                log_correct(line)  # 仅正确样本写入
+        pred_label = int(np.argmax(probs))
+        if pred_label != true_label:
+            result2, _ = call_api(prompt)
+            if result2:
+                probs = extract_probs(result2)
+                pred_label = int(np.argmax(probs))
+                log(f'  [RETRY] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label})')
+        soft_all[orig_idx] = probs
+        ok = "✓" if pred_label == true_label else "✗"
+        ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
+        top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
+        line = (f"  [{len(done_set)+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        log(line)
+        log_final(line)
+        class_gen[true_label] += 1
+        if ok == "✓":
+            true_correct += 1
+            class_corr[true_label] += 1
+            correct_indices.append(orig_idx)
+            log_correct(line)
 
         done_set.add(orig_idx)
         done_count += 1

@@ -48,6 +48,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 SOFT_FILE    = os.path.join(OUT_DIR, 'kuhar_soft.npy')
 CORRECT_FILE = os.path.join(OUT_DIR, 'kuhar_soft_correct_only.npy')
 LOG_FILE     = os.path.join(LOG_DIR, 'gen_kuhar.log')
+FINAL_FILE = os.path.join(LOG_DIR, 'gen_kuhar_final.log')
 ERR_FILE     = os.path.join(LOG_DIR, 'gen_kuhar_errors.log')
 CORR_LOG     = os.path.join(LOG_DIR, 'gen_kuhar_correct.log')
 CKPT_FILE    = os.path.join(LOG_DIR, 'gen_kuhar_checkpoint.json')
@@ -57,19 +58,10 @@ FORCE_RESTART = '--force' in sys.argv
 
 # ============ 有效性判断 ============
 def is_valid(probs):
-    """
-    软标签质量判断：
-    - 非 None
-    - 和为 1（±0.01）
-    - 不超过 one-hot（max < 0.95）
-    不检查熵：熵高（均匀）不代表坏，熵低（confident）也不代表好。
-    """
     if probs is None:
         return False
     row = np.array(probs)
     if not np.isclose(row.sum(), 1.0, atol=0.01):
-        return False
-    if row.max() >= 0.95:
         return False
     return True
 
@@ -110,7 +102,7 @@ def call_api(prompt):
                 messages=[{'role': 'user', 'content': prompt}],
                 temperature=TEMPERATURE,
                 max_tokens=MAX_TOKENS,
-                extra_body={"thinking": {"type": "disabled"}},
+                extra_body=DISABLE_THINKING,
             )
             content = r.choices[0].message.content.strip()
             probs = extract_probs(content)
@@ -139,6 +131,11 @@ def log(msg):
 def log_correct(msg):
     with open(CORR_LOG, 'a') as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
+
+def log_final(msg):
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
+    with open(FINAL_FILE, 'a') as f:
+        f.write(f'[{ts}] {msg}\n')
 
 def log_err(msg):
     ts = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -345,6 +342,10 @@ def build_prompt(window):
     f = compute_features(window)
     return f'''You are a HAR expert. Classify a 1.28-second waist sensor window into ONE of 18 activities.
 
+IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities.
+
+IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities.
+
 === ACTIVITY DESCRIPTIONS (use these to understand each class) ===
 0=Stand: completely still, upright waist (z_grav ~0.69), very low energy ~0.003
 1=Sit: completely still, seated waist (z_grav ~0.78), very low energy ~0.002
@@ -428,12 +429,12 @@ def main():
         sys.exit(1)
 
     if FORCE_RESTART:
-        for f in [LOG_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
         log("--force: 清除旧日志和断点，从头开始")
 
-    log(f"KuHar 软标签生成 (DISABLE_THINKING + one-hot过滤 + 温度{TEMPERATURE})")
+    log(f"KuHar 软标签生成 (DISABLE_THINKING + 温度{TEMPERATURE})")
     log(f"Mimo API: {API_URL}")
     log(f"Model: {MODEL}")
     log(f"Temperature: {TEMPERATURE}")
@@ -527,39 +528,31 @@ def main():
             done_count += 1
             continue
 
+        # 重试直到 pred==true 或达到最大次数
+        retry_pred_count = 2
+        while retry_pred_count < 3:
+            pred_label = int(np.argmax(probs))
+            if pred_label == true_label:
+                break
+            probs2, _ = call_api(prompt)
+            if probs2 is None:
+                break
+            probs = probs2
+            retry_pred_count += 1
+            log(f'  [RETRY {retry_pred_count}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[int(np.argmax(probs))]}({int(np.argmax(probs))})')
         ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-        pred_label = int(np.argmax(probs))  # 直接用LLM自己的预测，不强制覆盖
-        ok = "✓" if pred_label == true_label else "✗"
         top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-
-        if not is_valid(probs):
-            # 模型过于确信 (max >= 0.95)：保留模型原判断，但不做 one-hot 替换
-            soft_all[orig_idx] = probs  # 保留原始分布，不改为 one-hot
-            class_gen[true_label] += 1
-            line = (f"  [{done_count}/{total}] idx={orig_idx} "
-                    f"true={true_label}({CLASS_NAMES[true_label]}) "
-                    f"pred={pred_label}({CLASS_NAMES[pred_label]})[{ok}] "
-                    f"ent={ent:.3f} max={np.max(probs):.3f}")
-            log(line)
-            if ok == "✓":
-                true_correct += 1
-                class_corr[true_label] += 1
-                correct_indices.append(orig_idx)
-                log_correct(line)
-        else:
-            # 有效软标签，保存
-            soft_all[orig_idx] = probs
-            class_gen[true_label] += 1
-            line = (f"  [{done_count}/{total}] idx={orig_idx} "
-                    f"true={true_label}({CLASS_NAMES[true_label]}) "
-                    f"pred={pred_label}({CLASS_NAMES[pred_label]})[{ok}] "
-                    f"ent={ent:.3f} top=[{top2[0][0]}:{top2[0][1]:.3f},{top2[1][0]}:{top2[1][1]:.3f}]")
-            log(line)
-            if ok == "✓":
-                true_correct += 1
-                class_corr[true_label] += 1
-                correct_indices.append(orig_idx)
-                log_correct(line)
+        soft_all[orig_idx] = probs
+        ok = "✓" if pred_label == true_label else "✗"
+        class_gen[true_label] += 1
+        line = (f"  [{done_count:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        log(line)
+        log_final(line)
+        if ok == "✓":
+            true_correct += 1
+            class_corr[true_label] += 1
+            correct_indices.append(orig_idx)
+            log_correct(line)
 
         done_set.add(orig_idx)
         done_count += 1

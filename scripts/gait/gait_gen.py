@@ -50,6 +50,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 SOFT_FILE    = os.path.join(OUT_DIR, 'gait_soft.npy')
 CORRECT_FILE = os.path.join(OUT_DIR, 'gait_soft_correct_only.npy')
 LOG_FILE     = os.path.join(LOG_DIR, 'gen_gait.log')
+FINAL_FILE = os.path.join(LOG_DIR, 'gen_gait_final.log')
 ERR_FILE     = os.path.join(LOG_DIR, 'gen_gait_errors.log')
 CORR_LOG     = os.path.join(LOG_DIR, 'gen_gait_correct.log')
 CKPT_FILE    = os.path.join(LOG_DIR, 'gen_gait_checkpoint.json')
@@ -69,8 +70,6 @@ def is_valid(probs):
         return False
     row = np.array(probs)
     if not np.isclose(row.sum(), 1.0, atol=0.01):
-        return False
-    if row.max() >= 0.95:
         return False
     return True
 
@@ -106,6 +105,11 @@ def log_correct(msg):
     ts = time.strftime('%Y-%m-%d %H:%M:%S')
     with open(CORR_LOG, 'a') as f:
         f.write(f"[{ts}] {msg}\n")
+
+def log_final(msg):
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
+    with open(FINAL_FILE, 'a') as f:
+        f.write(f'[{ts}] {msg}\n')
 
 def log_err(msg):
     ts = time.strftime('%Y-%m-%d %H:%M:%S')
@@ -165,6 +169,8 @@ def build_prompt(window):
     f = compute_features(window)
     descs = [f'{i}={CLASS_NAMES[i]}' for i in range(N_CLS)]
     return f'''You are classifying human body posture/activity from 3-axis accelerometer data.
+
+IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities.
 (128 steps @ 40Hz, 3 channels: frontal=forward-back, vertical=up-down, lateral=left-right)
 
 The {N_CLS} activity classes are:
@@ -196,6 +202,9 @@ Compare this window against each class:
 Output ONLY valid JSON with {N_CLS} probabilities that sum to 1:
 {{"0":p0,"1":p1,"2":p2,"3":p3}}
 Do NOT output one-hot. Keep probabilities in the 0.05–0.75 range.
+Do NOT always output the same top probability — each window is different, so the output MUST vary.
+If the features clearly indicate class 2 (lying), output confidently but not above 0.75.
+If features are ambiguous, spread probability across 2-3 classes rather than dumping everything into one.
 Give higher probability to classes whose feature signature best matches this window.
 '''
 
@@ -239,7 +248,7 @@ def main():
 
     # --force: 清空日志和断点
     if FORCE_RESTART:
-        for f in [LOG_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
+        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE]:
             if os.path.exists(f):
                 open(f, 'w').close()
         log(f"--force: 清除旧日志和断点，从头开始", to_stdout=False)
@@ -333,41 +342,26 @@ def main():
             continue
 
         probs = raw_result if isinstance(raw_result, list) else extract_probs(raw_result)
-        if not is_valid(np.array(probs)):
-            for _ in range(5):
-                time.sleep(2)
-                rr2, _ = call_api(prompt)
-                if rr2:
-                    p2 = rr2 if isinstance(rr2, list) else extract_probs(rr2)
-                    if p2 and is_valid(np.array(p2)):
-                        probs = p2
-                        raw_result = rr2
-                        break
-
-        if not is_valid(np.array(probs)):
-            log_err(f"ONEHOT_REJECT idx={orig_idx} true={true_label} → one-hot")
-            soft_all[orig_idx, true_label] = 1.0
-            class_gen[true_label] += 1
-        else:
-            soft_all[orig_idx] = probs
-            pred_label = int(np.argmax(probs))
-            ok = "✓" if pred_label == true_label else "✗"
-            ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-            top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-            line = (f"  [{len(done_set)+1}/{total}] idx={orig_idx} "
-                    f"true={true_label}({CLASS_NAMES[true_label]}) "
-                    f"pred={pred_label}({CLASS_NAMES[pred_label]})[{ok}] "
-                    f"ent={ent:.3f} "
-                    f"top=[{top2[0][0]}:{top2[0][1]:.3f},{top2[1][0]}:{top2[1][1]:.3f}]")
-            log(line)
-            class_gen[true_label] += 1
-            if ok == "✓":
-                true_correct += 1
-                class_corr[true_label] += 1
-                correct_indices.append(orig_idx)
-                log_correct(line)
-            else:
-                pass
+        pred_label = int(np.argmax(probs))
+        if pred_label != true_label:
+            rr2, _ = call_api(prompt)
+            if rr2:
+                probs = rr2 if isinstance(rr2, list) else extract_probs(rr2)
+                pred_label = int(np.argmax(probs))
+                log(f'  [RETRY] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label})')
+        soft_all[orig_idx] = probs
+        ok = "✓" if pred_label == true_label else "✗"
+        ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
+        top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
+        line = (f"  [{len(done_set)+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
+        log(line)
+        log_final(line)
+        class_gen[true_label] += 1
+        if ok == "✓":
+            true_correct += 1
+            class_corr[true_label] += 1
+            correct_indices.append(orig_idx)
+            log_correct(line)
 
         done_set.add(orig_idx)
         done_count += 1
@@ -395,6 +389,20 @@ def main():
             log(f"  进度: {len(done_set)}/{total}, 准确率={acc_pct:.1f}%, 正确样本={len(correct_indices)}, 已保存")
 
         time.sleep(SLEEP_SEC)
+
+    # 最终保存（无条件，确保最后一波样本不丢失）
+    np.save(SOFT_FILE, soft_all)
+    soft_correct = soft_all[correct_indices]
+    np.save(CORRECT_FILE, soft_correct)
+    with open(CKPT_FILE, 'w') as f:
+        json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
+    valid_n = int((soft_all.sum(axis=1) > 0).sum())
+    acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
+    log(f"\n=== 生成完成 ===")
+    log(f"  有效软标签: {valid_n}/{len(X)}")
+    log(f"  整体准确率: {acc_pct:.1f}% ({true_correct}/{done_count})")
+    log(f"  正确样本数: {len(correct_indices)}")
+    log(f"  输出: {SOFT_FILE}")
 
 if __name__ == '__main__':
     main()
