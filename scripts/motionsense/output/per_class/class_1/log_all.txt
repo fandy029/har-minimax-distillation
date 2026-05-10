@@ -1,0 +1,5 @@
+[2026-05-10 23:38:17] MotionSense class 1 (jogging) T=0.8
+[2026-05-10 23:38:17]   1443 windows
+[2026-05-10 23:38:20] #0001/01443 | true=jogging | pred=jogging | ✓ | ent=0.168 conf=0.970 gap=0.960
+[2026-05-10 23:38:22] #0002/01443 | true=jogging | pred=jogging | ✓ | ent=0.672 conf=0.800 gap=0.670
+[2026-05-10 23:38:26] #0003/01443 | true=jogging | pred=jogging | ✓ | ent=0.334 conf=0.910 gap=0.830

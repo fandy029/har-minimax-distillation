@@ -1,0 +1,2 @@
+[2026-05-11 00:01:24] #0002/01989 | true=standing(2) | pred=standing(2) | ✓ | ent=0.447 conf=0.900 gap=0.850
+[2026-05-11 00:01:39] #0003/01989 | true=standing(2) | pred=standing(2) | ✓ | ent=0.742 conf=0.800 gap=0.700

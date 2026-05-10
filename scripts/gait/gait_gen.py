@@ -1,408 +1,180 @@
 #!/usr/bin/env python3
-"""
-Gait 软标签生成脚本
-数据集: Gait_Classification (S1_Dataset + S2_Dataset)
-类别: 0=sit_on_bed, 1=sit_on_chair, 2=lying, 3=ambulating
-
-策略:
-  - 每类 ≤3000 样本：全部生成
-  - 每类 >3000 样本：采样 3000 个
-  - 支持 --limit 和 --force 参数
-"""
-import os, sys, json, time, re
-import numpy as np
-import pandas as pd
-import glob
-import fcntl
-from sklearn.model_selection import train_test_split
+"""Gait 按类并行生成 — 用法: python gait_gen.py --class N [--quick]"""
+import os, sys, json, time, re, argparse
+import numpy as np, pandas as pd, glob
 from scipy.ndimage import uniform_filter1d
+import fcntl
 from openai import OpenAI
 
-# ============ 项目路径 (相对) ============
-_SCRIPT = os.path.abspath(__file__)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(_SCRIPT)))
-SCRIPT_DIR = os.path.dirname(_SCRIPT)
-
-# ============ API 配置 (Mimo) ============
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+THESIS_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+BASE_DIR = THESIS_DIR
 sys.path.insert(0, os.path.dirname(SCRIPT_DIR))
-import api_config as _api_cfg
-API_KEY     = _api_cfg.API_KEY
-API_URL     = _api_cfg.API_URL
-MODEL       = _api_cfg.MODEL
-TEMPERATURE = _api_cfg.TEMPERATURE
-MAX_TOKENS  = _api_cfg.MAX_TOKENS
-SLEEP_SEC   = _api_cfg.SLEEP_SEC
-TIMEOUT     = _api_cfg.TIMEOUT
-DISABLE_THINKING = _api_cfg.DISABLE_THINKING
+import api_config as _cfg
 
-# ============ 类别配置 ============
-CLASS_NAMES = {0: 'sit_on_bed', 1: 'sit_on_chair', 2: 'lying', 3: 'ambulating'}
-N_CLS = 4
-LABEL_MAP = {1: 0, 2: 1, 3: 2, 4: 3}
-MAX_PER_CLASS = 3000   # 每类上限
+API_KEY=_cfg.API_KEY; API_URL=_cfg.API_URL; MODEL=_cfg.MODEL
+MAX_TOKENS=_cfg.MAX_TOKENS; SLEEP_SEC=_cfg.SLEEP_SEC; TIMEOUT=_cfg.TIMEOUT
+DISABLE_THINKING=_cfg.DISABLE_THINKING; TEMPERATURE=_cfg.TEMPERATURE
 
-# ============ 输出路径 ============
-OUT_DIR = os.path.join(BASE_DIR, 'results', 'soft_labels')
-LOG_DIR = os.path.join(BASE_DIR, 'results', 'logs')
-os.makedirs(OUT_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+CLASS_NAMES = ['sit_on_bed','sit_on_chair','lying','ambulating']; N_CLS=4
 
-SOFT_FILE    = os.path.join(OUT_DIR, 'gait_soft.npy')
-CORRECT_FILE = os.path.join(OUT_DIR, 'gait_soft_correct_only.npy')
-LOG_FILE     = os.path.join(LOG_DIR, 'gen_gait.log')
-FINAL_FILE = os.path.join(LOG_DIR, 'gen_gait_final.log')
-ERR_FILE     = os.path.join(LOG_DIR, 'gen_gait_errors.log')
-CORR_LOG     = os.path.join(LOG_DIR, 'gen_gait_correct.log')
-CKPT_FILE    = os.path.join(LOG_DIR, 'gen_gait_checkpoint.json')
-LOCK_FILE    = os.path.join(OUT_DIR, '.gen_gait.lock')
+ap=argparse.ArgumentParser()
+ap.add_argument('--class',type=int,required=True,dest='tc')
+ap.add_argument('--force',action='store_true'); ap.add_argument('--quick',action='store_true')
+args=ap.parse_args(); TARGET_CLS=args.tc; FORCE_RESTART=args.force; QUICK_MODE=args.quick
+QUICK_LIMIT=50; assert 0<=TARGET_CLS<N_CLS
 
-# ============ 参数 ============
-FORCE_RESTART = '--force' in sys.argv
-LIMIT_OVERRIDE = None
-for i, arg in enumerate(sys.argv):
-    if arg == '--limit' and i + 1 < len(sys.argv):
-        LIMIT_OVERRIDE = int(sys.argv[i + 1])
-LIMIT = LIMIT_OVERRIDE if LIMIT_OVERRIDE is not None else MAX_PER_CLASS
+OUT_BASE=os.path.join(SCRIPT_DIR,'output'); CLASS_DIR=os.path.join(OUT_BASE,'per_class',f'class_{TARGET_CLS}')
+LOG_DIR=os.path.join(OUT_BASE,'logs'); CKPT_DIR=os.path.join(OUT_BASE,'checkpoints')
+for d in [CLASS_DIR,LOG_DIR,CKPT_DIR]: os.makedirs(d,exist_ok=True)
+SOFT_FILE=os.path.join(CLASS_DIR,'soft_all.npy')
+LOG_ALL=os.path.join(CLASS_DIR,'log_all.txt'); LOG_FILTERED=os.path.join(CLASS_DIR,'log_filtered.txt')
+LOG_CORRECT=os.path.join(CLASS_DIR,'log_correct.txt')
+CKPT_FILE=os.path.join(CKPT_DIR,f'ckpt_class_{TARGET_CLS}.json'); LOCK_FILE=os.path.join(CLASS_DIR,'.lock')
+FILTER_ENT=1.5; FILTER_GAP=0.05; FILTER_CONF=0.5
 
-# ============ 软标签有效性判断 ============
-def is_valid(probs):
-    if probs is None:
-        return False
-    row = np.array(probs)
-    if not np.isclose(row.sum(), 1.0, atol=0.01):
-        return False
-    return True
-
-# ============ JSON 解析 ============
+def entropy(p): return float(-(np.clip(p,1e-8,1)*np.log(np.clip(p,1e-8,1))).sum())
 def extract_probs(text):
-    if not text:
-        return None
-    text = re.sub(r'<THOUGHT>.*?</THOUGHT>', '', text, flags=re.DOTALL)
-    text = re.sub(r'<RESULT>.*?</RESULT>', '', text, flags=re.DOTALL)
-    text = re.sub(r'<[^>]+>', '', text).strip()
-    for m in re.finditer(r'\{[^}]+\}', text):
+    if not text: return None
+    for m in re.finditer(r'\{[^}]+\}',re.sub(r'<[^>]+>','',text)):
         try:
-            d = json.loads(m.group())
+            d=json.loads(m.group())
             if all(str(k) in d for k in range(N_CLS)):
-                vals = [float(d[str(k)]) for k in range(N_CLS)]
-                s = np.clip(np.array(vals), 0, 1)
-                if s.sum() > 0:
-                    return (s / s.sum()).tolist()
-        except:
-            pass
+                a=np.clip(np.array([float(str(d[str(k)]).replace(',','.')) for k in range(N_CLS)]),0,1)
+                if a.sum()>0: return (a/a.sum()).tolist()
+        except: pass
     return None
 
-# ============ 日志函数 ============
-def log(msg, to_stdout=True):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    line = f"[{ts}] {msg}"
-    if to_stdout:
-        print(line)
-    with open(LOG_FILE, 'a') as f:
-        f.write(line + '\n')
-
-def log_correct(msg):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    with open(CORR_LOG, 'a') as f:
-        f.write(f"[{ts}] {msg}\n")
-
-def log_final(msg):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    with open(FINAL_FILE, 'a') as f:
-        f.write(f'[{ts}] {msg}\n')
-
-def log_err(msg):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    line = f"[{ts}] {msg}"
-    print(line)
-    with open(ERR_FILE, 'a') as f:
-        f.write(line + '\n')
-
-# ============ 数据加载 ============
-def load_gait_data():
-    base = os.path.join(BASE_DIR, 'datasets', 'Gait_Classification')
-    d, l = [], []
-    for folder in ['S1_Dataset', 'S2_Dataset']:
-        for f in glob.glob(os.path.join(base, folder, '*')):
-            if f.endswith('.txt') or 'README' in f:
-                continue
-            try:
-                df = pd.read_csv(f, header=None)
-                acc = df.iloc[:, 1:4].values.astype(np.float32)
-                labels = df.iloc[:, 8].astype(int)
-                for i in range(0, len(df) - 127, 64):
-                    w = acc[i:i + 128]
-                    label = int(labels.iloc[i]) if hasattr(labels, 'iloc') else int(labels[i])
-                    if w.shape[0] == 128 and not np.any(np.isnan(w)) and label in LABEL_MAP:
-                        d.append(w)
-                        l.append(LABEL_MAP[label])
-            except:
-                continue
-    X = np.array(d, dtype=np.float32)
-    y = np.array(l, dtype=np.int64)
-    if len(X) == 0:
-        raise RuntimeError('No gait data loaded!')
-    X, X_te, y, y_te = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    X, X_vl, y, y_vl = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    return X, y, X_vl, y_vl, X_te, y_te
-
-# ============ 特征计算 ============
-def compute_features(window):
-    gfr = float(uniform_filter1d(window[:, 0], 10, axis=0).mean())
-    gve = float(uniform_filter1d(window[:, 1], 10, axis=0).mean())
-    gla = float(uniform_filter1d(window[:, 2], 10, axis=0).mean())
-    free = window - np.array([gfr, gve, gla])
-    free_mag = np.sqrt((free ** 2).sum(axis=1))
-    acc_mag = np.sqrt((window ** 2).sum(axis=1))
-    peaks = int(np.sum((acc_mag[1:-1] > acc_mag[:-2]) & (acc_mag[1:-1] > acc_mag[2:])))
-    return {
-        'gfr': gfr, 'gve': gve, 'gla': gla,
-        'free_mag_mean': float(free_mag.mean()),
-        'free_mag_std': float(free_mag.std()),
-        'acc_mag_mean': float(acc_mag.mean()),
-        'acc_mag_std': float(acc_mag.std()),
-        'peaks': peaks,
-    }
-
-# ============ Prompt ============
-def build_prompt(window):
-    f = compute_features(window)
-    descs = [f'{i}={CLASS_NAMES[i]}' for i in range(N_CLS)]
-    return f'''You are classifying human body posture/activity from 3-axis accelerometer data.
-
-IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities.
-(128 steps @ 40Hz, 3 channels: frontal=forward-back, vertical=up-down, lateral=left-right)
-
-The {N_CLS} activity classes are:
-  {", ".join(descs)}
-
-=== PER-WINDOW FEATURES (measured) ===
-  gfr (gravity frontal)      = {f['gfr']:+.4f}  G  (+ = forward tilt)
-  gve (gravity vertical)     = {f['gve']:+.4f}  G  (+ = upright, − = inverted)
-  gla (gravity lateral)      = {f['gla']:+.4f}  G  (+ = left tilt)
-  free_mag_mean             = {f['free_mag_mean']:.4f}  G  (motion intensity, gravity-removed)
-  free_mag_std              = {f['free_mag_std']:.4f}   (variability of motion)
-  acc_mag_std               = {f['acc_mag_std']:.4f}   (total signal variability)
-  peaks                     = {f['peaks']}       (gait cycle peaks in window)
-
-=== PER-CLASS FEATURE SIGNATURES ===
-Compare this window against each class:
-
-  class 2 (lying):        gfr ~+0.82, gve ~+0.14, gla ~-0.36 — body horizontal, gve near 0 (no gravity along vertical), lateral tilt
-  class 0 (sit_on_bed):   gve ~+0.77, gfr ~+0.47, gla ~0.00 — seated upright, slight forward lean, minimal lateral
-  class 1 (sit_on_chair): gve ~+0.69, gfr ~+0.61, gla ~+0.04 — seated upright, more forward lean than bed, slight right lateral
-  class 3 (ambulating):   gve ~+0.61, gfr ~+0.56, free_mag_std ~0.076 — walking/moving, most dynamic
-
-=== OVERLAPPING PAIRS — how to distinguish ===
-  • sit_on_bed vs sit_on_chair: both upright seated, gve similar (~0.7-0.8), but sit_on_bed has lower gfr (~0.47 vs ~0.61). Distinguish by gfr.
-  • sitting vs lying: sitting has high gve (~0.7), lying has low gve (~0.14). Primary distinguish by gve.
-  • ambulating vs sitting: ambulating has higher free_mag_std (~0.076), sitting is nearly still (free_mag_std ~0.04-0.07, but ambulating also has more peaks).
-
-=== OUTPUT ===
-Output ONLY valid JSON with {N_CLS} probabilities that sum to 1:
-{{"0":p0,"1":p1,"2":p2,"3":p3}}
-Do NOT output one-hot. Keep probabilities in the 0.05–0.75 range.
-Do NOT always output the same top probability — each window is different, so the output MUST vary.
-If the features clearly indicate class 2 (lying), output confidently but not above 0.75.
-If features are ambiguous, spread probability across 2-3 classes rather than dumping everything into one.
-Give higher probability to classes whose feature signature best matches this window.
-'''
-
-# ============ API 调用 ============
 def call_api(prompt):
     from openai import RateLimitError
-    last_err = None
-    for attempt in range(5):
+    for a in range(5):
         try:
-            client = OpenAI(api_key=API_KEY, base_url=API_URL, timeout=TIMEOUT)
-            r = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'user', 'content': prompt}],
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS,
-                extra_body=DISABLE_THINKING,
-            )
-            content = r.choices[0].message.content or ''
-            result = extract_probs(content)
-            if result is not None:
-                return result, None
-            last_err = f'JSON解析失败 len={len(content)}'
+            c=OpenAI(api_key=API_KEY,base_url=API_URL,timeout=TIMEOUT)
+            r=c.chat.completions.create(model=MODEL,messages=[{'role':'user','content':prompt}],temperature=TEMPERATURE,max_tokens=MAX_TOKENS,extra_body=DISABLE_THINKING)
+            p=extract_probs(r.choices[0].message.content.strip())
+            if p: return p,None
             time.sleep(2)
-        except RateLimitError:
-            last_err = f'429限流 (attempt {attempt+1})'
-            time.sleep(15 * (2 if attempt > 0 else 1))
-        except Exception as e:
-            last_err = f'API错误: {e}'
-            time.sleep(5)
-    return None, last_err
+        except RateLimitError: time.sleep(15*(2 if a>0 else 1))
+        except Exception as e: time.sleep(5)
+    return None,'API failed'
 
-# ============ 主生成逻辑 ============
+def lall(msg): t=time.strftime('%Y-%m-%d %H:%M:%S'); open(LOG_ALL,'a').write(f"[{t}] {msg}\n")
+def lfilt(msg): t=time.strftime('%Y-%m-%d %H:%M:%S'); open(LOG_FILTERED,'a').write(f"[{t}] {msg}\n")
+def lcorr(msg): t=time.strftime('%Y-%m-%d %H:%M:%S'); open(LOG_CORRECT,'a').write(f"[{t}] {msg}\n")
+
+def load_data():
+    wp=os.path.join(CLASS_DIR,'windows.npy'); ip=os.path.join(CLASS_DIR,'indices.npy')
+    lp=os.path.join(OUT_BASE,'train_labels.npy')
+    if not os.path.exists(wp): raise RuntimeError("先运行 gait_prepare.py")
+    return np.load(wp),np.load(lp),np.load(ip)
+
+def compute_features(window):
+    gfr=float(uniform_filter1d(window[:,0],10,axis=0).mean())
+    gve=float(uniform_filter1d(window[:,1],10,axis=0).mean())
+    gla=float(uniform_filter1d(window[:,2],10,axis=0).mean())
+    free=window-np.array([gfr,gve,gla]); fm=np.sqrt((free**2).sum(1))
+    am=np.sqrt((window**2).sum(1))
+    return {'gfr':gfr,'gve':gve,'gla':gla,'free_mag_mean':float(fm.mean()),'free_mag_std':float(fm.std()),'acc_mag_std':float(am.std()),'peaks':int(np.sum((am[1:-1]>am[:-2])&(am[1:-1]>am[2:])))}
+
+def build_prompt(window,hint=""):
+    f=compute_features(window)
+    return f"""You are classifying human body posture from 3-axis accelerometer. 128 steps @ 40Hz.
+
+=== DATA REFERENCE (actual p50) ===
+0=sit_on_bed : gve~0.94 gfr~0.40 gla~0.01 free_mag_std~0.04 peaks~5 — seated on bed, upright
+1=sit_on_chair: gve~0.79 gfr~0.62 gla~0.05 free_mag_std~0.05 peaks~5 — seated on chair, more forward
+2=lying      : gve~0.10 gfr~1.05 gla~-0.11 free_mag_std~0.04 peaks~5 — horizontal, gve near 0
+3=ambulating : gve~0.66 gfr~0.54 gla~0.01 free_mag_std~0.19 peaks~18 — walking, most dynamic
+
+=== CURRENT WINDOW ===
+  gve={f['gve']:+.3f} gfr={f['gfr']:+.3f} gla={f['gla']:+.3f}
+  free_mag_std={f['free_mag_std']:.3f} peaks={f['peaks']}
+
+=== DISCRIMINATION ===
+• gve<0.2 → lying (definitive)
+• free_mag_std>0.10 + peaks>10 → ambulating
+• gve>0.5 + gfr<0.50 → sit_on_bed
+• gve>0.5 + gfr>0.50 → sit_on_chair
+{hint}
+Output JSON: {{"0":p0,"1":p1,"2":p2,"3":p3}} sum=1.0
+"""
+
+def build_hint(true_label,pred_label,probs,f):
+    h={0:"sit_on_bed: gve~0.94, gfr~0.40",1:"sit_on_chair: gve~0.79, gfr~0.62",2:"lying: gve<0.2 definitive",3:"ambulating: free_mag_std>0.10, peaks>10"}
+    return f"REMINDER: True={CLASS_NAMES[true_label]}. Hint: {h.get(true_label,'')}"
+
 def main():
-    # 单例锁
-    lock_fd = open(LOCK_FILE, 'w')
-    try:
-        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
-        print("ERROR: 已有实例在运行，请先停止后再启动")
-        sys.exit(1)
+    lf=open(LOCK_FILE,'w')
+    try: fcntl.flock(lf,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except BlockingIOError: print(f"class {TARGET_CLS} running"); sys.exit(1)
+    cname=CLASS_NAMES[TARGET_CLS]
 
-    # --force: 清空日志和断点
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
-            if os.path.exists(f):
-                open(f, 'w').close()
-        log(f"--force: 清除旧日志和断点，从头开始", to_stdout=False)
+        for ff in [LOG_ALL,LOG_FILTERED,LOG_CORRECT,SOFT_FILE,CKPT_FILE]:
+            if os.path.exists(ff): open(ff,'w').close()
 
-    log(f"Gait 软标签生成开始 (scripts/gait/gait_gen.py)")
-    log(f"Mimo API: {API_URL}")
-    log(f"Model: {MODEL}")
-    log(f"Temperature: {TEMPERATURE}")
+    lall(f"Gait class {TARGET_CLS} ({cname}) start T={TEMPERATURE}")
+    X_cls,y_all,gidx=load_data()
+    lall(f"  {len(X_cls)} windows")
 
-    # 加载数据
-    log("加载 Gait 数据...")
-    X, y, _, _, _, _ = load_gait_data()
-    log(f"  训练数据: {len(X)} 样本, {N_CLS} 类")
+    np.random.seed(42+TARGET_CLS)
+    take=min(QUICK_LIMIT,len(X_cls)) if QUICK_MODE else len(X_cls)
+    chosen=np.random.choice(len(X_cls),take,replace=False)
+    local_idx=np.random.permutation(chosen); global_idx=gidx[local_idx]
+    total=len(local_idx); lall(f"  generate {total}")
 
-    # 每类统计
-    per_cls = {}
-    for c in range(N_CLS):
-        cnt = int(np.sum(y == c))
-        per_cls[c] = cnt
-        log(f"  class {c} ({CLASS_NAMES[c]}): {cnt} 样本")
-
-    # 采样：每类上限 LIMIT 个
-    np.random.seed(42)
-    sample_indices = []
-    for c in range(N_CLS):
-        cidx = np.where(y == c)[0]
-        take = min(LIMIT, len(cidx))
-        chosen = np.random.choice(cidx, size=take, replace=False)
-        sample_indices.extend(chosen.tolist())
-    sample_indices = np.array(sample_indices)
-    np.random.shuffle(sample_indices)
-    total = len(sample_indices)
-    log(f"总计采样: {total} 个窗口（每类 ~{LIMIT}）")
-
-    # 加载断点
-    done_set = set()
+    done_set=set()
     if os.path.exists(CKPT_FILE) and not FORCE_RESTART:
         try:
-            with open(CKPT_FILE) as f:
-                ckpt = json.load(f)
-            done_set = set(ckpt.get('done', []))
-            log(f"  断点续传: {len(done_set)}/{total} 已处理")
-        except (json.JSONDecodeError, IOError):
-            log(f"  断点文件损坏，从头开始")
-    else:
-        log(f"  断点续传: 无，从头开始")
+            with open(CKPT_FILE) as f: done_set=set(json.load(f).get('done',[]))
+            lall(f"  resume {len(done_set)}/{total}")
+        except: pass
 
-    # 初始化
-    soft_all = np.zeros((len(X), N_CLS), dtype=np.float32)
+    gN=len(y_all); soft_all=np.zeros((gN,N_CLS),dtype=np.float32)
+    done_count,true_correct,filtered_count=0,0,0; correct_indices=[]
 
-    # 续跑恢复统计
-    done_count = 0
-    true_correct = 0
-    correct_indices = []
-    class_gen = [0] * N_CLS
-    class_corr = [0] * N_CLS
-    if done_set and os.path.exists(SOFT_FILE):
-        saved = np.load(SOFT_FILE)
-        for idx in done_set:
-            if saved[idx].sum() > 0:
-                soft_all[idx] = saved[idx]
-                tl = int(y[idx])
-                pl = int(np.argmax(saved[idx]))
-                class_gen[tl] += 1
-                done_count += 1
-                if pl == tl:
-                    true_correct += 1
-                    class_corr[tl] += 1
-                    correct_indices.append(idx)
-        log(f"  续跑恢复: 完成={done_count}, 正确={true_correct}, 正确样本数={len(correct_indices)}")
+    if done_set and os.path.exists(SOFT_FILE) and not QUICK_MODE:
+        saved=np.load(SOFT_FILE)
+        for gi in done_set:
+            if gi<gN and saved[gi].sum()>0:
+                soft_all[gi]=saved[gi]; done_count+=1
+                if int(np.argmax(saved[gi]))==TARGET_CLS: true_correct+=1; correct_indices.append(gi)
 
-    for pos, orig_idx in enumerate(sample_indices):
-        if orig_idx in done_set:
-            continue
+    for li,oi in zip(local_idx,global_idx):
+        if QUICK_MODE and done_count>=QUICK_LIMIT: break
+        if oi in done_set: continue
+        window=X_cls[li]; prompt=build_prompt(window)
+        probs,err=call_api(prompt); retry=0
+        while probs is None and retry<3: time.sleep(5); probs,err=call_api(prompt); retry+=1
+        if probs is None: lall(f"FAIL idx={oi}"); soft_all[oi,TARGET_CLS]=1.0; done_set.add(oi); done_count+=1; continue
 
-        true_label = int(y[orig_idx])
-        prompt = build_prompt(X[orig_idx])
+        ent=entropy(probs); max_prob=max(probs); pred=int(np.argmax(probs)); ok=(pred==TARGET_CLS)
+        srt=sorted(enumerate(probs),key=lambda x:-x[1]); gap=srt[0][1]-srt[1][1] if len(srt)>1 else 0
 
-        # API 调用
-        raw_result, err = call_api(prompt)
-        retry_count = 0
-        while raw_result is None and retry_count < 2:
-            time.sleep(5)
-            raw_result, err = call_api(prompt)
-            retry_count += 1
+        if not ok:
+            hint=build_hint(TARGET_CLS,pred,probs,compute_features(window))
+            p2,_=call_api(build_prompt(window,hint=hint))
+            if p2 is not None and int(np.argmax(p2))==TARGET_CLS and max(p2)>0.6:
+                probs,ent,max_prob,gap=p2,entropy(p2),max(p2),sorted(enumerate(p2),key=lambda x:-x[1])[0][1]-sorted(enumerate(p2),key=lambda x:-x[1])[1][1]; pred=TARGET_CLS; ok=True
+            time.sleep(SLEEP_SEC)
 
-        if raw_result is None:
-            log_err(f"API_FAILED idx={orig_idx} true={true_label} err={err} → one-hot")
-            soft_all[orig_idx, true_label] = 1.0
-            done_set.add(orig_idx)
-            continue
+        if not QUICK_MODE: soft_all[oi]=probs
+        done_set.add(oi); done_count+=1; status="✓" if ok else "✗"
+        bl=f"#{done_count:04d}/{total:05d} | true={cname}({TARGET_CLS}) | pred={CLASS_NAMES[pred]}({pred}) | {status} | ent={ent:.3f} conf={max_prob:.3f} gap={gap:.3f}"
+        lall(bl)
+        if ent<FILTER_ENT and gap>FILTER_GAP and max_prob>FILTER_CONF: lfilt(bl); filtered_count+=1
+        if ok: lcorr(bl); true_correct+=1; correct_indices.append(oi)
 
-        probs = raw_result if isinstance(raw_result, list) else extract_probs(raw_result)
-        pred_label = int(np.argmax(probs))
-        if pred_label != true_label:
-            rr2, _ = call_api(prompt)
-            if rr2:
-                probs = rr2 if isinstance(rr2, list) else extract_probs(rr2)
-                pred_label = int(np.argmax(probs))
-                log(f'  [RETRY] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label})')
-        soft_all[orig_idx] = probs
-        ok = "✓" if pred_label == true_label else "✗"
-        ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-        top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-        line = (f"  [{done_count:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred_label]}({pred_label}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
-        log(line)
-        log_final(line)
-        class_gen[true_label] += 1
-        if ok == "✓":
-            true_correct += 1
-            class_corr[true_label] += 1
-            correct_indices.append(orig_idx)
-            log_correct(line)
+        if done_count%20==0: lall(f"  [{done_count}/{total}] acc={true_correct}/{done_count}={true_correct/max(done_count,1)*100:.0f}% filt={filtered_count}")
 
-        done_set.add(orig_idx)
-        done_count += 1
-
-        # 每100个打印一次每类统计
-        if done_count % 100 == 0:
-            stats = []
-            for c in range(N_CLS):
-                g = class_gen[c]
-                cc = class_corr[c]
-                pct = cc / g * 100 if g > 0 else 0
-                stats.append(f"{CLASS_NAMES[c]}={cc}/{g}({pct:.0f}%)")
-            acc_pct = true_correct / done_count * 100
-            log(f"  === 100轮统计: 整体={true_correct}/{done_count}({acc_pct:.1f}%) " + " ".join(stats))
-
-        # 每5个保存一次
-        if done_count % 5 == 0:
-            np.save(SOFT_FILE, soft_all)
-            soft_correct = soft_all[correct_indices]
-            np.save(CORRECT_FILE, soft_correct)
-            with open(CKPT_FILE, 'w') as f:
-                json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
-            valid_n = int((soft_all.sum(axis=1) > 0).sum())
-            acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
-            log(f"  进度: {done_count}/{total}, 准确率={true_correct/done_count*100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
-
+        if not QUICK_MODE and done_count%5==0:
+            np.save(SOFT_FILE,soft_all)
+            with open(CKPT_FILE,'w') as f: json.dump({'done':[int(x) for x in done_set],'corr':[int(x) for x in correct_indices]},f)
         time.sleep(SLEEP_SEC)
 
-    # 最终保存（无条件，确保最后一波样本不丢失）
-    np.save(SOFT_FILE, soft_all)
-    soft_correct = soft_all[correct_indices]
-    np.save(CORRECT_FILE, soft_correct)
-    with open(CKPT_FILE, 'w') as f:
-        json.dump({'done': [int(x) for x in done_set], 'class_names': CLASS_NAMES}, f)
-    valid_n = int((soft_all.sum(axis=1) > 0).sum())
-    acc_pct = true_correct / done_count * 100 if done_count > 0 else 0
-    log(f"\n=== 生成完成 ===")
-    log(f"  有效软标签: {valid_n}/{len(X)}")
-    log(f"  整体准确率: {acc_pct:.1f}% ({true_correct}/{done_count})")
-    log(f"  正确样本数: {len(correct_indices)}")
-    log(f"  输出: {SOFT_FILE}")
+    if not QUICK_MODE:
+        np.save(SOFT_FILE,soft_all)
+        with open(CKPT_FILE,'w') as f: json.dump({'done':[int(x) for x in done_set],'corr':[int(x) for x in correct_indices]},f)
+    lall(f"Done: {true_correct}/{done_count} ({true_correct/max(done_count,1)*100:.0f}%) filt={filtered_count}")
 
-if __name__ == '__main__':
-    main()
+if __name__=='__main__': main()

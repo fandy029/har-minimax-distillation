@@ -1,0 +1,2 @@
+[2026-05-10 23:38:11] #0001/01395 | true=downstairs | pred=walking | ✗ | ent=0.562 conf=0.750 gap=0.500
+[2026-05-10 23:38:24] #0002/01395 | true=downstairs | pred=downstairs | ✓ | ent=1.132 conf=0.620 gap=0.440

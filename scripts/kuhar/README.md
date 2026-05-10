@@ -1,75 +1,119 @@
 # KuHar 软标签生成
 
-## 1. 数据集简介
+## 文件结构
 
-**来源**: KuHar (Korean Human Activity Recognition) 数据集，腰部传感器，100Hz
-
-**窗口**: 128步 × 8通道（加速度3 + 陀螺仪3 + 2额外通道），步进64
-
-**类别 (18类)**:
-
-| ID | 类别名 | 样本数 | ID | 类别名 | 样本数 |
-|----|--------|--------|----|--------|--------|
-| 0 | Stand | 5,191 | 9 | Push-up | 1,389 |
-| 1 | Sit | 5,152 | 10 | Sit-up | 2,869 |
-| 2 | Talk-sit | 4,971 | 11 | Walk | 2,328 |
-| 3 | Talk-stand | 5,155 | 12 | Walk-backwards | 845 |
-| 4 | Stand-sit | 5,881 | 13 | Walk-circle | 701 |
-| 5 | Lay | 5,058 | 14 | Run | 1,643 |
-| 6 | Lay-stand | 4,807 | 15 | Stair-up | 2,321 |
-| 7 | Pick | 3,664 | 16 | Stair-down | 2,259 |
-| 8 | Jump | 1,903 | 17 | Table-tennis | 1,247 |
-
-**训练样本总数**: 57,384
-
----
-
-## 2. 软标签生成详情（训练相关）
-
-### 输入格式
-- 窗口 shape: `(128, 8)` — 8通道原始时域数据
-- cols 1-3: 加速度 X/Y/Z，cols 5-7: 陀螺仪 X/Y/Z
-
-### 提供给模型的特征（核心判别特征）
 ```
-energy_acc    — 加速度总能量（按强度分层：<0.1静态 / 0.1-5过渡 / 5-20轻量 / >100高强度）
-acc_y_std     — Y轴变化幅度（行走/跑步/过渡动作）
-gyro_x_std    — X轴旋转（乒乓/楼梯关键）
-gyro_y_std    — Y轴旋转（站-坐 vs 躺-站过渡区分）
-jerk          — 加速度变化率（Jump高，Push-up低）
-n_peaks_acc   — 峰值数量（周期性步态检测）
-impulsiveness — 峰值/rms比（Jump>3，Push-up<2.1）
-z_grav        — 垂直方向重力（>0.65直立，<0.55水平）
-kurt_az       — Z轴峰度（Jump>3，Run中等）
+kuhar/
+├── README.md                    ← 本文件
+├── DATASET_INFO.md              ← 数据集详细介绍 (18类特征、分布)
+├── api_config.py                ← API 配置 (Mimo-v2.5-pro, T=0.8)
+│
+├── prepare_per_class_data.py    ← ① 预存每类数据 (一次性, 减少内存)
+├── kuhar_gen_per_class.py       ← ② 按类并行生成 (加载预存数据)
+├── run_kuhar_all.sh             ← ③ 一键启动/停止 18进程
+├── merge_kuhar_soft.py          ← ④ 合并 → A/B/C三版
+├── cleanup.sh                   ← 删除所有生成内容
+│
+├── kuhar_gen_v2.py              ← 旧版: 全类串行 (已废弃)
+│
+└── output/                      ← 所有输出
+    ├── train_labels.npy              全局标签 (57k样本)
+    ├── soft_labels/
+    │   ├── kuhar_soft_all.npy           (A版: 全部软标签)
+    │   ├── kuhar_soft_filtered.npy      (B版: 质量筛选)
+    │   └── kuhar_soft_correct_only.npy  (C版: 仅正确)
+    ├── logs/
+    │   ├── all.log / filtered.log / correct.log
+    │   └── stdout_class_*.log           (每个进程的标准输出)
+    ├── checkpoints/              ← 断点续传 (每个类独立)
+    └── per_class/                ← 18类中间产物 (永久保留)
+        └── class_N/
+            ├── windows.npy            预存的窗口数据 (~13MB)
+            ├── indices.npy            全局索引映射
+            ├── soft_all.npy           本类软标签
+            ├── log_all.txt            本类全部日志
+            ├── log_filtered.txt       本类通过筛选的日志
+            └── log_correct.txt        本类预测正确的日志
 ```
 
-### 决策流程（4步）
-1. **能量分层**: 按 energy_acc 划分动静和强度等级
-2. **方向判断**: z_grav 区分直立/水平/坐姿
-3. **过渡动作**: gyro_y_std + acc_y_std 区分 Stand-sit/Lay-stand/Sit-up/Talk-stand
-4. **动态活动**: impulsiveness + n_peaks + dom_freq 区分 Walk/Run/Stairs/Push-up/Ping-pong
+## 快速开始
 
-### 关键区分点
-- **Push-up vs Jump**: impulsiveness < 2.1 唯一标识 Push-up
-- **Stand vs Sit vs Lay**: z_grav 分界清晰（>0.78 Sit, 0.65-0.78 Stand, <0.55 Lay）
-- **Ping-pong vs Stairs-down**: gyro_x（乒乓≈1.0，楼梯≈0.53）
-- **Jump vs Run**: energy（Jump≈177，Run≈323，但 jerk 差异更大）
+### ① 准备数据 (一次性, ~30秒)
+```bash
+python3 prepare_per_class_data.py
+```
+按类预存窗口数据到 `output/per_class/class_N/windows.npy`。
+之后每个生成进程只加载自己的类 (~13MB), 18进程总计 ~250MB 内存。
 
-### 软标签生成参数
-- **模型**: MiniMax-M2.7 (API)
-- **Temperature**: 0.3
-- **API 失败重试**: ≤3 次
-- **预测不匹配重试**: ❌ 已禁用（每次只调1次API）
-- **输出**: `kuhar_soft.npy` (57384, 18) + `kuhar_soft_correct_only.npy`
+### ② 测试 (每类50样本, ~10分钟)
+```bash
+bash run_kuhar_all.sh --quick
+python3 merge_kuhar_soft.py --quick
+```
 
-### 输出文件
-- `results/soft_labels/kuhar_soft.npy` — 全量软标签
-- `results/soft_labels/kuhar_soft_correct_only.npy` — 仅 pred=true 的软标签
-- `results/logs/gen_kuhar.log` — 运行日志
-- `results/logs/gen_kuhar_errors.log` — 错误日志
+### ③ 全量生成 (18进程并行, ~25小时)
+```bash
+bash run_kuhar_all.sh
+# 等全部完成...
+python3 merge_kuhar_soft.py
+```
 
-### 训练提示
-- 18类中最复杂的数据集，动作间特征重叠多
-- Walk-circle 和 Walk-backwards 样本最少（701/845），注意召回率
-- Talk-sit/Talk-stand 与 Sit/Stand 极为相似，依赖微小的周期性说话动作特征
-- Ping-pong（乒乓球）与其他动态活动区分依赖陀螺仪 X 轴高旋转特征
+### 停止
+```bash
+bash run_kuhar_all.sh --stop
+```
+
+### 强制重新开始
+```bash
+# 先清理
+bash cleanup.sh
+# 再重新准备
+python3 prepare_per_class_data.py
+# 再启动
+bash run_kuhar_all.sh
+```
+
+### 查看进度
+```bash
+# 某类进度
+tail -f output/per_class/class_0/log_all.txt
+
+# 所有类完成数
+wc -l output/per_class/class_*/log_all.txt
+
+# 所有进程状态
+pgrep -a kuhar_gen_per_class
+```
+
+## API 配置
+
+- 模型: **Mimo-v2.5-pro**
+- 地址: `https://token-plan-cn.xiaomimimo.com/v1`
+- 温度: **0.8** (从 `api_config.py` 读取, 0.8 为最优)
+- 所有生成脚本通过 `import api_config` 读取配置
+
+## 输出说明
+
+| 版本 | 文件 | 说明 | 软标签比例 | 用途 |
+|------|------|------|-----------|------|
+| A | `kuhar_soft_all.npy` | 全部软标签 | 100% | 蒸馏主实验 |
+| B | `kuhar_soft_filtered.npy` | 质量筛选 | ~87% | 去除噪声的蒸馏对照 |
+| C | `kuhar_soft_correct_only.npy` | 仅正确 | ~45% | 蒸馏效果上界 |
+
+筛选规则 (B版): 满足全部条件保留, 否则 → one-hot
+- `entropy < 1.5` (不过于均匀)
+- `gap > 0.05` (有区分度)
+- `confidence > 0.5` (有一定置信度)
+
+## 资源占用
+
+| 模式 | 内存 | 说明 |
+|------|------|------|
+| 有预存数据 | ~250MB (18进程总计) | 每进程 ~13MB |
+| 无预存数据 | ~4.5GB (18进程总计) | 每进程加载全量 235MB |
+
+## 断点续传
+
+每个类独立 checkpoint (`output/checkpoints/ckpt_class_N.json`)。
+中断后重新运行 `bash run_kuhar_all.sh` 即可从断点继续。
+用 `--force` 参数可清除断点重来。

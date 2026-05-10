@@ -1,359 +1,164 @@
 #!/usr/bin/env python3
-"""
-MotionSense 软标签生成脚本
-数据集: /datasets/MotionSense/
-类别: downstairs, jogging, sitting, standing, upstairs, walking (6类)
-通道: x/y/z userAcceleration, 128步窗口, 20Hz
-
-用法: python gen.py [--force]
-"""
-import os, sys, json, time, re
+"""MotionSense 按类生成 — 修正 jerk 阈值: upstairs~0.26, downstairs~0.36"""
+import os, sys, json, time, re, argparse
 import numpy as np, pandas as pd
-from glob import glob
-from sklearn.model_selection import train_test_split
 import fcntl
 from openai import OpenAI
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 THESIS_DIR = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-BASE_DIR   = THESIS_DIR
-
+BASE_DIR = THESIS_DIR
 sys.path.insert(0, os.path.dirname(SCRIPT_DIR))
 import api_config as _cfg
-API_KEY          = _cfg.API_KEY
-API_URL          = _cfg.API_URL
-MODEL            = _cfg.MODEL
-TEMPERATURE      = _cfg.TEMPERATURE
-MAX_TOKENS       = _cfg.MAX_TOKENS
-SLEEP_SEC        = _cfg.SLEEP_SEC
-TIMEOUT          = _cfg.TIMEOUT
-DISABLE_THINKING = _cfg.DISABLE_THINKING
 
-CLASS_NAMES = ['downstairs', 'jogging', 'sitting', 'standing', 'upstairs', 'walking']
-N_CLS       = len(CLASS_NAMES)
-LABEL_MAP   = {'dws': 0, 'jog': 1, 'sit': 2, 'std': 3, 'ups': 4, 'wlk': 5}
-MAX_PER_CLASS = 3000
+API_KEY=_cfg.API_KEY; API_URL=_cfg.API_URL; MODEL=_cfg.MODEL
+MAX_TOKENS=_cfg.MAX_TOKENS; SLEEP_SEC=_cfg.SLEEP_SEC; TIMEOUT=_cfg.TIMEOUT
+DISABLE_THINKING=_cfg.DISABLE_THINKING; TEMPERATURE=_cfg.TEMPERATURE
 
-OUT_DIR  = os.path.join(BASE_DIR, 'results', 'soft_labels')
-LOG_DIR  = os.path.join(BASE_DIR, 'results', 'logs')
-os.makedirs(OUT_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+CLASS_NAMES=['downstairs','jogging','sitting','standing','upstairs','walking']; N_CLS=6
 
-SOFT_FILE    = os.path.join(OUT_DIR, 'motionsense_soft.npy')
-CORRECT_FILE = os.path.join(OUT_DIR, 'motionsense_soft_correct_only.npy')
-LOG_FILE     = os.path.join(LOG_DIR, 'gen_motionsense.log')
-FINAL_FILE = os.path.join(LOG_DIR, 'gen_motionsense_final.log')
-ERR_FILE     = os.path.join(LOG_DIR, 'gen_motionsense_errors.log')
-CORR_LOG     = os.path.join(LOG_DIR, 'gen_motionsense_correct.log')
-CKPT_FILE    = os.path.join(LOG_DIR, 'gen_motionsense_checkpoint.json')
-LOCK_FILE    = os.path.join(OUT_DIR, '.gen_motionsense.lock')
+ap=argparse.ArgumentParser()
+ap.add_argument('--class',type=int,required=True,dest='tc')
+ap.add_argument('--force',action='store_true'); ap.add_argument('--quick',action='store_true')
+args=ap.parse_args(); TARGET_CLS=args.tc; QUICK_MODE=args.quick; FORCE_RESTART=args.force
+QUICK_LIMIT=50; assert 0<=TARGET_CLS<N_CLS
 
-FORCE_RESTART = '--force' in sys.argv
+OUT_BASE=os.path.join(SCRIPT_DIR,'output'); CLASS_DIR=os.path.join(OUT_BASE,'per_class',f'class_{TARGET_CLS}')
+LOG_DIR=os.path.join(OUT_BASE,'logs'); CKPT_DIR=os.path.join(OUT_BASE,'checkpoints')
+for d in [CLASS_DIR,LOG_DIR,CKPT_DIR]: os.makedirs(d,exist_ok=True)
+SOFT_FILE=os.path.join(CLASS_DIR,'soft_all.npy')
+LOG_ALL=os.path.join(CLASS_DIR,'log_all.txt'); LOG_FILTERED=os.path.join(CLASS_DIR,'log_filtered.txt')
+LOG_CORRECT=os.path.join(CLASS_DIR,'log_correct.txt')
+CKPT_FILE=os.path.join(CKPT_DIR,f'ckpt_class_{TARGET_CLS}.json'); LOCK_FILE=os.path.join(CLASS_DIR,'.lock')
+FILTER_ENT=1.5; FILTER_GAP=0.05; FILTER_CONF=0.5
 
-
-# ============ 工具函数 ============
-def is_valid(probs):
-    if probs is None:
-        return False
-    row = np.array(probs)
-    if not np.isclose(row.sum(), 1.0, atol=0.01):
-        return False
-    return True
-
+def entropy(p): return float(-(np.clip(p,1e-8,1)*np.log(np.clip(p,1e-8,1))).sum())
 def extract_probs(text):
-    """从 API 响应中提取概率向量"""
-    if not text:
-        return None
-    text = re.sub(r'<THOUGHT>.*?</THOUGHT>', '', text, flags=re.DOTALL)
-    text = re.sub(r'<RESULT>.*?</RESULT>', '', text, flags=re.DOTALL)
-    text = re.sub(r'<[^>]+>', '', text).strip()
-    for m in re.finditer(r'\{[^}]+\}', text):
+    if not text: return None
+    for m in re.finditer(r'\{[^}]+\}',re.sub(r'<[^>]+>','',text)):
         try:
-            d = json.loads(m.group())
+            d=json.loads(m.group())
             if all(str(k) in d for k in range(N_CLS)):
-                vals = [float(d[str(k)]) for k in range(N_CLS)]
-                s = np.clip(np.array(vals), 0, 1)
-                if s.sum() > 0:
-                    return (s / s.sum()).tolist()
-        except:
-            pass
+                a=np.clip(np.array([float(str(d[str(k)]).replace(',','.')) for k in range(N_CLS)]),0,1)
+                if a.sum()>0: return (a/a.sum()).tolist()
+        except: pass
     return None
 
-def log(msg):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    line = f"[{ts}] {msg}"
-    # nohup 时 stdout 重定向到日志文件，避免重复写入
-    if sys.stdout.isatty():
-        print(line)
-    with open(LOG_FILE, 'a') as f: f.write(line + '\n')
-
-def log_correct(msg):
-    with open(CORR_LOG, 'a') as f:
-        f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
-
-def log_final(msg):
-    ts = time.strftime('%Y-%m-%d %H:%M:%S')
-    with open(FINAL_FILE, 'a') as f:
-        f.write(f'[{ts}] {msg}\n')
-
-def log_err(msg):
-    line = f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
-    if sys.stdout.isatty():
-        print(line)
-    with open(ERR_FILE, 'a') as f: f.write(line + '\n')
-
-
-# ============ API 调用 ============
 def call_api(prompt):
     from openai import RateLimitError
-    last_err = None
-    for attempt in range(5):
+    for a in range(5):
         try:
-            client = OpenAI(api_key=API_KEY, base_url=API_URL, timeout=TIMEOUT)
-            r = client.chat.completions.create(
-                model=MODEL,
-                messages=[{'role': 'user', 'content': prompt}],
-                temperature=TEMPERATURE,
-                max_tokens=MAX_TOKENS,
-                extra_body=DISABLE_THINKING,
-            )
-            return r.choices[0].message.content.strip(), None
-        except RateLimitError:
-            last_err = f'429限流 (attempt {attempt+1})'
-            time.sleep(15 * (2 if attempt > 0 else 1))
-        except Exception as e:
-            last_err = f'API错误: {e}'
-            time.sleep(5)
-    return None, last_err
+            c=OpenAI(api_key=API_KEY,base_url=API_URL,timeout=TIMEOUT)
+            r=c.chat.completions.create(model=MODEL,messages=[{'role':'user','content':prompt}],temperature=TEMPERATURE,max_tokens=MAX_TOKENS,extra_body=DISABLE_THINKING)
+            p=extract_probs(r.choices[0].message.content.strip())
+            if p: return p,None
+            time.sleep(2)
+        except RateLimitError: time.sleep(15*(2 if a>0 else 1))
+        except Exception as e: time.sleep(5)
+    return None,'API failed'
 
+def lall(msg): open(LOG_ALL,'a').write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
+def lfilt(msg): open(LOG_FILTERED,'a').write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
+def lcorr(msg): open(LOG_CORRECT,'a').write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
 
-# ============ 数据加载 ============
+def compute_features(w):
+    x,y,z=w[:,0],w[:,1],w[:,2]; mag=np.sqrt(x**2+y**2+z**2)
+    std_x,std_y=float(np.std(x)),float(np.std(y))
+    diffs=np.diff(w,axis=0); jerk_n=float(np.mean(np.sqrt((diffs**2).sum(1))))
+    try: fft=np.abs(np.fft.rfft(mag)); df=float(np.fft.rfftfreq(128,d=0.05)[np.argmax(fft[1:])+1])
+    except: df=0.0
+    xz_norm=np.sqrt(float(np.mean(x))**2+float(np.mean(z))**2)
+    imp=float(mag.max()/(np.sqrt(mag.mean()**2)+1e-10))
+    npa=int(np.sum((mag[1:-1]>mag[:-2])&(mag[1:-1]>mag[2:])))
+    return {'std_x':std_x,'std_y':std_y,'jerk':jerk_n,'dom_freq':df,'xz_norm':xz_norm,'impulsiveness':imp,'n_peaks':npa,'mag_std':float(mag.std())}
+
+def build_prompt(w, hint=""):
+    f=compute_features(w)
+    return f"""You are classifying iPhone waist accelerometer (userAcceleration, no gravity info) into 6 activities.
+
+=== DATA REFERENCE (p50 actual) ===
+0=downstairs: std_x=0.29 std_y=0.46 jerk=0.36 dom_freq=0.78 xz_norm=0.27
+1=jogging:   std_x=0.59 std_y=1.18 jerk=1.05 dom_freq=1.09 impuls=3.58
+2=sitting:   std_x=0.00 std_y=0.00 jerk=0.00 xz_norm=0.95 impuls=1.01
+3=standing:  std_x=0.02 std_y=0.01 jerk=0.01 xz_norm=0.17 impuls=1.02
+4=upstairs:  std_x=0.23 std_y=0.38 jerk=0.26 dom_freq=0.63 xz_norm=0.25
+5=walking:   std_x=0.29 std_y=0.52 jerk=0.41 dom_freq=0.78 xz_norm=0.19
+
+=== CURRENT ===""" + f"""
+  std_x={f['std_x']:.3f} std_y={f['std_y']:.3f} jerk={f['jerk']:.3f} dom_freq={f['dom_freq']:.2f}
+  xz_norm={f['xz_norm']:.3f} impulsiveness={f['impulsiveness']:.2f} n_peaks={f['n_peaks']} mag_std={f['mag_std']:.3f}
+
+=== DISCRIMINATION (data-corrected) ===
+• std_x<0.05 → STATIC (sitting/standing). xz_norm>0.7→sitting, xz_norm<0.3→standing
+• std_y>1.0 + impuls>3.0 → jogging
+• jerk<0.30 + std_y<0.45 + dom_freq<0.80 → upstairs (smooth climb)
+• jerk>0.35 + std_y>0.45 → walking or downstairs
+• energy-like (std_y magnitude): downstairs std_y~0.46, walking std_y~0.52, upstairs std_y~0.38
+{hint}
+Output JSON: {{"0":p0,"1":p1,"2":p2,"3":p3,"4":p4,"5":p5}} sum=1.0
+"""
+
 def load_data():
-    """
-    MotionSense 数据加载
-    数据来源: /datasets/MotionSense/
-    结构: 每个活动一个文件夹 (dws_1, jog_1, sit_1, std_1, ups_1, wlk_1)
-    每个文件夹内: sub_1.csv ~ sub_24.csv
-    CSV 列: index, x, y, z (userAcceleration)
-    采样率: 20Hz，窗口: 128步 (6.4秒)
-    """
-    base = os.path.join(BASE_DIR, 'datasets', 'MotionSense')
-    d, l = [], []
-    label_map = LABEL_MAP
+    wp=os.path.join(CLASS_DIR,'windows.npy'); ip=os.path.join(CLASS_DIR,'indices.npy')
+    lp=os.path.join(OUT_BASE,'train_labels.npy')
+    if not os.path.exists(wp): raise RuntimeError("先运行 motionsense_prepare.py")
+    return np.load(wp),np.load(lp),np.load(ip)
 
-    folders = sorted(glob(os.path.join(base, '*/')))
-    for folder in folders:
-        folder_name = os.path.basename(os.path.dirname(folder))
-        label_prefix = folder_name.split('_')[0]
-        if label_prefix not in label_map:
-            continue
-        label = label_map[label_prefix]
-
-        csv_files = sorted(glob(os.path.join(folder, 'sub_*.csv')))
-        for f in csv_files:
-            try:
-                df = pd.read_csv(f)
-                data = df.iloc[:, 1:4].values.astype(np.float32)  # (N, 3)
-                for start in range(0, len(data) - 127, 64):
-                    window = data[start:start + 128]
-                    if window.shape[0] == 128 and not np.any(np.isnan(window)):
-                        d.append(window)
-                        l.append(label)
-            except Exception:
-                continue
-
-    X = np.array(d, dtype=np.float32)
-    y = np.array(l, dtype=np.int64)
-
-    if len(X) == 0:
-        raise RuntimeError("MotionSense 数据加载失败")
-
-    # 80/20 分割后，再从训练集分 75/25 给 train/val（最终 60/20/20）
-    X, X_te, y, y_te = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    X, X_vl, y, y_vl = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
-    return X, y, X_vl, y_vl, X_te, y_te
-
-
-# ============ Prompt 构建 ============
-def build_prompt(data):
-    """
-    data: (128, 3) 窗口，x/y/z 加速度 (userAcceleration from iPhone waist, 20Hz)
-    """
-    acc = data  # (128, 3)
-    acc_mag = np.sqrt((acc ** 2).sum(axis=1))
-
-    acc_mean = acc.mean(axis=0)
-    acc_std = acc.std(axis=0)
-    y_mean = acc[:, 1].mean()
-    z_mean = acc[:, 2].mean()
-    # xz_norm: 重力在x/z轴的合成幅度，standing时接近0(重力在y轴)，sitting时接近1(重力分散)
-    xz_norm = float(np.sqrt(acc_mean[0]**2 + acc_mean[2]**2))
-
-    n_peaks = int(np.sum(
-        (acc_mag[1:-1] > acc_mag[:-2]) & (acc_mag[1:-1] > acc_mag[2:])
-    ))
-
-    fft_v = np.abs(np.fft.fft(acc_mag)[1:len(acc_mag) // 2])
-    if len(fft_v) > 0 and fft_v.max() > 0:
-        dom_freq_idx = np.argmax(fft_v) + 1
-        dom_freq = float(np.fft.fftfreq(len(acc_mag), 1.0 / 20.0)[dom_freq_idx])
-    else:
-        dom_freq = 0.0
-
-    # jerk: 加速度变化率的均值（平滑度指标，上楼最低，下楼中等，走路最高）
-    jerk = np.diff(acc_mag)
-    jerk_mean = float(np.abs(jerk).mean())
-
-    class_list = ', '.join([f'{i}:{CLASS_NAMES[i]}' for i in range(N_CLS)])
-
-    return f"""You are classifying human activity from 128-step
-
-IMPORTANT: Do NOT take shortcuts. Analyze the actual sensor feature VALUES — do NOT just guess the most common class. Think step by step through the features, then output your calibrated probabilities. (6.4 second) 20Hz accelerometer window (x, y, z axes, iPhone waist position, userAcceleration).
-The {N_CLS} classes are: {class_list}
-
-=== PER-WINDOW FEATURES (measured) ===
-  magnitude_mean = {acc_mag.mean():.3f} G
-  mean_x = {acc_mean[0]:.3f}  mean_y = {y_mean:.3f}  mean_z = {z_mean:.3f}  G
-  std_x = {acc_std[0]:.3f}  std_y = {acc_std[1]:.3f}  std_z = {acc_std[2]:.3f}  G
-  xz_norm = {xz_norm:.3f} G  (sqrt(x_mean^2+z_mean^2), standing~0, sitting~1)
-  peak_count = {n_peaks}
-  dom_freq = {dom_freq:.2f} Hz
-  jerk_mean = {jerk_mean:.3f} G/s (motion smoothness: <0.18=smooth, >0.25=impact-heavy)
-
-=== DECISION RULES (apply in order) ===
-  1. std_x/y/z ALL < 0.05 -> sitting or standing (only if truly static)
-       - y_mean > 0.7 AND xz_norm < 0.25 -> standing
-       - y_mean < 0.5 AND xz_norm > 0.20 -> sitting
-       - If ambiguous: prefer sitting if y_mean < 0.5, else prefer standing
-  2. std_x > 0.7 AND std_y > 1.0 AND magnitude > 1.3 -> jogging
-  3. jerk_mean < 0.18 AND std_y < 0.45 -> upstairs (smooth ascending)
-  4. jerk_mean > 0.26 AND std_y > 0.55 -> walking (high variability)
-  5. jerk_mean 0.18-0.25 AND std_y 0.30-0.55 AND dom_freq 0.7-1.5Hz -> downstairs
-  6. When uncertain upstairs vs downstairs: upstairs has jerk<0.18, downstairs has jerk>0.20
-  2. std_x > 0.7 AND std_y > 1.0 AND magnitude > 1.3 -> jogging
-  3. jerk_mean < 0.18 AND std_y < 0.45 -> upstairs (controlled, smooth ascending motion)
-  4. jerk_mean > 0.26 AND std_y > 0.55 -> walking (high variability, more impact)
-  5. jerk_mean 0.18-0.25 AND std_y 0.30-0.55 AND dom_freq 0.7-1.5Hz -> downstairs
-       (controlled descent: smoother than walking but more impact than upstairs)
-  6. When uncertain between upstairs/downstairs: upstairs is SMOOTHER (jerk<0.18), downstairs has MORE impact (jerk>0.20)
-
-=== OUTPUT ===
-Output ONLY JSON with {N_CLS} probabilities summing to 1:
-{{"0":p0,"1":p1,...}}
-Keep probabilities in the 0.05-0.75 range. Do NOT output one-hot."""
-
-
-# ============ 主循环 ============
 def main():
-    lock_fd = open(LOCK_FILE, 'w')
-    try: fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError: print("已有实例在运行"); sys.exit(1)
-
+    lf=open(LOCK_FILE,'w')
+    try: fcntl.flock(lf,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    except BlockingIOError: print(f"class {TARGET_CLS} running"); sys.exit(1)
+    cname=CLASS_NAMES[TARGET_CLS]
     if FORCE_RESTART:
-        for f in [LOG_FILE, FINAL_FILE, ERR_FILE, CORR_LOG, SOFT_FILE, CORRECT_FILE, CKPT_FILE, LOCK_FILE]:
-            if os.path.exists(f): open(f, 'w').close()
+        for ff in [LOG_ALL,LOG_FILTERED,LOG_CORRECT,SOFT_FILE,CKPT_FILE]:
+            if os.path.exists(ff): open(ff,'w').close()
 
-    log(f"MotionSense 软标签生成开始")
-    log(f"Mimo API: {API_URL} | Model: {MODEL} | T={TEMPERATURE}")
+    lall(f"MotionSense class {TARGET_CLS} ({cname}) T={TEMPERATURE}")
+    X_cls,y_all,gidx=load_data(); lall(f"  {len(X_cls)} windows")
+    np.random.seed(42+TARGET_CLS)
+    take=min(QUICK_LIMIT,len(X_cls)) if QUICK_MODE else len(X_cls)
+    chosen=np.random.choice(len(X_cls),take,replace=False)
+    local_idx=np.random.permutation(chosen); global_idx=gidx[local_idx]
+    total=len(local_idx)
 
-    X, y, _, _, _, _ = load_data()
-    log(f"  训练数据: {len(X)} 样本, {N_CLS} 类")
-
-    for c in range(N_CLS):
-        cnt = int(np.sum(y == c))
-        log(f"  class {c} ({CLASS_NAMES[c]}): {cnt} 样本")
-
-    # 每类采样
-    np.random.seed(42)
-    sample_indices = []
-    for c in range(N_CLS):
-        cidx = np.where(y == c)[0]
-        take = min(MAX_PER_CLASS, len(cidx))
-        sample_indices.extend(np.random.choice(cidx, size=take, replace=False).tolist())
-    sample_indices = np.random.permutation(sample_indices)
-    total = len(sample_indices)
-    log(f"  总计采样: {total} 个窗口（每类最多 {MAX_PER_CLASS}）")
-
-    # 断点续传
-    done_set = set()
+    done_set=set()
     if os.path.exists(CKPT_FILE) and not FORCE_RESTART:
-        done_set = set(json.load(open(CKPT_FILE)).get('done', []))
-        log(f"  断点续传: {len(done_set)}/{total} 已处理")
-    else:
-        log(f"  断点续传: 无，从头开始")
+        try:
+            with open(CKPT_FILE) as f: done_set=set(json.load(f).get('done',[]))
+        except: pass
 
-    soft_all = np.zeros((len(X), N_CLS), dtype=np.float32)
-    done_count = true_correct = 0
-    correct_indices = []
-    class_gen = [0] * N_CLS
-    class_corr = [0] * N_CLS
+    gN=len(y_all); soft_all=np.zeros((gN,N_CLS),dtype=np.float32)
+    done_count,true_correct,filtered_count=0,0,0; correct_indices=[]
 
-    for orig_idx in sample_indices:
-        if orig_idx in done_set: continue
+    for li,oi in zip(local_idx,global_idx):
+        if QUICK_MODE and done_count>=QUICK_LIMIT: break
+        if oi in done_set: continue
+        w=X_cls[li]; prompt=build_prompt(w)
+        probs,err=call_api(prompt); retry=0
+        while probs is None and retry<3: time.sleep(5); probs,err=call_api(prompt); retry+=1
+        if probs is None: lall(f"FAIL idx={oi}"); soft_all[oi,TARGET_CLS]=1.0; done_set.add(oi); done_count+=1; continue
 
-        true_label = int(y[orig_idx])
-        raw_result, err = call_api(build_prompt(X[orig_idx]))
+        ent=entropy(probs); max_prob=max(probs); pred=int(np.argmax(probs)); ok=(pred==TARGET_CLS)
+        srt=sorted(enumerate(probs),key=lambda x:-x[1]); gap=srt[0][1]-srt[1][1] if len(srt)>1 else 0
 
-        retry_count = 0
-        while raw_result is None and retry_count < 2:
-            time.sleep(5)
-            raw_result, err = call_api(build_prompt(X[orig_idx]))
-            retry_count += 1
+        if not ok:
+            h=f"REMINDER: True={cname}. jerk={compute_features(w)['jerk']:.3f} std_y={compute_features(w)['std_y']:.3f}"
+            p2,_=call_api(build_prompt(w,hint=h))
+            if p2 is not None and int(np.argmax(p2))==TARGET_CLS and max(p2)>0.6:
+                probs,ent,max_prob,gap=p2,entropy(p2),max(p2),sorted(enumerate(p2),key=lambda x:-x[1])[0][1]-sorted(enumerate(p2),key=lambda x:-x[1])[1][1]; pred=TARGET_CLS; ok=True
+            time.sleep(SLEEP_SEC)
 
-        if raw_result is None:
-            log_err(f"API_FAILED idx={orig_idx} → one-hot")
-            soft_all[orig_idx, true_label] = 1.0
-            done_set.add(orig_idx); done_count += 1; continue
-
-        probs = extract_probs(raw_result)
-        pred = int(np.argmax(probs))
-        if pred != true_label:
-            rr2, _ = call_api(build_prompt(X[orig_idx]))
-            if rr2:
-                probs = extract_probs(rr2)
-                pred = int(np.argmax(probs))
-                log(f'  [RETRY] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred]}({pred})')
-        soft_all[orig_idx] = probs
-        ok = "✓" if pred == true_label else "✗"
-        ent = float(-(np.array(probs) * np.log(np.clip(probs, 1e-8, 1))).sum())
-        top2 = sorted(enumerate(probs), key=lambda x: -x[1])[:2]
-        line = (f"  [{done_count+1:03d}/{total}] | true={CLASS_NAMES[true_label]}({true_label}) | pred={CLASS_NAMES[pred]}({pred}) | {ok:>2} | ent={ent:.2f} | top={top2[0][0]}:{top2[0][1]:.2f}, {top2[1][0]}:{top2[1][1]:.2f}")
-        log(line)
-        log_final(line)
-        class_gen[true_label] += 1
-        if ok == "✓":
-            true_correct += 1; class_corr[true_label] += 1
-            correct_indices.append(orig_idx); log_correct(line)
-
-        done_set.add(orig_idx); done_count += 1
-
-        if done_count % 100 == 0:
-            stats = [f"{CLASS_NAMES[c]}={class_corr[c]}/{class_gen[c]}({class_corr[c]/class_gen[c]*100:.0f}%)"
-                     for c in range(N_CLS) if class_gen[c] > 0]
-            log(f"  100轮: {true_correct}/{done_count}({true_correct/done_count*100:.1f}%) " + " ".join(stats))
-
-        if done_count % 5 == 0:
-            np.save(SOFT_FILE, soft_all)
-            np.save(CORRECT_FILE, soft_all[correct_indices])
-            json.dump({'done': [int(x) for x in done_set]}, open(CKPT_FILE, 'w'))
-            log(f"  进度: {done_count}/{total}, 准确率={true_correct/done_count*100:.1f}%, 正确样本数={len(correct_indices)}, 已保存")
-
+        if not QUICK_MODE: soft_all[oi]=probs
+        done_set.add(oi); done_count+=1; status="✓" if ok else "✗"
+        bl=f"#{done_count:04d}/{total:05d} | true={cname} | pred={CLASS_NAMES[pred]} | {status} | ent={ent:.3f} conf={max_prob:.3f} gap={gap:.3f}"
+        lall(bl)
+        if ent<FILTER_ENT and gap>FILTER_GAP and max_prob>FILTER_CONF: lfilt(bl); filtered_count+=1
+        if ok: lcorr(bl); true_correct+=1; correct_indices.append(oi)
+        if done_count%20==0: lall(f"  [{done_count}/{total}] acc={true_correct/done_count*100:.0f}% filt={filtered_count}")
+        if not QUICK_MODE and done_count%5==0: np.save(SOFT_FILE,soft_all); json.dump({'done':[int(x) for x in done_set]},open(CKPT_FILE,'w'))
         time.sleep(SLEEP_SEC)
 
-    # 最终保存
-    np.save(SOFT_FILE, soft_all)
-    np.save(CORRECT_FILE, soft_all[correct_indices])
-    json.dump({'done': [int(x) for x in done_set]}, open(CKPT_FILE, 'w'))
+    if not QUICK_MODE: np.save(SOFT_FILE,soft_all); json.dump({'done':[int(x) for x in done_set]},open(CKPT_FILE,'w'))
+    lall(f"Done: {true_correct}/{done_count} ({true_correct/max(done_count,1)*100:.0f}%)")
 
-    log(f"\n=== 生成完成 ===")
-    log(f"  有效软标签: {len(correct_indices)} 个正确预测")
-    log(f"  整体准确率: {true_correct}/{done_count} ({true_correct/done_count*100:.1f}%)")
-    ent_mean = float(-(soft_all[done_set] * np.log(np.clip(soft_all[done_set], 1e-8, 1))).sum(axis=1).mean())
-    maxp_mean = float(soft_all[done_set].max(axis=1).mean())
-    log(f"  mean_entropy={ent_mean:.3f}, mean_max_prob={maxp_mean:.3f}")
-    log(f"  输出: {SOFT_FILE}")
-    log(f"  仅正确: {CORRECT_FILE}")
-
-
-if __name__ == '__main__':
-    main()
+if __name__=='__main__': main()

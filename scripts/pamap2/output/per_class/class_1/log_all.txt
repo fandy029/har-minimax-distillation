@@ -1,0 +1,3 @@
+[2026-05-11 00:00:47] PAMAP2 class 1 (sitting) start T=0.8
+[2026-05-11 00:00:47]   1989 windows
+[2026-05-11 00:01:13] #0001/01989 | true=sitting(1) | pred=sitting(1) | ✓ | ent=0.895 conf=0.750 gap=0.650
