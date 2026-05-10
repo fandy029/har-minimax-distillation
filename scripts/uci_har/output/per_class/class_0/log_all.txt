@@ -1,9 +1,0 @@
-[2026-05-10 23:38:01] UCI-HAR class 0 (WALKING) T=0.8
-[2026-05-10 23:38:01]   1206 samples
-[2026-05-10 23:38:05] #0001/01206 | true=WALKING | pred=STANDING | ✗ | ent=0.693 conf=0.500 gap=0.000
-[2026-05-10 23:38:13] #0002/01206 | true=WALKING | pred=SITTING | ✗ | ent=0.000 conf=1.000 gap=1.000
-[2026-05-10 23:38:19] #0003/01206 | true=WALKING | pred=WALKING_DOWN | ✗ | ent=0.000 conf=1.000 gap=1.000
-[2026-05-10 23:38:25] #0004/01206 | true=WALKING | pred=SITTING | ✗ | ent=0.000 conf=1.000 gap=1.000
-[2026-05-11 00:01:18] UCI-HAR class 0 (WALKING) T=0.8
-[2026-05-11 00:01:18]   1206 samples
-[2026-05-11 00:01:44] #0001/01206 | true=WALKING | pred=LAYING | ✗ | ent=0.000 conf=1.000 gap=1.000

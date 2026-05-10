@@ -1,4 +1,0 @@
-[2026-05-11 00:01:15] #0001/00944 | true=walking(3) | pred=walking(3) | ✓ | ent=0.458 conf=0.900 gap=0.860
-[2026-05-11 00:01:25] #0002/00944 | true=walking(3) | pred=walking(3) | ✓ | ent=0.279 conf=0.920 gap=0.840
-[2026-05-11 00:01:27] #0003/00944 | true=walking(3) | pred=walking(3) | ✓ | ent=1.201 conf=0.600 gap=0.450
-[2026-05-11 00:01:41] #0004/00944 | true=walking(3) | pred=walking(3) | ✓ | ent=0.227 conf=0.940 gap=0.880
