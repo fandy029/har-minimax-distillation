@@ -1,0 +1,48 @@
+[2026-05-11 11:05:10] Gait class 1 (sit_on_chair) start T=0.8
+[2026-05-11 11:05:10]   42 windows
+[2026-05-11 11:05:10]   generate 42
+[2026-05-11 11:05:22] #0001/00042 | true=sit_on_chair(1) | pred=sit_on_bed(0) | ✗ | ent=0.588 conf=0.850 gap=0.800
+[2026-05-11 11:05:26] #0002/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.527 conf=0.780 gap=0.560
+[2026-05-11 11:05:29] #0003/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.394 conf=0.900 gap=0.850
+[2026-05-11 11:05:43] #0004/00042 | true=sit_on_chair(1) | pred=ambulating(3) | ✗ | ent=0.199 conf=0.950 gap=0.900
+[2026-05-11 11:06:00] #0005/00042 | true=sit_on_chair(1) | pred=lying(2) | ✗ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:06:03] #0006/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.500 conf=0.800 gap=0.600
+[2026-05-11 11:06:17] #0007/00042 | true=sit_on_chair(1) | pred=ambulating(3) | ✗ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:06:20] #0008/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.394 conf=0.900 gap=0.850
+[2026-05-11 11:06:23] #0009/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.428 conf=0.900 gap=0.850
+[2026-05-11 11:06:26] #0010/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.611 conf=0.700 gap=0.400
+[2026-05-11 11:06:29] #0011/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=1.194 conf=0.400 gap=0.000
+[2026-05-11 11:06:41] #0012/00042 | true=sit_on_chair(1) | pred=sit_on_bed(0) | ✗ | ent=0.588 conf=0.850 gap=0.800
+[2026-05-11 11:06:44] #0013/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:06:52] #0014/00042 | true=sit_on_chair(1) | pred=sit_on_bed(0) | ✗ | ent=0.224 conf=0.950 gap=0.910
+[2026-05-11 11:06:59] #0015/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:07:13] #0016/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.871 conf=0.700 gap=0.500
+[2026-05-11 11:07:15] #0017/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.394 conf=0.900 gap=0.850
+[2026-05-11 11:07:34] #0018/00042 | true=sit_on_chair(1) | pred=lying(2) | ✗ | ent=0.199 conf=0.950 gap=0.900
+[2026-05-11 11:07:36] #0019/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.423 conf=0.850 gap=0.700
+[2026-05-11 11:07:39] #0020/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.613 conf=0.800 gap=0.650
+[2026-05-11 11:07:39]   [20/42] acc=13/20=65% filt=19
+[2026-05-11 11:07:43] #0021/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.588 conf=0.850 gap=0.800
+[2026-05-11 11:07:45] #0022/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.500 conf=0.800 gap=0.600
+[2026-05-11 11:07:53] #0023/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.800 conf=0.750 gap=0.600
+[2026-05-11 11:07:57] #0024/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:08:14] #0025/00042 | true=sit_on_chair(1) | pred=ambulating(3) | ✗ | ent=0.568 conf=0.850 gap=0.770
+[2026-05-11 11:08:19] #0026/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.802 conf=0.700 gap=0.500
+[2026-05-11 11:08:26] #0027/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.423 conf=0.850 gap=0.700
+[2026-05-11 11:08:31] #0028/00042 | true=sit_on_chair(1) | pred=lying(2) | ✗ | ent=0.611 conf=0.700 gap=0.400
+[2026-05-11 11:08:55] #0029/00042 | true=sit_on_chair(1) | pred=ambulating(3) | ✗ | ent=0.199 conf=0.950 gap=0.900
+[2026-05-11 11:09:00] #0030/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.428 conf=0.900 gap=0.850
+[2026-05-11 11:09:12] #0031/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.639 conf=0.800 gap=0.700
+[2026-05-11 11:09:26] #0032/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.588 conf=0.850 gap=0.800
+[2026-05-11 11:09:31] #0033/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:09:42] #0034/00042 | true=sit_on_chair(1) | pred=sit_on_bed(0) | ✗ | ent=0.428 conf=0.900 gap=0.850
+[2026-05-11 11:09:44] #0035/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.568 conf=0.850 gap=0.770
+[2026-05-11 11:09:54] #0036/00042 | true=sit_on_chair(1) | pred=ambulating(3) | ✗ | ent=0.000 conf=1.000 gap=1.000
+[2026-05-11 11:10:17] #0037/00042 | true=sit_on_chair(1) | pred=sit_on_bed(0) | ✗ | ent=0.552 conf=0.850 gap=0.750
+[2026-05-11 11:10:20] #0038/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.800 conf=0.750 gap=0.600
+[2026-05-11 11:10:23] #0039/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.731 conf=0.750 gap=0.600
+[2026-05-11 11:10:26] #0040/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.518 conf=0.850 gap=0.750
+[2026-05-11 11:10:26]   [40/42] acc=27/40=68% filt=39
+[2026-05-11 11:10:35] #0041/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.708 conf=0.800 gap=0.700
+[2026-05-11 11:10:39] #0042/00042 | true=sit_on_chair(1) | pred=sit_on_chair(1) | ✓ | ent=0.423 conf=0.850 gap=0.700
+[2026-05-11 11:10:39] Done: 29/42 (69%) filt=41

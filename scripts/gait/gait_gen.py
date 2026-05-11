@@ -3,7 +3,10 @@
 import os, sys, json, time, re, argparse
 import numpy as np, pandas as pd, glob
 from scipy.ndimage import uniform_filter1d
-import fcntl
+import platform
+try:
+    import fcntl; HAS_FCNTL = True
+except ImportError: HAS_FCNTL = False
 from openai import OpenAI
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -105,8 +108,9 @@ def build_hint(true_label,pred_label,probs,f):
 
 def main():
     lf=open(LOCK_FILE,'w')
-    try: fcntl.flock(lf,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    except BlockingIOError: print(f"class {TARGET_CLS} running"); sys.exit(1)
+    if HAS_FCNTL:
+        try: fcntl.flock(lf,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError: print(f"class {TARGET_CLS} running"); sys.exit(1)
     cname=CLASS_NAMES[TARGET_CLS]
 
     if FORCE_RESTART:

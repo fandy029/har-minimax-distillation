@@ -1,0 +1,32 @@
+train=737 val=158 test=158
+E000 loss=0.9553 val_acc=0.8354 test_acc=0.8101 lr=5.00e-04
+E001 loss=0.6381 val_acc=0.8608 test_acc=0.8481 lr=5.00e-04
+E002 loss=0.5658 val_acc=0.8797 test_acc=0.8544 lr=5.00e-04
+E003 loss=0.5263 val_acc=0.8987 test_acc=0.8608 lr=5.00e-04
+E004 loss=0.5152 val_acc=0.9114 test_acc=0.8734 lr=5.00e-04
+E005 loss=0.4757 val_acc=0.9304 test_acc=0.8924 lr=5.00e-04
+E006 loss=0.4482 val_acc=0.9241 test_acc=0.8987 lr=5.00e-04
+E007 loss=0.4312 val_acc=0.9114 test_acc=0.8987 lr=5.00e-04
+E008 loss=0.4209 val_acc=0.9304 test_acc=0.9051 lr=5.00e-04
+E009 loss=0.3916 val_acc=0.9177 test_acc=0.8924 lr=5.00e-04
+E010 loss=0.3874 val_acc=0.8987 test_acc=0.9051 lr=5.00e-04
+E011 loss=0.3531 val_acc=0.9177 test_acc=0.8924 lr=5.00e-04
+E012 loss=0.3444 val_acc=0.9177 test_acc=0.8924 lr=5.00e-04
+E013 loss=0.3377 val_acc=0.8987 test_acc=0.9114 lr=5.00e-04
+E014 loss=0.3208 val_acc=0.9051 test_acc=0.9051 lr=5.00e-04
+E015 loss=0.3024 val_acc=0.8924 test_acc=0.8987 lr=5.00e-04
+E016 loss=0.3024 val_acc=0.8924 test_acc=0.8987 lr=5.00e-04
+E017 loss=0.2803 val_acc=0.8861 test_acc=0.9051 lr=2.50e-04
+E018 loss=0.2675 val_acc=0.9051 test_acc=0.8924 lr=2.50e-04
+E019 loss=0.2723 val_acc=0.8924 test_acc=0.8924 lr=2.50e-04
+E020 loss=0.2523 val_acc=0.8861 test_acc=0.8987 lr=2.50e-04
+早停 @ epoch 20 (最佳 val_acc=0.9304 @ E5)
+
+=== 蒸馏训练结果 ===
+策略: all
+α=0.7 (硬标签70% | 软标签30%)
+T=1.5
+train_acc: 0.9349
+best_val_acc: 0.9304
+test_acc: 0.8924
+模型已保存: gait_distill_all_a0.7.pt

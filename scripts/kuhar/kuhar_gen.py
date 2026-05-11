@@ -10,7 +10,10 @@ import os, sys, json, time, re, argparse
 import numpy as np, pandas as pd
 from glob import glob
 from sklearn.model_selection import train_test_split
-import fcntl
+import platform
+try:
+    import fcntl; HAS_FCNTL = True
+except ImportError: HAS_FCNTL = False
 from openai import OpenAI
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -210,8 +213,9 @@ def build_hint(true_label, pred_label, probs, f):
 
 def main():
     lock_fd=open(LOCK_FILE,'w')
-    try: fcntl.flock(lock_fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    except BlockingIOError: print(f"class {TARGET_CLS} 已有进程在跑"); sys.exit(1)
+    if HAS_FCNTL:
+        try: fcntl.flock(lock_fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError: print(f"class {TARGET_CLS} 已有进程在跑"); sys.exit(1)
 
     cname = CLASS_NAMES[TARGET_CLS]
     

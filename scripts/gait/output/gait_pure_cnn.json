@@ -1,0 +1,13 @@
+{
+  "test_acc": 0.8987341523170471,
+  "best_val_acc": 0.9303797483444214,
+  "train_acc": 0.975576639175415,
+  "best_epoch": 11,
+  "config": {
+    "epochs": 80,
+    "patience": 15,
+    "lr": 0.001,
+    "batch_size": 64,
+    "seed": 42
+  }
+}
