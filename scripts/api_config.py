@@ -1,6 +1,6 @@
 # API 配置文件
 
-API_KEY       = 'tp-shx3nrgd1una7e5mr0on0em8cz8m8j17skkwyohpnadbd3id'
+API_KEY       = 'tp-si3hoxea7pgjr31778w3id54m5e0rbuu3ga97ednux76sjh2'
 API_URL       = 'https://token-plan-sgp.xiaomimimo.com/v1'
 MODEL         = 'mimo-v2.5-pro'
 TEMPERATURE   = 0.8  

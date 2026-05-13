@@ -1,0 +1,17 @@
+{
+  "test_acc": 0.892405092716217,
+  "best_val_acc": 0.9303797483444214,
+  "train_acc": 0.9321573972702026,
+  "best_epoch": 5,
+  "config": {
+    "strategy": "all",
+    "alpha": 0.67,
+    "temperature": 1.5,
+    "epochs": 80,
+    "patience": 15,
+    "lr": 0.0005,
+    "batch_size": 64,
+    "seed": 42,
+    "soft_contrib_pct": "~33%"
+  }
+}

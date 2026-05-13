@@ -708,3 +708,177 @@
 [2026-05-11 17:54:40] #0664/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.051 | conf=0.650 | gap=0.450
 [2026-05-11 17:55:11] #0665/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.568 | conf=0.850 | gap=0.770
 [2026-05-11 17:55:46] #0666/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 18:21:30] Class 13 (Walk-circle) 软标签生成开始
+[2026-05-11 18:21:30]   QUICK=False LIMIT=50
+[2026-05-11 18:21:30]   温度=0.8 (from api_config)
+[2026-05-11 18:21:30]   本类: 818窗口 (仅加载本类, 内存友好)
+[2026-05-11 18:21:30]   实际生成: 818 窗口
+[2026-05-11 18:21:30]   续传: 665/818
+[2026-05-11 18:21:57] #0666/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.588 | conf=0.850 | gap=0.800
+[2026-05-11 18:22:29] #0667/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 18:23:03] #0668/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 18:23:39] #0669/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.613 | conf=0.800 | gap=0.650
+[2026-05-11 18:24:09] #0670/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.876 | conf=0.750 | gap=0.650
+[2026-05-11 18:24:40] #0671/00818 | true=Walk-circle(13) | pred=Pick(7) | ✗ | ent=1.060 | conf=0.700 | gap=0.600
+[2026-05-11 18:25:36] #0672/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 18:26:21] #0673/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.366 | conf=0.600 | gap=0.500
+[2026-05-11 18:26:53] #0674/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.929 | conf=0.750 | gap=0.650
+[2026-05-11 18:27:36] #0675/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.279 | conf=0.950 | gap=0.940
+[2026-05-11 18:28:09] #0676/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.876 | conf=0.750 | gap=0.650
+[2026-05-11 18:28:39] #0677/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.989 | conf=0.700 | gap=0.580
+[2026-05-11 18:29:07] #0678/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 18:29:39] #0679/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.010 | conf=0.700 | gap=0.600
+[2026-05-11 18:30:07] #0680/00818 | true=Walk-circle(13) | pred=Table-tennis(17) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 18:30:07]   [680/818] acc=252/680=37.1% filtered=15/680
+[2026-05-11 18:30:39] #0681/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 18:31:08] #0682/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.708 | conf=0.800 | gap=0.700
+[2026-05-11 18:31:39] #0683/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 18:32:10] #0684/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.829 | conf=0.780 | gap=0.710
+[2026-05-11 18:32:48] #0685/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.795 | conf=0.780 | gap=0.660
+[2026-05-11 18:33:21] #0686/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.443 | conf=0.550 | gap=0.400
+[2026-05-11 18:33:46] #0687/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.379 | conf=0.920 | gap=0.890
+[2026-05-11 18:34:12] #0688/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 18:34:27] #0689/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.731 | conf=0.750 | gap=0.600
+[2026-05-11 18:35:01] #0690/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.500 | conf=0.800 | gap=0.600
+[2026-05-11 18:35:36] #0691/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 18:36:09] #0692/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=1.402 | conf=0.500 | gap=0.300
+[2026-05-11 18:36:40] #0693/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.826 | conf=0.750 | gap=0.650
+[2026-05-11 18:37:14] #0694/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.373 | conf=0.550 | gap=0.400
+[2026-05-11 18:37:46] #0695/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 18:38:22] #0696/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.574 | conf=0.850 | gap=0.770
+[2026-05-11 18:38:50] #0697/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.651 | conf=0.850 | gap=0.800
+[2026-05-11 18:39:24] #0698/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.190 | conf=0.650 | gap=0.550
+[2026-05-11 18:40:04] #0699/00818 | true=Walk-circle(13) | pred=Lay-stand(6) | ✗ | ent=0.215 | conf=0.944 | gap=0.889
+[2026-05-11 18:41:07] #0700/00818 | true=Walk-circle(13) | pred=Pick(7) | ✗ | ent=0.206 | conf=0.947 | gap=0.895
+[2026-05-11 18:41:07]   [700/818] acc=259/700=37.0% filtered=34/700
+[2026-05-11 18:41:42] #0701/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.860 | conf=0.750 | gap=0.650
+[2026-05-11 18:42:31] #0702/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.826 | conf=0.750 | gap=0.650
+[2026-05-11 18:43:01] #0703/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.640 | conf=0.850 | gap=0.800
+[2026-05-11 18:43:33] #0704/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.778 | conf=0.800 | gap=0.750
+[2026-05-11 18:43:49] #0705/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.294 | conf=0.450 | gap=0.200
+[2026-05-11 18:44:32] #0706/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.010 | conf=0.700 | gap=0.600
+[2026-05-11 18:44:57] #0707/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 18:45:30] #0708/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.611 | conf=0.700 | gap=0.400
+[2026-05-11 18:45:53] #0709/00818 | true=Walk-circle(13) | pred=Lay-stand(6) | ✗ | ent=0.534 | conf=0.859 | gap=0.758
+[2026-05-11 18:46:32] #0710/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.704 | conf=0.350 | gap=0.100
+[2026-05-11 18:46:59] #0711/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.675 | conf=0.850 | gap=0.810
+[2026-05-11 18:47:51] #0712/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.800 | conf=0.750 | gap=0.600
+[2026-05-11 18:48:25] #0713/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.518 | conf=0.850 | gap=0.750
+[2026-05-11 18:48:56] #0714/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 18:49:42] #0715/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.998 | conf=0.750 | gap=0.700
+[2026-05-11 18:50:10] #0716/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.655 | conf=0.850 | gap=0.800
+[2026-05-11 18:50:27] #0717/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.426 | conf=0.450 | gap=0.250
+[2026-05-11 18:51:23] #0718/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.802 | conf=0.700 | gap=0.500
+[2026-05-11 18:51:56] #0719/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.518 | conf=0.850 | gap=0.750
+[2026-05-11 18:52:30] #0720/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.079 | conf=0.700 | gap=0.600
+[2026-05-11 18:52:30]   [720/818] acc=268/720=37.2% filtered=51/720
+[2026-05-11 18:52:58] #0721/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.147 | conf=0.650 | gap=0.500
+[2026-05-11 18:53:30] #0722/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.778 | conf=0.800 | gap=0.750
+[2026-05-11 18:54:08] #0723/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.543 | conf=0.850 | gap=0.750
+[2026-05-11 18:54:38] #0724/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.685 | conf=0.850 | gap=0.810
+[2026-05-11 18:55:19] #0725/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.639 | conf=0.800 | gap=0.700
+[2026-05-11 18:55:53] #0726/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 18:56:27] #0727/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.568 | conf=0.850 | gap=0.770
+[2026-05-11 18:56:56] #0728/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 18:57:22] #0729/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 18:57:50] #0730/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.334 | conf=0.920 | gap=0.880
+[2026-05-11 18:58:24] #0731/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.820 | conf=0.800 | gap=0.750
+[2026-05-11 18:59:03] #0732/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.644 | conf=0.850 | gap=0.800
+[2026-05-11 18:59:28] #0733/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.639 | conf=0.800 | gap=0.700
+[2026-05-11 18:59:44] #0734/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.139 | conf=0.550 | gap=0.250
+[2026-05-11 19:00:14] #0735/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.860 | conf=0.750 | gap=0.650
+[2026-05-11 19:01:08] #0736/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.656 | conf=0.450 | gap=0.330
+[2026-05-11 19:01:49] #0737/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.381 | conf=0.550 | gap=0.400
+[2026-05-11 19:02:19] #0738/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.588 | conf=0.850 | gap=0.800
+[2026-05-11 19:02:48] #0739/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.822 | conf=0.750 | gap=0.630
+[2026-05-11 19:03:36] #0740/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.965 | conf=0.750 | gap=0.700
+[2026-05-11 19:03:36]   [740/818] acc=273/740=36.9% filtered=70/740
+[2026-05-11 19:04:08] #0741/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.206 | conf=0.947 | gap=0.895
+[2026-05-11 19:05:02] #0742/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:05:34] #0743/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.835 | conf=0.770 | gap=0.650
+[2026-05-11 19:06:07] #0744/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.721 | conf=0.750 | gap=0.550
+[2026-05-11 19:06:51] #0745/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 19:07:17] #0746/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:07:43] #0747/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.739 | conf=0.800 | gap=0.720
+[2026-05-11 19:08:28] #0748/00818 | true=Walk-circle(13) | pred=Talk-stand(3) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:08:56] #0749/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.336 | conf=0.895 | gap=0.789
+[2026-05-11 19:09:32] #0750/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.851 | conf=0.300 | gap=0.150
+[2026-05-11 19:10:00] #0751/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.611 | conf=0.700 | gap=0.400
+[2026-05-11 19:10:44] #0752/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.407 | conf=0.550 | gap=0.400
+[2026-05-11 19:11:20] #0753/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.781 | conf=0.820 | gap=0.770
+[2026-05-11 19:11:52] #0754/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.128 | conf=0.650 | gap=0.500
+[2026-05-11 19:12:22] #0755/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.674 | conf=0.850 | gap=0.800
+[2026-05-11 19:13:06] #0756/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.279 | conf=0.920 | gap=0.840
+[2026-05-11 19:13:39] #0757/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.826 | conf=0.737 | gap=0.579
+[2026-05-11 19:14:10] #0758/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.571 | conf=0.880 | gap=0.850
+[2026-05-11 19:14:57] #0759/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 19:15:34] #0760/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.639 | conf=0.800 | gap=0.700
+[2026-05-11 19:15:34]   [760/818] acc=281/760=37.0% filtered=89/760
+[2026-05-11 19:16:03] #0761/00818 | true=Walk-circle(13) | pred=Lay-stand(6) | ✗ | ent=0.871 | conf=0.700 | gap=0.500
+[2026-05-11 19:16:47] #0762/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.017 | conf=0.700 | gap=0.550
+[2026-05-11 19:17:05] #0763/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.518 | conf=0.850 | gap=0.750
+[2026-05-11 19:17:52] #0764/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.304 | conf=0.600 | gap=0.450
+[2026-05-11 19:18:29] #0765/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 19:19:04] #0766/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.611 | conf=0.700 | gap=0.400
+[2026-05-11 19:19:33] #0767/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 19:20:00] #0768/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.588 | conf=0.850 | gap=0.800
+[2026-05-11 19:20:39] #0769/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.708 | conf=0.800 | gap=0.700
+[2026-05-11 19:21:34] #0770/00818 | true=Walk-circle(13) | pred=Talk-stand(3) | ✗ | ent=0.731 | conf=0.750 | gap=0.600
+[2026-05-11 19:22:29] #0771/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.871 | conf=0.700 | gap=0.500
+[2026-05-11 19:23:00] #0772/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.669 | conf=0.850 | gap=0.800
+[2026-05-11 19:23:38] #0773/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 19:24:12] #0774/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 19:24:59] #0775/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.746 | conf=0.700 | gap=0.450
+[2026-05-11 19:25:28] #0776/00818 | true=Walk-circle(13) | pred=Pick(7) | ✗ | ent=1.094 | conf=0.650 | gap=0.500
+[2026-05-11 19:26:06] #0777/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 19:26:49] #0778/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.518 | conf=0.850 | gap=0.750
+[2026-05-11 19:27:09] #0779/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.826 | conf=0.750 | gap=0.650
+[2026-05-11 19:27:47] #0780/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.423 | conf=0.850 | gap=0.700
+[2026-05-11 19:27:47]   [780/818] acc=291/780=37.3% filtered=109/780
+[2026-05-11 19:28:28] #0781/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.334 | conf=0.920 | gap=0.880
+[2026-05-11 19:29:30] #0782/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 19:30:14] #0783/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.811 | conf=0.800 | gap=0.750
+[2026-05-11 19:30:48] #0784/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=1.002 | conf=0.720 | gap=0.620
+[2026-05-11 19:31:26] #0785/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.094 | conf=0.650 | gap=0.500
+[2026-05-11 19:31:45] #0786/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.583 | conf=0.350 | gap=0.100
+[2026-05-11 19:32:15] #0787/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.190 | conf=0.650 | gap=0.550
+[2026-05-11 19:32:44] #0788/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.407 | conf=0.550 | gap=0.400
+[2026-05-11 19:33:24] #0789/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:34:23] #0790/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.443 | conf=0.550 | gap=0.400
+[2026-05-11 19:34:56] #0791/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.325 | conf=0.900 | gap=0.800
+[2026-05-11 19:35:29] #0792/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.407 | conf=0.550 | gap=0.400
+[2026-05-11 19:36:17] #0793/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:36:52] #0794/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.232 | conf=0.950 | gap=0.920
+[2026-05-11 19:37:24] #0795/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.800 | conf=0.750 | gap=0.600
+[2026-05-11 19:38:03] #0796/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.708 | conf=0.800 | gap=0.700
+[2026-05-11 19:38:35] #0797/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.586 | conf=0.860 | gap=0.810
+[2026-05-11 19:39:11] #0798/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.901 | conf=0.750 | gap=0.650
+[2026-05-11 19:40:04] #0799/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.609 | conf=0.400 | gap=0.200
+[2026-05-11 19:40:35] #0800/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 19:40:35]   [800/818] acc=301/800=37.6% filtered=127/800
+[2026-05-11 19:41:00] #0801/00818 | true=Walk-circle(13) | pred=Talk-stand(3) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
+[2026-05-11 19:41:30] #0802/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=0.588 | conf=0.850 | gap=0.800
+[2026-05-11 19:42:33] #0803/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=1.010 | conf=0.700 | gap=0.600
+[2026-05-11 19:43:04] #0804/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.334 | conf=0.920 | gap=0.880
+[2026-05-11 19:43:35] #0805/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.379 | conf=0.920 | gap=0.890
+[2026-05-11 19:44:14] #0806/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.708 | conf=0.800 | gap=0.700
+[2026-05-11 19:44:45] #0807/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.261 | conf=0.550 | gap=0.350
+[2026-05-11 19:45:41] #0808/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.333 | conf=0.500 | gap=0.300
+[2026-05-11 19:46:21] #0809/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.734 | conf=0.350 | gap=0.150
+[2026-05-11 19:47:14] #0810/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.778 | conf=0.800 | gap=0.750
+[2026-05-11 19:47:46] #0811/00818 | true=Walk-circle(13) | pred=Push-up(9) | ✗ | ent=1.113 | conf=0.700 | gap=0.600
+[2026-05-11 19:48:27] #0812/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=1.079 | conf=0.700 | gap=0.600
+[2026-05-11 19:49:02] #0813/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.431 | conf=0.900 | gap=0.860
+[2026-05-11 19:49:39] #0814/00818 | true=Walk-circle(13) | pred=Walk-circle(13) | ✓ | ent=0.423 | conf=0.850 | gap=0.700
+[2026-05-11 19:50:12] #0815/00818 | true=Walk-circle(13) | pred=Stair-up(15) | ✗ | ent=0.679 | conf=0.850 | gap=0.800
+[2026-05-11 19:50:44] #0816/00818 | true=Walk-circle(13) | pred=Stair-down(16) | ✗ | ent=0.394 | conf=0.900 | gap=0.850
+[2026-05-11 19:51:11] #0817/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.199 | conf=0.950 | gap=0.900
+[2026-05-11 19:51:44] #0818/00818 | true=Walk-circle(13) | pred=Walk(11) | ✗ | ent=0.265 | conf=0.950 | gap=0.930
+[2026-05-11 19:51:45] Done: 305/818 (37.3%) filtered=143/818
+[2026-05-12 22:29:09] Class 13 (Walk-circle) 软标签生成开始
+[2026-05-12 22:29:09]   QUICK=False LIMIT=50
+[2026-05-12 22:29:09]   温度=0.8 (from api_config)
+[2026-05-12 22:29:09]   本类: 818窗口 (仅加载本类, 内存友好)
+[2026-05-12 22:29:09]   实际生成: 818 窗口
+[2026-05-12 22:29:09]   续传: 818/818
+[2026-05-12 22:29:09] Done: 305/818 (37.3%) filtered=0/818
