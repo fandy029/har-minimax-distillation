@@ -754,8 +754,6 @@
 [2026-05-11 17:53:46] #0818/05799 | true=Talk-sit(2) | pred=Talk-sit(2) | ✓ | ent=1.084 | conf=0.750 | gap=0.700
 [2026-05-11 17:54:16] #0819/05799 | true=Talk-sit(2) | pred=Talk-sit(2) | ✓ | ent=0.854 | conf=0.737 | gap=0.632
 [2026-05-11 17:54:44] #0820/05799 | true=Talk-sit(2) | pred=Talk-sit(2) | ✓ | ent=0.169 | conf=0.960 | gap=0.919
-[2026-05-11 17:55:09] #0821/05799 | true=Talk-sit(2) | pred=Lay(5) | ✗ | ent=0.348 | conf=0.930 | gap=0.910
-[2026-05-11 17:55:39] #0822/05799 | true=Talk-sit(2) | pred=Sit(1) | ✗ | ent=0.067 | conf=0.990 | gap=0.986
 [2026-05-11 18:20:03] #0821/05799 | true=Talk-sit(2) | pred=Lay(5) | ✗ | ent=0.000 | conf=1.000 | gap=1.000
 [2026-05-11 18:20:25] #0822/05799 | true=Talk-sit(2) | pred=Sit(1) | ✗ | ent=0.428 | conf=0.900 | gap=0.850
 [2026-05-11 18:21:01] #0823/05799 | true=Talk-sit(2) | pred=Talk-sit(2) | ✓ | ent=1.013 | conf=0.722 | gap=0.567

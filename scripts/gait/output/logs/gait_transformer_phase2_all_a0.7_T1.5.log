@@ -1,0 +1,36 @@
+13:38:35 | ============================================================
+13:38:35 | 阶段2: TRANSFORMER 蒸馏微调
+13:38:35 | 策略: all  |  α=0.7  |  T=1.5
+13:38:35 | 硬标签 70% | 软标签 30%
+13:38:35 | 阶段1 基线 test_acc: 0.9177
+13:38:35 | ============================================================
+13:38:42 | E001 | loss=0.4564 train=0.8670 val=0.9304 lr=9.94e-05
+13:39:09 | E005 | loss=0.4416 train=0.8955 val=0.9241 lr=8.54e-05
+13:39:43 | E010 | loss=0.4154 train=0.9064 val=0.9367 lr=5.00e-05
+13:40:17 | E015 | loss=0.4107 train=0.9064 val=0.9367 lr=1.46e-05
+13:40:50 | E020 | loss=0.4097 train=0.9037 val=0.9367 lr=1.00e-04
+13:40:57 | 早停 @ E21 (best val=0.9367 @ E6)
+13:40:58 | 
+============================================================
+13:40:58 | 阶段2 完成!
+13:40:58 |   train_acc: 0.9104
+13:40:58 |   val_acc:   0.9367 @ E6
+13:40:58 |   test_acc:  0.9114  (基线 0.9177, -0.63pp)
+13:40:58 |   耗时: 2.4 min
+13:40:58 | 
+每类准确率 (test):
+13:40:58 |   sit_on_bed     : 0.9211
+13:40:58 |   sit_on_chair   : 0.5556
+13:40:58 |   lying          : 1.0000
+13:40:58 |   ambulating     : 0.2222
+13:40:58 | 
+混淆矩阵 (test):
+13:40:58 |         sit_on_b sit_on_c    lying ambulati
+13:40:58 |   sit_on_bed       35        1        0        2
+13:40:58 |   sit_on_chair        3        5        1        0
+13:40:58 |   lying           0        0      102        0
+13:40:58 |   ambulating        7        0        0        2
+13:40:58 | ============================================================
+13:40:58 | 模型: /home/fandy/workplace/thesis/scripts/gait/output/results/gait_transformer_phase2_all_a0.7_T1.5.pt
+13:40:58 | 结果: /home/fandy/workplace/thesis/scripts/gait/output/results/gait_transformer_phase2_all_a0.7_T1.5.json
+13:40:58 | 日志: /home/fandy/workplace/thesis/scripts/gait/output/logs/gait_transformer_phase2_all_a0.7_T1.5.log

@@ -1,0 +1,37 @@
+13:32:00 | ============================================================
+13:32:00 | 阶段1: PURECNN 预训练
+13:32:00 | 参数量: 610,500  |  Focal Loss γ=2.0  |  lr=0.0005
+13:32:00 | train=737  val=158  test=158
+13:32:00 | ============================================================
+13:32:02 | E001 | loss=0.5471 train=0.5794 val=0.8291 lr=4.97e-04
+13:32:04 | E005 | loss=0.2044 train=0.8684 val=0.8924 lr=4.27e-04
+13:32:07 | E010 | loss=0.1304 train=0.9050 val=0.9177 lr=2.50e-04
+13:32:10 | E015 | loss=0.1028 train=0.9132 val=0.9241 lr=7.32e-05
+13:32:13 | E020 | loss=0.1004 train=0.9227 val=0.9304 lr=5.00e-04
+13:32:16 | E025 | loss=0.0953 train=0.9308 val=0.9051 lr=4.81e-04
+13:32:18 | E030 | loss=0.0712 train=0.9294 val=0.9177 lr=4.27e-04
+13:32:21 | 早停 @ E34 (best val=0.9304 @ E19)
+13:32:21 | 
+============================================================
+13:32:21 | 阶段1 完成!
+13:32:21 |   train_acc: 0.9512
+13:32:21 |   val_acc:   0.9304 @ E19
+13:32:21 |   test_acc:  0.8987
+13:32:21 |   耗时: 0.3 min
+13:32:21 | 
+每类准确率 (test):
+13:32:21 |   sit_on_bed     : 0.8158
+13:32:21 |   sit_on_chair   : 0.6667
+13:32:21 |   lying          : 0.9902
+13:32:21 |   ambulating     : 0.4444
+13:32:21 | 
+混淆矩阵 (test):
+13:32:21 |         sit_on_b sit_on_c    lying ambulati
+13:32:21 |   sit_on_bed       31        2        3        2
+13:32:21 |   sit_on_chair        3        6        0        0
+13:32:21 |   lying           1        0      101        0
+13:32:21 |   ambulating        5        0        0        4
+13:32:21 | ============================================================
+13:32:21 | 模型: /home/fandy/workplace/thesis/scripts/gait/output/results/gait_purecnn_phase1.pt
+13:32:21 | 结果: /home/fandy/workplace/thesis/scripts/gait/output/results/gait_purecnn_phase1.json
+13:32:21 | 日志: /home/fandy/workplace/thesis/scripts/gait/output/logs/gait_purecnn_phase1.log

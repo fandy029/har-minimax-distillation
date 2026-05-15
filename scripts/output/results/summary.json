@@ -1,0 +1,24 @@
+{
+  "dataset": "Gait",
+  "n_train": 737,
+  "n_val": 158,
+  "n_test": 158,
+  "n_classes": 4,
+  "class_names": [
+    "sit_on_bed",
+    "sit_on_chair",
+    "lying",
+    "ambulating"
+  ],
+  "phase1": {
+    "transformer": {
+      "val_acc": 0.9367088607594937,
+      "test_acc": 0.9050632911392406,
+      "train_acc": 0.9226594301221167,
+      "best_epoch": 37,
+      "params": 167428,
+      "time_min": 9.859036854902904
+    }
+  },
+  "phase2_top5": []
+}

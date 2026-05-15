@@ -1,0 +1,32 @@
+{
+  "purecnn_correct_a0.9_T1.5": {
+    "model": "purecnn",
+    "strategy": "correct",
+    "alpha": 0.9,
+    "T": 1.5,
+    "val_acc": 0.9571078431372549,
+    "test_acc": 0.9454656862745098,
+    "gain": 0.0018382352941176405,
+    "best_epoch": 15
+  },
+  "purecnn_correct_a0.8_T1.5": {
+    "model": "purecnn",
+    "strategy": "correct",
+    "alpha": 0.8,
+    "T": 1.5,
+    "val_acc": 0.9577205882352942,
+    "test_acc": 0.9485294117647058,
+    "gain": 0.004901960784313708,
+    "best_epoch": 18
+  },
+  "purecnn_correct_a0.9_T2.0": {
+    "model": "purecnn",
+    "strategy": "correct",
+    "alpha": 0.9,
+    "T": 2.0,
+    "val_acc": 0.9571078431372549,
+    "test_acc": 0.9479166666666666,
+    "gain": 0.0042892156862744946,
+    "best_epoch": 15
+  }
+}
